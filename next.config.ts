@@ -4,8 +4,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   
-  // Optimize images
+  // Static export for Netlify
+  output: 'export',
+  trailingSlash: true,
   images: {
+    unoptimized: true,
     formats: ['image/webp'],
   },
 
@@ -14,19 +17,12 @@ const nextConfig: NextConfig = {
     DEFAULT_WINDOW_HOURS: process.env.LAST_MINUTE_WINDOW_HOURS || '72',
   },
 
-  // Redirects for cleaner URLs
-  async redirects() {
-    return [
-      // You can add redirects here if needed
-    ];
-  },
-
-  // Disable ESLint during build for Vercel
+  // Disable ESLint during build
   eslint: {
     ignoreDuringBuilds: true,
   },
 
-  // Disable TypeScript errors during build for Vercel
+  // Disable TypeScript errors during build
   typescript: {
     ignoreBuildErrors: true,
   },

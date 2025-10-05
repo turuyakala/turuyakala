@@ -27,7 +27,7 @@ export default function OfferCard({ item }: OfferCardProps) {
   const timeInfo = getTimeUntilDeparture(departureDate);
   const isSurprise = item.isSurprise === true;
   const isCritical = timeInfo.totalHours <= 3;
-  const categoryColor = categoryColors[item.category];
+  const categoryColor = categoryColors[item.category] || categoryColors.tour;
 
   return (
     <div className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 ${

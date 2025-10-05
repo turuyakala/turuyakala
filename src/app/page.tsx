@@ -8,197 +8,149 @@ import ReviewsSection from '@/components/ReviewsSection';
 import Footer from '@/components/Footer';
 import { sortOptions } from '@/lib/sort';
 import { Item } from '@/lib/types';
-import { prisma } from '@/lib/prisma';
 
-type SearchParams = Promise<{
-  cat?: string;
-  from?: string;
-  to?: string;
-  window?: string;
-  minPrice?: string;
-  maxPrice?: string;
-  sort?: string;
-}>;
-
-async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
-  const params = await searchParams;
-  
-  // Get current date/time for filtering tours within 72 hours
-  const now = new Date();
-  const windowEnd = new Date(now.getTime() + 72 * 60 * 60 * 1000);
-
-  // Build where clause for Offer table
-  const where: any = {
-    category: 'tour',
-    status: 'active', // Only active offers
-    startAt: {
-      gte: now,
-      lte: windowEnd,
-    },
-  };
-
-  // Add price filter (priceMinor is in kuruş, convert from TRY)
-  if (params.minPrice || params.maxPrice) {
-    where.priceMinor = {};
-    if (params.minPrice) where.priceMinor.gte = parseFloat(params.minPrice) * 100;
-    if (params.maxPrice) where.priceMinor.lte = parseFloat(params.maxPrice) * 100;
-  }
-
-  // Determine sort order (adapted for Offer table)
-  const sortBy = params.sort || 'departure-asc';
-  let orderBy: any = { startAt: 'asc' };
-  
-  switch (sortBy) {
-    case 'departure-desc':
-      orderBy = { startAt: 'desc' };
-      break;
-    case 'price-asc':
-      orderBy = { priceMinor: 'asc' };
-      break;
-    case 'price-desc':
-      orderBy = { priceMinor: 'desc' };
-      break;
-    case 'seats-asc':
-      orderBy = { seatsLeft: 'asc' };
-      break;
-    case 'seats-desc':
-      orderBy = { seatsLeft: 'desc' };
-      break;
-    default:
-      orderBy = { startAt: 'asc' };
-  }
-
-  // Fetch surprise tours (always show at top, no filters, exclude from main query)
-  const surpriseTours = await prisma.offer.findMany({
-    where: {
-      category: 'tour',
+// For static export, use sample data
+const sampleOffers: Item[] = [
+  {
+    id: '1',
+    title: 'Antalya Kaş Turu',
+    description: 'Muhteşem Kaş bölgesinde 3 günlük tatil',
+    priceMinor: 120000,
+    currency: 'TRY',
+    from: 'İstanbul',
+    to: 'Antalya',
+    startAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    seatsLeft: 5,
+    transport: 'Uçak',
+    duration: '3 gün 2 gece',
+    images: ['/images/hero-1.jpg'],
+    isSurprise: false,
+    category: 'tur',
+    supplier: {
+      name: 'Test Acentesi',
+      contactEmail: 'info@test.com',
+      contactPhone: '+90 555 123 4567'
+    }
+  },
+  {
+    id: '2',
+    title: 'Kapadokya Balon Turu',
+    description: 'Kapadokya\'da unutulmaz balon turu',
+    priceMinor: 150000,
+    currency: 'TRY',
+    from: 'İstanbul',
+    to: 'Nevşehir',
+    startAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
+    seatsLeft: 3,
+    transport: 'Uçak',
+    duration: '2 gün 1 gece',
+    images: ['/images/hero-2.jpg'],
       isSurprise: true,
-      status: 'active',
-      startAt: {
-        gte: now,
-        lte: windowEnd,
-      },
-    },
-    orderBy: { startAt: 'asc' },
-    take: 3,
-    include: {
+    category: 'tur',
       supplier: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  });
-
-  // Fetch regular tours with filters (exclude surprise tours)
-  const regularTours = await prisma.offer.findMany({
-    where: {
-      ...where,
-      isSurprise: false, // Exclude surprise tours from main query
-    },
-    orderBy,
-    include: {
+      name: 'Test Acentesi',
+      contactEmail: 'info@test.com',
+      contactPhone: '+90 555 123 4567'
+    }
+  },
+  {
+    id: '3',
+    title: 'Bodrum Yacht Turu',
+    description: 'Bodrum\'da lüks yacht turu',
+    priceMinor: 200000,
+    currency: 'TRY',
+    from: 'İstanbul',
+    to: 'Bodrum',
+    startAt: new Date(Date.now() + 72 * 60 * 60 * 1000),
+    seatsLeft: 8,
+    transport: 'Uçak',
+    duration: '4 gün 3 gece',
+    images: ['/images/hero-3.jpg'],
+      isSurprise: false,
+    category: 'tur',
       supplier: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  });
+      name: 'Test Acentesi',
+      contactEmail: 'info@test.com',
+      contactPhone: '+90 555 123 4567'
+    }
+  }
+];
 
-  // Combine: surprise tours first, then regular tours
-  const allTours = [...surpriseTours, ...regularTours];
-
-  // Convert to Item format
-  const sortedItems: Item[] = allTours.map(tour => ({
-    id: tour.id,
-    category: tour.category as any,
-    title: tour.title,
-    from: tour.from,
-    to: tour.to,
-    startAt: tour.startAt.toISOString(),
-    seatsLeft: tour.seatsLeft,
-    price: tour.priceMinor / 100, // Convert minor units to major
-    currency: tour.currency as any,
-    supplier: tour.supplier?.name || 'TuruYakala',
-    contact: undefined, // Offer doesn't have contact field
-    terms: tour.terms || undefined,
-    image: tour.image || undefined,
-    transport: tour.transport || undefined,
-    isSurprise: tour.isSurprise,
-    requiresVisa: tour.requiresVisa,
-    requiresPassport: tour.requiresPassport,
-    createdAt: tour.createdAt.toISOString(),
-  }));
-
-  // Get price range for filter (convert priceMinor to price)
-  const allPrices = allTours.map(t => t.priceMinor / 100).filter(p => p > 0);
-  const priceRange = {
-    min: allPrices.length > 0 ? Math.floor(Math.min(...allPrices)) : 0,
-    max: allPrices.length > 0 ? Math.ceil(Math.max(...allPrices)) : 10000,
-  };
-  
-  const currentSortLabel = sortOptions.find(opt => opt.value === sortBy)?.label || sortOptions[0].label;
+function OffersContent() {
+  const surpriseTours = sampleOffers.filter(offer => offer.isSurprise);
+  const mainOffers = sampleOffers.filter(offer => !offer.isSurprise);
+  const allItems = [...surpriseTours, ...mainOffers];
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Simple Navigation */}
-      <nav className="bg-[#563C5C] text-white py-4 shadow-lg sticky top-0 z-50">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold font-montserrat">TuruYakala</h1>
+      {/* Navigation */}
+      <nav className="bg-[#563C5C] text-white shadow-lg">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <h1 className="text-xl font-bold">TuruYakala</h1>
+            </div>
+            <div className="flex items-center space-x-4">
             <AuthButtons />
+            </div>
           </div>
         </div>
       </nav>
 
-      {/* Hero Slider */}
+      {/* Hero Section */}
       <HeroSlider />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {/* Filter and Sort Bar */}
-        <div className="mb-8 bg-white rounded-lg shadow-md p-6">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Filters */}
+        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <h2 className="text-2xl font-semibold text-gray-900">
-                {sortedItems.length} Tur Fırsatı Bulundu
-              </h2>
-              <p className="text-sm text-gray-600 mt-1">72 saat içinde kalkış yapacak turlar</p>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Fiyat Aralığı
+              </label>
+              <SimplePriceFilter />
             </div>
-
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <SimplePriceFilter priceRange={priceRange} />
-              <div className="h-8 w-px bg-gray-300 hidden sm:block"></div>
-              <SortSelect />
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Sıralama
+              </label>
+              <SortSelect options={sortOptions} />
             </div>
           </div>
         </div>
         
-        {/* Offers Grid - TÜM TURLAR (Sürpriz turlar en üstte) */}
-        {sortedItems.length > 0 ? (
+        {/* Results */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            {allItems.length} Tur Fırsatı Bulundu
+          </h2>
+          
+          {/* Surprise Tours */}
+          {surpriseTours.length > 0 && (
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Sürpriz Turlar
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {surpriseTours.map((offer) => (
+                  <OfferCard key={offer.id} item={offer} />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Main Offers */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {sortedItems.map((item) => (
-              <OfferCard key={item.id} item={item} />
+            {mainOffers.map((offer) => (
+              <OfferCard key={offer.id} item={offer} />
             ))}
           </div>
-        ) : (
-          <div className="bg-white rounded-lg shadow-md p-12 text-center">
-            <div className="text-6xl mb-4">😔</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">
-              Fırsat Bulunamadı
-            </h3>
-            <p className="text-gray-600 mb-6">
-              Aradığınız kriterlere uygun son dakika fırsatı bulunamadı.
-              <br />
-              Filtreleri değiştirerek tekrar deneyin.
-            </p>
-          </div>
-        )}
-      </main>
+        </div>
 
-      {/* Reviews Section (above footer) */}
-      <ReviewsSection />
+        {/* Reviews Section */}
+        <ReviewsSection />
+          </div>
 
       {/* Footer */}
       <Footer />
@@ -206,23 +158,10 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
   );
 }
 
-export default async function Home({
-  searchParams,
-}: {
-  searchParams: SearchParams;
-}) {
+export default function HomePage() {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-            <div className="text-6xl mb-4 animate-bounce">✈️</div>
-            <p className="text-xl text-gray-600">Fırsatlar yükleniyor...</p>
-          </div>
-        </div>
-      }
-    >
-      <OffersContent searchParams={searchParams} />
+    <Suspense fallback={<div>Loading...</div>}>
+      <OffersContent />
     </Suspense>
   );
 }

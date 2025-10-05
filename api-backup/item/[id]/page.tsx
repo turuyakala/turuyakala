@@ -15,6 +15,18 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
+// Generate static params for static export
+export async function generateStaticParams() {
+  // For static export, return sample IDs
+  return [
+    { id: '1' },
+    { id: '2' },
+    { id: '3' },
+    { id: '4' },
+    { id: '5' },
+  ];
+}
+
 export default async function ItemDetailPage({ params }: PageProps) {
   const { id } = await params;
   
