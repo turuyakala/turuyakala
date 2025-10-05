@@ -9,6 +9,7 @@ import Footer from '@/components/Footer';
 import { sortOptions } from '@/lib/sort';
 import { Item } from '@/lib/types';
 import { prisma } from '@/lib/prisma';
+import { toNum } from '@/lib/utils';
 
 type SearchParams = Promise<{
   cat?: string;
@@ -48,10 +49,10 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
     where.to = { contains: params.to, mode: 'insensitive' };
   }
   if (params.minPrice) {
-    where.priceMinor = { gte: parseInt(params.minPrice) * 100 };
+    where.priceMinor = { gte: toNum(params.minPrice, 0) * 100 };
   }
   if (params.maxPrice) {
-    where.priceMinor = { ...where.priceMinor, lte: parseInt(params.maxPrice) * 100 };
+    where.priceMinor = { ...where.priceMinor, lte: toNum(params.maxPrice, Number.MAX_SAFE_INTEGER) * 100 };
   }
 
   // Determine sort order (adapted for Offer table)
@@ -133,7 +134,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         id: '1',
         title: 'Kapadokya Balon Turu',
         description: 'Kapadokya\'da unutulmaz balon turu',
-        priceMinor: 150000,
+        priceMinor: toNum(150000),
         currency: 'TRY',
         from: 'İstanbul',
         to: 'Nevşehir',
@@ -157,7 +158,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         id: '2',
         title: 'Antalya Kaş Turu',
         description: 'Muhteşem Kaş bölgesinde 3 günlük tatil',
-        priceMinor: 120000,
+        priceMinor: toNum(120000),
         currency: 'TRY',
         from: 'İstanbul',
         to: 'Antalya',
@@ -178,7 +179,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         id: '3',
         title: 'Bodrum Yacht Turu',
         description: 'Bodrum\'da lüks yacht turu',
-        priceMinor: 200000,
+        priceMinor: toNum(200000),
         currency: 'TRY',
         from: 'İstanbul',
         to: 'Bodrum',

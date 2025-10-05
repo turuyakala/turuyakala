@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
 
   // Environment variables available to the client
   env: {
-    DEFAULT_WINDOW_HOURS: process.env.LAST_MINUTE_WINDOW_HOURS || '72',
+    NEXT_PUBLIC_DEFAULT_WINDOW_HOURS: process.env.LAST_MINUTE_WINDOW_HOURS || '72',
   },
 
   // Disable ESLint during build

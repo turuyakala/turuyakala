@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { Item } from '@/lib/types';
 import { formatDateShort, getTimeUntilDeparture } from '@/lib/time';
 import { formatPrice } from '@/lib/price';
+import { toNum, toString } from '@/lib/utils';
 import Badge from './Badge';
 
 type OfferCardProps = {
@@ -23,11 +24,12 @@ const categoryColors: Record<Item['category'], { bg: string; border: string }> =
 };
 
 export default function OfferCard({ item }: OfferCardProps) {
-  const departureDate = new Date(item.startAt);
+  // Güvenli değer okuma
+  const departureDate = new Date(item?.startAt || Date.now());
   const timeInfo = getTimeUntilDeparture(departureDate);
-  const isSurprise = item.isSurprise === true;
-  const isCritical = timeInfo.totalHours <= 3;
-  const categoryColor = categoryColors[item.category] || categoryColors.tour;
+  const isSurprise = item?.isSurprise === true;
+  const isCritical = toNum(timeInfo?.totalHours, 0) <= 3;
+  const categoryColor = categoryColors[item?.category] || categoryColors.tour;
 
   return (
     <div className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 ${
@@ -61,18 +63,18 @@ export default function OfferCard({ item }: OfferCardProps) {
                 ? 'bg-red-600 text-white font-bold' 
                 : 'bg-white/90 text-gray-700'
             }`}>
-              {item.transport}
+              {toString(item?.transport, 'Uçak')}
             </div>
           </div>
         )}
 
         {/* Sağ alt (kartın içinde): Kalan koltuk - Kırmızı yuvarlak */}
-        {item.seatsLeft <= 2 && !isSurprise && (
+        {toNum(item?.seatsLeft, 0) <= 2 && !isSurprise && (
           <div className="absolute bottom-3 right-3 z-10">
             <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center shadow-lg animate-pulse">
               <div className="text-center">
                 <div className="text-white font-bold text-lg leading-tight">SON</div>
-                <div className="text-white font-bold text-2xl leading-tight">{item.seatsLeft}</div>
+                <div className="text-white font-bold text-2xl leading-tight">{toNum(item?.seatsLeft, 0)}</div>
                 <div className="text-white font-bold text-xs leading-tight">KOLTUK</div>
               </div>
             </div>
