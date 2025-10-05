@@ -1,0 +1,21 @@
+{
+  "name": "TuruYakala - Son Dakika Fırsatları",
+  "short_name": "TuruYakala",
+  "description": "Son dakikada, en doğru fırsatla! Tur, otobüs, uçak ve gemi biletlerinde en iyi son dakika fırsatları.",
+  "icons": [
+    {
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#563C5C",
+  "background_color": "#563C5C",
+  "display": "standalone",
+  "start_url": "/"
+}

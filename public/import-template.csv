@@ -1,0 +1,6 @@
+title,description,category,startLocation,endLocation,startAt,endAt,price,currency,availableSeats,images,highlights,included,excluded
+İstanbul Boğaz Turu,Boğazda unutulmaz bir gün geçirin,tours,İstanbul,İstanbul,2025-10-10T09:00:00,2025-10-10T17:00:00,150.00,TRY,40,https://example.com/img1.jpg,Boğaz manzarası|Öğle yemeği|Rehberli tur,Yemek|İçecek|Rehber,Kişisel harcamalar
+Antalya Uçak Bileti,İstanbul-Antalya direkt uçuş,flights,İstanbul,Antalya,2025-10-12T14:30:00,2025-10-12T16:00:00,350.00,TRY,120,https://example.com/flight.jpg,Direkt uçuş|15kg bagaj,15kg bagaj dahil|Koltuk seçimi,Yemek|Ekstra bagaj
+İzmir Otobüs Bileti,Konforlu otobüs yolculuğu,buses,İstanbul,İzmir,2025-10-15T20:00:00,2025-10-16T06:00:00,200.00,TRY,50,https://example.com/bus.jpg,2+1 koltuk|Wi-Fi|İkram,Wi-Fi|İkram|Klima,Yemek
+Akdeniz Cruise,7 günlük cruise tatili,ships,İstanbul,Akdeniz,2025-11-01T10:00:00,2025-11-08T10:00:00,5500.00,EUR,200,https://example.com/cruise.jpg,Full pension|Eğlence|Havuz,3 öğün yemek|Aktiviteler|Animasyon,Ekstra turlar|Alkol
+
