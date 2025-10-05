@@ -4,11 +4,8 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactStrictMode: true,
   
-  // Static export for Netlify
-  output: 'export',
-  trailingSlash: true,
+  // Netlify configuration
   images: {
-    unoptimized: true,
     formats: ['image/webp'],
   },
 
