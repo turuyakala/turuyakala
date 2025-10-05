@@ -4,6 +4,7 @@ import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
+import NextAuth from 'next-auth';
 
 const loginSchema = z.object({
   email: z.string().email('Geçerli bir e-posta adresi girin'),
@@ -82,4 +83,7 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET,
 };
+
+// NextAuth v5 auth function
+export const { auth, handlers, signIn, signOut } = NextAuth(authOptions);
 
