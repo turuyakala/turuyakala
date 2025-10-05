@@ -1,7 +1,0 @@
-# Vercel Environment Variables
-# Bu değişkenleri Vercel dashboard'da Settings > Environment Variables'da ekleyin
-
-DATABASE_URL=postgresql://username:password@host:5432/database
-NEXTAUTH_SECRET=your-secret-key-here
-NEXTAUTH_URL=https://your-domain.vercel.app
-LAST_MINUTE_WINDOW_HOURS=72
