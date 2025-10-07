@@ -1,11 +1,11 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
   reactStrictMode: true,
   
   // Netlify configuration
   images: {
+    unoptimized: true,
     formats: ['image/webp'],
   },
 
@@ -23,6 +23,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+
+  // External packages for server components
+  serverExternalPackages: ['@prisma/client'],
 };
 
 export default nextConfig;
