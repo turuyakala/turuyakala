@@ -3,15 +3,12 @@ import { cleanupExpiredOffers } from '@/lib/jobs/cleanupService';
 
 /**
  * GET /api/cron/cleanup
- * Vercel Cron Job endpoint for cleaning up expired/sold out offers
+ * Cron Job endpoint for cleaning up expired/sold out offers
  * 
  * Security: Protected by CRON_SECRET environment variable
  * 
- * Vercel cron.json:
- * {
- *   "path": "/api/cron/cleanup",
- *   "schedule": "0 * * * *"
- * }
+ * Can be triggered by AWS EventBridge or similar cloud cron services
+ * Schedule: "0 * * * *" (hourly)
  */
 export async function GET(request: NextRequest) {
   try {

@@ -10,7 +10,7 @@ export function initializeCronJobs() {
   const enableCron = process.env.ENABLE_CRON === 'true' || process.env.NODE_ENV === 'development';
 
   if (!enableCron) {
-    console.log('⏸️  Cron jobs disabled (use Vercel Cron in production)');
+    console.log('⏸️  Cron jobs disabled (use cloud cron service in production)');
     return;
   }
 

@@ -95,10 +95,12 @@ http://localhost:3000
 
 ## 🚀 Deploy Et
 
-### Vercel (Önerilen)
+### AWS Amplify
 1. GitHub'a push et
-2. [Vercel](https://vercel.com)'e import et
-3. Deploy!
+2. AWS Amplify Console'dan repository'yi bağla
+3. amplify.yml otomatik algılanacak
+4. Environment değişkenlerini ayarla
+5. Deploy!
 
 ### Build Al
 ```bash

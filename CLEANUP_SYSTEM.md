@@ -81,21 +81,12 @@ ENABLE_CRON=true npm run dev
 ✅ Cleanup completed: 12 expired, 3 sold out
 ```
 
-### Production (Vercel Cron)
+### Production (Cloud Cron)
 
-```json
-// vercel.json
-{
-  "crons": [
-    {
-      "path": "/api/cron/cleanup",
-      "schedule": "0 * * * *"
-    }
-  ]
-}
-```
+**AWS EventBridge veya benzeri bir cron servisi kullanılabilir:**
 
 **Endpoint:** `GET /api/cron/cleanup`  
+**Schedule:** `0 * * * *` (Her saat başı)  
 **Auth:** `Authorization: Bearer ${CRON_SECRET}`
 
 ---
@@ -272,7 +263,7 @@ WHERE status IN ('new', 'imported', 'active')
 ┌─────────────────────────────────────────────────────────────────┐
 │                    HOURLY CLEANUP TRIGGER                       │
 │  Dev: node-cron (0 * * * *)                                    │
-│  Prod: Vercel Cron (/api/cron/cleanup)                        │
+│  Prod: Cloud Cron (/api/cron/cleanup)                         │
 └───────────────────────────┬─────────────────────────────────────┘
                             │
                             ▼
@@ -357,7 +348,7 @@ WHERE status IN ('new', 'imported', 'active')
 **Checklist:**
 - [ ] `ENABLE_CRON=true` (development)
 - [ ] Cron initialized? (console'da "Cron jobs initialized" var mı?)
-- [ ] Vercel cron configured? (vercel.json)
+- [ ] Cloud cron configured? (AWS EventBridge)
 - [ ] `CRON_SECRET` set? (production)
 
 **Debug:**
@@ -420,7 +411,7 @@ CREATE INDEX idx_offer_status ON Offer(status);
 
 ### CRON_SECRET Protection
 
-**Vercel Cron:**
+**Cron Endpoint Authentication:**
 ```typescript
 const authHeader = request.headers.get('authorization');
 if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -442,10 +433,9 @@ if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
 |------|-------------|
 | `lib/jobs/cleanupService.ts` | Main cleanup logic |
 | `lib/jobs/cronJobs.ts` | Cron scheduler (dev) |
-| `src/app/api/cron/cleanup/route.ts` | Vercel cron endpoint |
+| `src/app/api/cron/cleanup/route.ts` | Cron endpoint |
 | `src/app/admin/stats/page.tsx` | Dashboard UI |
 | `src/app/api/admin/stats/last-cleanup/route.ts` | Last cleanup API |
-| `vercel.json` | Vercel cron config |
 
 ---
 

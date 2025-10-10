@@ -364,6 +364,7 @@ PORT=3001 npm run dev
 
 | Dosya | Açıklama |
 |-------|----------|
+| `AWS_DEPLOYMENT.md` | **AWS Amplify deployment kılavuzu** |
 | `SEED_DATA_GUIDE.md` | Database seed kılavuzu |
 | `OFFER_TABLE_MIGRATION.md` | Offer tablosu geçişi |
 | `PRICE_FORMATTING_UPDATE.md` | Fiyat formatlama sistemi |
@@ -373,34 +374,26 @@ PORT=3001 npm run dev
 
 ## 🚀 Production Deployment
 
-### 1. Environment Değişkenleri
+**Detaylı kılavuz için:** [`AWS_DEPLOYMENT.md`](./AWS_DEPLOYMENT.md) 📖
+
+### Hızlı Özet
+
+1. **AWS RDS PostgreSQL** database oluştur
+2. **AWS Amplify Console**'da repository'yi bağla
+3. **Environment variables** ayarla (DATABASE_URL, NEXTAUTH_SECRET, vb.)
+4. **Deploy!** (otomatik build başlar)
+5. **AWS EventBridge** ile cron jobs kur (opsiyonel)
+
+### Required Environment Variables
 ```env
-DATABASE_URL="postgresql://user:pass@host:5432/db"
-NEXTAUTH_URL="https://yourdomain.com"
+DATABASE_URL="postgresql://user:pass@host:5432/db?schema=public"
+NEXTAUTH_URL="https://your-app.amplifyapp.com"
 NEXTAUTH_SECRET="production-secret-key"
 ENCRYPTION_KEY="your-32-char-encryption-key"
+CRON_SECRET="your-cron-secret"
 ```
 
-### 2. Database Migration
-```bash
-npx prisma migrate deploy
-```
-
-### 3. Build
-```bash
-npm run build
-npm run start
-```
-
-### 4. Vercel Deployment
-```bash
-# Vercel'e deploy
-vercel
-
-# Environment değişkenlerini ayarla
-vercel env add DATABASE_URL
-vercel env add NEXTAUTH_SECRET
-```
+Detaylar için [`AWS_DEPLOYMENT.md`](./AWS_DEPLOYMENT.md) dosyasına bakın.
 
 ## 📄 Lisans
 

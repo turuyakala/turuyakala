@@ -3,9 +3,8 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   
-  // Netlify configuration
+  // Image optimization
   images: {
-    unoptimized: true,
     formats: ['image/webp'],
   },
 

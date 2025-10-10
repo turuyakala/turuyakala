@@ -3,19 +3,12 @@ import { syncAllSuppliers } from '@/lib/jobs/syncService';
 
 /**
  * GET /api/cron/sync-suppliers
- * Vercel Cron Job endpoint for syncing suppliers
+ * Cron Job endpoint for syncing suppliers
  * 
  * Security: Protected by CRON_SECRET environment variable
  * 
- * Vercel cron.json example:
- * {
- *   "crons": [
- *     {
- *       "path": "/api/cron/sync-suppliers",
- *       "schedule": "* /15 * * * *"
- *     }
- *   ]
- * }
+ * Can be triggered by AWS EventBridge or similar cloud cron services
+ * Recommended schedule: "*/15 * * * *" (every 15 minutes)
  */
 export async function GET(request: NextRequest) {
   try {

@@ -405,7 +405,7 @@ useEffect(() => {
 ```bash
 # Check cron status
 # Dev: Check instrumentation.ts logs
-# Prod: Check Vercel cron logs
+# Prod: Check cloud cron logs (AWS EventBridge)
 
 # Test supplier manually
 curl /api/admin/suppliers/[id]/sync-now
