@@ -8,7 +8,7 @@ import { cleanupExpiredOffers } from '@/lib/jobs/cleanupService';
  * Security: Protected by CRON_SECRET environment variable
  * 
  * Can be triggered by AWS EventBridge or similar cloud cron services
- * Schedule: "0 * * * *" (hourly)
+ * Schedule: hourly
  */
 export async function GET(request: NextRequest) {
   try {

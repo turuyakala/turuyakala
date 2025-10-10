@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   
   // Image optimization
   images: {
-    formats: ['image/webp'],
+    unoptimized: true,
   },
 
   // Environment variables available to the client

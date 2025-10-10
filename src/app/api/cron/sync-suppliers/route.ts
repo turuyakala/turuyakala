@@ -8,7 +8,7 @@ import { syncAllSuppliers } from '@/lib/jobs/syncService';
  * Security: Protected by CRON_SECRET environment variable
  * 
  * Can be triggered by AWS EventBridge or similar cloud cron services
- * Recommended schedule: "*/15 * * * *" (every 15 minutes)
+ * Recommended schedule: every 15 minutes
  */
 export async function GET(request: NextRequest) {
   try {
