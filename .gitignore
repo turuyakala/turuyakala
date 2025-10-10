@@ -1,7 +1,9 @@
 # Dependencies
 node_modules
-.pnp
-.pnp.js
+.next
+.env*
+
+
 
 # Testing
 coverage
@@ -17,6 +19,12 @@ dist
 # Production
 .vercel
 .netlify
+
+# AWS Amplify
+amplify/
+.amplifyrc
+amplify-build-config.json
+amplify-meta.json
 
 # Environment
 .env
@@ -62,5 +70,3 @@ Dockerfile
 # Logs
 logs
 *.log
-
-.vercel
