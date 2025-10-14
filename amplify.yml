@@ -3,11 +3,13 @@ frontend:
   phases:
     preBuild:
       commands:
+        - nvm install 20
+        - nvm use 20
         - npm ci
-        - npx prisma generate
+        - npx prisma generate --schema=prisma/schema.prisma
     build:
       commands:
-        - npx prisma migrate deploy
+        - npx prisma migrate deploy --schema=prisma/schema.prisma
         - npm run build
   artifacts:
     baseDirectory: .next
