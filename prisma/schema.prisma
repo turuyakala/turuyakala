@@ -1,0 +1,439 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// Auth Models (NextAuth compatible)
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?   // For credentials login
+  image         String?
+  role          String    @default("user") // user, seller, admin
+  
+  accounts      Account[]
+  sessions      Session[]
+  orders        Order[]
+  auditLogs     AuditLog[]
+  reviews       Review[]
+  
+  // For sellers
+  sellerProfile SellerProfile?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+  
+  @@unique([identifier, token])
+}
+
+// Seller Profile
+model SellerProfile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  companyName String
+  phone       String?
+  address     String?
+  taxId       String?
+  verified    Boolean  @default(false)
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  inventory   InventoryItem[]
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Inventory & Orders (Normalized Offer Schema)
+model InventoryItem {
+  id                String        @id @default(cuid())
+  
+  // Supplier Integration
+  supplierId        String?                        // Foreign key to Supplier (optional for manual entries)
+  vendorOfferId     String?                        // Unique ID from vendor/supplier system
+  
+  // Ownership & Management
+  sellerId          String                         // Who manages this offer (admin/seller)
+  
+  // Offer Details
+  category          String                         // tour, bus, flight, cruise
+  title             String
+  from              String
+  to                String
+  startAt           DateTime
+  seatsTotal        Int
+  seatsLeft         Int
+  
+  // Pricing (Normalized - in minor units: cents/kuruş)
+  priceMinor        Int                            // Price in minor currency units (cents/kuruş)
+  currency          String        @default("TRY")
+  
+  // Additional Info
+  image             String?
+  terms             String?
+  contact           String?                        // JSON: {phone, whatsapp}
+  transport         String?                        // Ulaşım şekli
+  
+  // Flags
+  isSurprise        Boolean       @default(false)  // Sürpriz tur mu?
+  requiresVisa      Boolean       @default(false)  // Vize gerekli mi?
+  requiresPassport  Boolean       @default(false)  // Pasaport gerekli mi?
+  
+  // Status & Sync
+  status            String        @default("active") // active, inactive, expired, sold_out
+  rawJson           String?                        // Raw JSON from supplier API
+  
+  // Relations
+  supplier          Supplier?     @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  seller            SellerProfile @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  orders            Order[]
+  
+  // Timestamps
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  
+  // Indexes
+  @@unique([vendorOfferId, supplierId], name: "vendor_offer_unique")
+  @@index([category, startAt])
+  @@index([isSurprise])
+  @@index([status])
+  @@index([supplierId])
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  userId          String?
+  inventoryItemId String
+  email           String
+  fullName        String
+  phone           String
+  seats           Int
+  totalPrice      Int           // in cents
+  paymentStatus   String        // pending, paid, failed, refunded
+  paymentMethod   String?
+  transactionId   String?
+  pnrCode         String?
+  
+  user            User?         @relation(fields: [userId], references: [id])
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+  reviews         Review[]
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  @@index([userId])
+  @@index([email])
+}
+
+// Supplier Integration
+model Supplier {
+  id                  String          @id @default(cuid())
+  name                String          @unique
+  description         String?
+  integrationMode     String          // pull, push, csv
+  
+  // API Configuration
+  apiUrl              String?
+  apiKey              String?         // Encrypted
+  apiSecret           String?         // Encrypted
+  username            String?
+  password            String?         // Encrypted
+  additionalHeaders   String?         // JSON
+  
+  // Healthcheck Configuration
+  healthcheckUrl      String?
+  healthcheckMethod   String          @default("GET") // GET, POST
+  lastHealthcheck     DateTime?
+  healthcheckStatus   String?         // success, failed
+  healthcheckMessage  String?
+  
+  // Webhook Configuration
+  webhookSecret       String?         // HMAC secret for webhook signature validation
+  
+  // Security & Rate Limiting
+  ipAllowlist         String?         // JSON array of allowed IPs (null = allow all)
+  rateLimitPerMinute  Int?            // Max requests per minute (null = no limit)
+  
+  // Status
+  isActive            Boolean         @default(true)
+  
+  // Relations
+  inventoryItems      InventoryItem[]
+  offers              Offer[]
+  jobs                FetchJob[]
+  jobRuns             JobRun[]
+  auditLogs           AuditLog[]
+  
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  
+  @@index([isActive])
+}
+
+// Offer Model (Raw offers from suppliers)
+model Offer {
+  id                String    @id @default(cuid())
+  
+  // Supplier Integration (Required)
+  supplierId        String
+  vendorOfferId     String                        // Unique ID from vendor system
+  
+  // Offer Details
+  category          String                        // tour, bus, flight, cruise
+  title             String
+  from              String
+  to                String
+  startAt           DateTime
+  seatsTotal        Int
+  seatsLeft         Int
+  
+  // Pricing
+  priceMinor        Int                           // Price in minor currency units
+  currency          String        @default("TRY")
+  
+  // Additional Info
+  image             String?
+  terms             String?
+  transport         String?
+  
+  // Flags
+  isSurprise        Boolean       @default(false)  // Sürpriz tur mu?
+  requiresVisa      Boolean       @default(false)  // Vize gerekli mi?
+  requiresPassport  Boolean       @default(false)  // Pasaport gerekli mi?
+  
+  // Raw Data
+  rawJson           String                        // Full raw JSON from supplier API
+  
+  // Status
+  status            String        @default("new") // new, imported, ignored, expired, active
+  importedToInventory Boolean     @default(false) // Has this been imported to InventoryItem?
+  inventoryItemId   String?                       // Link to created InventoryItem
+  
+  // Relations
+  supplier          Supplier      @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  lastSyncedAt      DateTime      @default(now()) // Last time synced from supplier
+  
+  // Indexes
+  @@unique([vendorOfferId, supplierId], name: "vendor_offer_unique")
+  @@index([supplierId])
+  @@index([status])
+  @@index([importedToInventory])
+  @@index([startAt])
+  @@index([isSurprise])
+  @@index([category])
+}
+
+// Background Jobs System
+model FetchJob {
+  id          String    @id @default(cuid())
+  
+  // Job Configuration
+  supplierId  String
+  jobType     String    @default("fetch_offers")  // fetch_offers, sync_inventory, etc.
+  
+  // Schedule
+  scheduledAt DateTime  @default(now())
+  interval    Int?      // Minutes (null = one-time job)
+  
+  // Status
+  status      String    @default("pending")  // pending, running, completed, failed, cancelled
+  enabled     Boolean   @default(true)
+  
+  // Metadata
+  config      String?   // JSON: additional configuration
+  
+  // Relations
+  supplier    Supplier  @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  runs        JobRun[]
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  lastRunAt   DateTime?
+  
+  // Indexes
+  @@index([supplierId])
+  @@index([status])
+  @@index([enabled])
+}
+
+model JobRun {
+  id          String    @id @default(cuid())
+  
+  // Job Reference
+  jobId       String
+  supplierId  String
+  
+  // Execution
+  status      String    @default("running")  // running, completed, failed
+  startedAt   DateTime  @default(now())
+  finishedAt  DateTime?
+  duration    Int?      // Seconds
+  
+  // Results
+  inserted    Int       @default(0)
+  updated     Int       @default(0)
+  failed      Int       @default(0)
+  
+  // Error Handling
+  error       String?   // Error message if failed
+  errorStack  String?   // Full error stack trace
+  
+  // Metadata
+  result      String?   // JSON: detailed results
+  
+  // Relations
+  job         FetchJob  @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  supplier    Supplier  @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  
+  // Indexes
+  @@index([jobId])
+  @@index([supplierId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+// Audit Log System
+model AuditLog {
+  id          String    @id @default(cuid())
+  
+  // Event Details
+  action      String    // sync_started, sync_completed, rate_limit_hit, etc.
+  entity      String    // supplier, offer, job
+  entityId    String?
+  
+  // Context
+  userId      String?
+  supplierId  String?
+  actor       String?   // scheduler, webhook, manual, api
+  
+  // Network Info
+  ip          String?   // Client IP address
+  userAgent   String?   // User agent string
+  payloadSize Int?      // Request payload size in bytes
+  
+  // Data
+  metadata    String?   // JSON: additional context
+  statusCode  Int?      // HTTP status if applicable
+  error       String?   // Error message if failed
+  
+  // Timestamps
+  createdAt   DateTime  @default(now())
+  
+  // Relations
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  supplier    Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  
+  // Indexes
+  @@index([action])
+  @@index([entity])
+  @@index([userId])
+  @@index([supplierId])
+  @@index([actor])
+  @@index([statusCode])
+  @@index([createdAt])
+}
+
+// User Reviews
+model Review {
+  id          String   @id @default(cuid())
+  
+  // User & Order
+  userId      String
+  orderId     String?
+  
+  // Review Content
+  rating      Int      // 1-5 stars
+  comment     String
+  tourName    String   // Cached tour name
+  
+  // Moderation
+  isApproved  Boolean  @default(false)
+  isPublished Boolean  @default(false)
+  
+  // Relations
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order       Order?   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  
+  // Timestamps
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Indexes
+  @@unique([userId, orderId])
+  @@index([isPublished])
+  @@index([rating])
+  @@index([createdAt])
+}
+
+// Contact Messages
+model ContactMessage {
+  id        String   @id @default(cuid())
+  
+  // Contact Info
+  name      String
+  email     String
+  subject   String
+  message   String
+  
+  // Status
+  status    String   @default("new") // new, read, replied, closed
+  
+  // Admin Response
+  adminReply String?
+  repliedAt  DateTime?
+  repliedBy  String? // Admin user ID
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([status])
+  @@index([createdAt])
+}

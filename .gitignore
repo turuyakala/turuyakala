@@ -60,7 +60,6 @@ Thumbs.db
 
 # Disabled Backend
 _backend_disabled/
-prisma/
 docker-compose.yml
 Dockerfile
 
