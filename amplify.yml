@@ -6,11 +6,8 @@ frontend:
         - nvm install 20
         - nvm use 20
         - npm ci
-        - npx prisma generate --schema=prisma/schema.prisma
     build:
       commands:
-        # migrate deploy yerine db push (pgbouncer ile genelde sorunsuz)
-        - npx prisma db push --schema=prisma/schema.prisma --accept-data-loss
         - npm run build
   artifacts:
     baseDirectory: .next
