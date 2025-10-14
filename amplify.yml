@@ -1,21 +1,18 @@
 version: 1
-applications:
-  - appRoot: /
-    frontend:
-      phases:
-        preBuild:
-          commands:
-            - npm ci
-            - npx prisma generate
-        build:
-          commands:
-            - npm run build
-      artifacts:
-        baseDirectory: .next
-        files:
-          - '**/*'
-      cache:
-        paths:
-          - node_modules/**/*
-          - .next/cache/**/*
-          - .prisma/**/*
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+        - npx prisma generate
+    build:
+      commands:
+        - npx prisma migrate deploy
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
