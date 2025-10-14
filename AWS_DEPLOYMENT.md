@@ -1,91 +1,34 @@
-# 🚀 AWS Amplify Deployment Guide
+# AWS'e Deployment ve Domain Bağlama Rehberi
 
-Bu proje AWS Amplify ile deploy edilmek üzere yapılandırılmıştır.
+## 🎯 Genel Bakış
 
-## 📋 Gereksinimler
+Bu rehber, lastminutetour projesini AWS'e deploy etmek ve domain bağlamak için adım adım talimatlar içerir.
 
-- AWS Hesabı
-- GitHub Repository
-- PostgreSQL Database (AWS RDS önerilir)
+## 📋 Ön Koşullar
 
----
-
-## 🔧 1. Environment Variables
-
-Amplify Console'da aşağıdaki environment değişkenlerini ayarlayın:
-
-### Zorunlu Değişkenler:
-
-```bash
-# Database (PostgreSQL)
-DATABASE_URL="postgresql://user:password@host:5432/database?schema=public"
-
-# NextAuth
-NEXTAUTH_URL="https://your-app-url.amplifyapp.com"
-NEXTAUTH_SECRET="your-random-32-char-secret-key"
-
-# Encryption
-ENCRYPTION_KEY="your-32-character-encryption-key"
-
-# Cron Security
-CRON_SECRET="your-random-cron-secret-key"
-```
-
-### Opsiyonel Değişkenler:
-
-```bash
-# Application Settings
-DEFAULT_WINDOW_HOURS="72"
-
-# Cron (development only)
-ENABLE_CRON="false"
-```
+- [ ] AWS Hesabı (henüz yoksa [aws.amazon.com](https://aws.amazon.com) üzerinden ücretsiz hesap açın)
+- [ ] GitHub/GitLab/Bitbucket repository'si (kodunuz burada olmalı)
+- [ ] Domain adı (GoDaddy, Namecheap, vb. üzerinden satın alınmış)
+- [ ] PostgreSQL veritabanı (AWS RDS veya başka bir sağlayıcı)
 
 ---
 
-## 🗄️ 2. Database Kurulumu (AWS RDS)
+## 🚀 ADIM 1: AWS Amplify ile Deployment
 
-### 2.1. PostgreSQL Database Oluşturma
+### 1.1. AWS Console'a Giriş
+1. [AWS Console](https://console.aws.amazon.com)'a gidin
+2. Sağ üstten **İstanbul (eu-south-1)** bölgesini seçin (Türkiye için en hızlı)
+3. Arama çubuğuna "**Amplify**" yazın ve **AWS Amplify** servisini açın
 
-1. AWS Console → RDS → Create Database
-2. PostgreSQL seçin (latest version)
-3. Template: Free tier veya Production
-4. DB Instance Identifier: `turuyakala-db`
-5. Master username: `postgres`
-6. Master password: Güvenli bir şifre seçin
-7. Public access: **Yes** (Amplify'dan erişim için)
-8. Security Group: PostgreSQL (5432) portunu açın
+### 1.2. Yeni Uygulama Oluşturma
+1. **"Create new app"** veya **"New app" > "Host web app"** butonuna tıklayın
+2. **Git sağlayıcınızı seçin**: GitHub, GitLab veya Bitbucket
+3. **"Authorize AWS Amplify"** ile yetkilendirme yapın
+4. Repository'nizi ve branch'inizi seçin (genellikle `main` veya `master`)
+5. **"Next"** butonuna tıklayın
 
-### 2.2. Database Migration
-
-Database oluşturduktan sonra, Amplify build sırasında otomatik migration çalışacak.
-
-`amplify.yml` içinde zaten yapılandırılmış:
-```yaml
-build:
-  commands:
-    - npm run build    # Prisma generate + Next.js build
-```
-
-**Not:** `package.json`'da `postinstall` script'i ile Prisma client otomatik oluşturulur.
-
----
-
-## 🌐 3. Amplify Console'da Kurulum
-
-### 3.1. Repository Bağlama
-
-1. [AWS Amplify Console](https://console.aws.amazon.com/amplify)'a gidin
-2. **New app** → **Host web app**
-3. GitHub'ı seçin ve repository'yi bağlayın
-4. Branch: `main`
-5. **Next**
-
-### 3.2. Build Settings
-
-Amplify otomatik olarak `amplify.yml` dosyasını algılayacak.
-
-Eğer manuel yapılandırma gerekirse:
+### 1.3. Build Ayarları
+AWS otomatik olarak Next.js projenizi algılayacak ve build ayarlarını önerecektir. Aşağıdaki `amplify.yml` yapılandırmasının kullanıldığından emin olun:
 
 ```yaml
 version: 1
@@ -96,6 +39,7 @@ applications:
         preBuild:
           commands:
             - npm ci
+            - npx prisma generate
         build:
           commands:
             - npm run build
@@ -109,251 +53,256 @@ applications:
           - .next/cache/**/*
 ```
 
-### 3.3. Environment Variables
+**Önemli:** Prisma kullanıyorsanız `preBuild` aşamasına `npx prisma generate` eklenmelidir.
 
-1. **App settings** → **Environment variables**
-2. Yukarıdaki tüm environment değişkenlerini ekleyin
-3. **Save**
+### 1.4. Environment Variables (Çevre Değişkenleri)
+"**Advanced settings**" > "**Environment variables**" bölümünden aşağıdaki değişkenleri ekleyin:
 
-### 3.4. Deploy
-
-1. **Save and deploy**
-2. İlk build ~5-10 dakika sürer
-3. Build tamamlandığında URL'niz hazır: `https://main.xxxxx.amplifyapp.com`
-
----
-
-## ⏱️ 4. Cron Jobs Kurulumu (AWS EventBridge)
-
-Amplify'da Vercel gibi built-in cron desteği yok. AWS EventBridge kullanmanız gerekir.
-
-### 4.1. EventBridge Rules Oluşturma
-
-#### Cleanup Cron (Her Saat Başı)
-
-1. **AWS Console** → **EventBridge** → **Rules** → **Create rule**
-2. Name: `turuyakala-cleanup-hourly`
-3. Rule type: **Schedule**
-4. Schedule pattern: `cron(0 * * * ? *)`
-5. Target: **API Gateway** veya **HTTP endpoint**
-6. URL: `https://your-app.amplifyapp.com/api/cron/cleanup`
-7. Method: **GET**
-8. Headers:
-   ```
-   Authorization: Bearer YOUR_CRON_SECRET
-   ```
-9. **Create**
-
-#### Supplier Sync (Her 15 Dakika)
-
-1. **EventBridge** → **Rules** → **Create rule**
-2. Name: `turuyakala-sync-15min`
-3. Schedule: `cron(*/15 * * * ? *)`
-4. Target URL: `https://your-app.amplifyapp.com/api/cron/sync-suppliers`
-5. Headers:
-   ```
-   Authorization: Bearer YOUR_CRON_SECRET
-   ```
-6. **Create**
-
-### 4.2. Alternatif: Lambda + EventBridge
-
-Daha güvenli bir yöntem:
-
-1. Lambda function oluştur
-2. Lambda'dan internal API'yi çağır
-3. EventBridge → Lambda'yı tetikle
-
----
-
-## 🔐 5. Security Best Practices
-
-### 5.1. Environment Secrets
-
-- ✅ Tüm secret'ları Amplify Console'da saklayın
-- ✅ Asla `.env` dosyasını commit etmeyin
-- ✅ Strong random key'ler kullanın (32+ karakter)
-
-### 5.2. Database Security
-
-- ✅ RDS Security Group'unda sadece Amplify IP'lerini whitelist'leyin
-- ✅ SSL connection kullanın: `?sslmode=require`
-- ✅ Master user yerine application user oluşturun
-
-### 5.3. Cron Security
-
-- ✅ `CRON_SECRET` kullanın
-- ✅ EventBridge'de authorization header'ı ayarlayın
-- ✅ Rate limiting ekleyin
-
----
-
-## 📊 6. Monitoring & Logs
-
-### Build Logs
-- Amplify Console → Your App → Build history
-- Her commit için otomatik build
-
-### Application Logs
-- Amplify Console → Monitoring → Logs
-- CloudWatch'ta daha detaylı loglar
-
-### Database Monitoring
-- RDS Console → Your Database → Monitoring
-- CPU, Memory, Connections
-
----
-
-## 🚀 7. Deployment Workflow
-
-### Otomatik Deploy (Önerilen)
-
-```bash
-# Local'de geliştirme yap
-git add .
-git commit -m "feat: new feature"
-git push origin main
-
-# Amplify otomatik olarak build ve deploy eder
+```
+DATABASE_URL=postgresql://user:password@host:5432/database
+NEXTAUTH_SECRET=your-generated-secret-key-here
+NEXTAUTH_URL=https://your-temporary-amplify-url.amplifyapp.com
+NODE_ENV=production
 ```
 
-### Manuel Deploy
-
-Amplify Console'dan:
-1. **Redeploy this version** butonuna tıklayın
-
----
-
-## 🔄 8. Database Migration Workflow
-
-### Yeni Model Ekleme
-
+**NEXTAUTH_SECRET oluşturmak için:**
 ```bash
-# 1. Local'de schema düzenle
-# prisma/schema.prisma
-
-# 2. Migration oluştur
-npx prisma migrate dev --name add_new_model
-
-# 3. Git'e push et
-git add .
-git commit -m "db: add new model"
-git push
-
-# 4. Amplify build sırasında otomatik migrate deploy çalışır
+openssl rand -base64 32
 ```
 
+### 1.5. Deploy Başlatma
+1. Tüm ayarları gözden geçirin
+2. **"Save and Deploy"** butonuna tıklayın
+3. Deploy işlemi 5-10 dakika sürebilir
+4. Deploy tamamlandığında size `https://main.d1234abcd.amplifyapp.com` gibi bir URL verilecektir
+
 ---
 
-## ⚠️ 9. Troubleshooting
+## 🌐 ADIM 2: Domain Bağlama
 
-### Build Fails
+### 2.1. AWS Amplify'da Domain Ekleme
+1. AWS Amplify Console'da projenizi açın
+2. Sol menüden **"Domain management"** seçeneğine tıklayın
+3. **"Add domain"** butonuna tıklayın
+4. Domain adınızı girin (örn: `turuyakala.com`)
+5. **"Configure domain"** butonuna tıklayın
 
-**Problem:** `Prisma Client` hatası
+### 2.2. Subdomain Yapılandırması
+AWS size şu seçenekleri sunar:
+- `www.turuyakala.com` → Ana site
+- `turuyakala.com` (root domain) → www'ye redirect
 
+**Önerilen yapılandırma:**
+- ✅ `turuyakala.com` (root) → Ana site
+- ✅ `www.turuyakala.com` → turuyakala.com'a redirect
+
+### 2.3. SSL Sertifikası
+AWS otomatik olarak **ücretsiz SSL sertifikası** (HTTPS) sağlar. Herhangi bir işlem yapmanıza gerek yok.
+
+### 2.4. DNS Kayıtlarını Güncelleme
+
+AWS size DNS kayıtları verecektir. Domain sağlayıcınızda (GoDaddy, Namecheap, vb.) aşağıdaki kayıtları eklemeniz gerekiyor:
+
+#### Seçenek A: CNAME Kaydı (Önerilen)
+Domain sağlayıcınızın DNS yönetim paneline gidin ve:
+
+```
+Type: CNAME
+Name: www
+Value: [AWS'in verdiği CNAME değeri]
+TTL: 300
+```
+
+```
+Type: CNAME  
+Name: @  (veya boş)
+Value: [AWS'in verdiği CNAME değeri]
+TTL: 300
+```
+
+**Not:** Bazı domain sağlayıcılar root domain (@) için CNAME desteklemez. O zaman A kaydı kullanın.
+
+#### Seçenek B: A Kaydı (Alternatif)
+```
+Type: A
+Name: @
+Value: [AWS'in verdiği IP adresi]
+TTL: 300
+```
+
+```
+Type: A
+Name: www
+Value: [AWS'in verdiği IP adresi]
+TTL: 300
+```
+
+### 2.5. DNS Yayılımını Bekleme
+- DNS değişiklikleri **15 dakika - 48 saat** arasında yayılabilir
+- Genellikle 1-2 saat içinde aktif olur
+- Kontrol etmek için: [https://dnschecker.org](https://dnschecker.org)
+
+### 2.6. SSL Sertifikası Onayı
+1. AWS, SSL sertifikası için DNS onayı isteyebilir
+2. AWS Console'da size gösterilen CNAME kayıtlarını domain sağlayıcınıza eklemeniz gerekecek
+3. Onay genellikle 5-30 dakika sürer
+
+---
+
+## 🗄️ ADIM 3: Veritabanı Kurulumu
+
+### Seçenek A: AWS RDS (PostgreSQL) - Önerilen
+1. AWS Console'da **RDS** servisine gidin
+2. **"Create database"** tıklayın
+3. **PostgreSQL** seçin
+4. **Free tier** veya **Production** seçin
+5. Database ayarları:
+   - DB instance identifier: `lastminutetour-db`
+   - Master username: `postgres`
+   - Master password: (güçlü bir şifre)
+   - Instance type: `db.t3.micro` (Free tier)
+6. **"Create database"** tıklayın
+7. Database endpoint'ini alın (örn: `lastminutetour-db.c1234.eu-south-1.rds.amazonaws.com`)
+8. `DATABASE_URL` environment variable'ı güncelleyin:
+   ```
+   DATABASE_URL=postgresql://postgres:password@endpoint:5432/postgres
+   ```
+
+### Seçenek B: Dış Sağlayıcı
+- [Neon.tech](https://neon.tech) - Ücretsiz PostgreSQL (önerilen)
+- [Supabase](https://supabase.com) - Ücretsiz PostgreSQL + Auth
+- [PlanetScale](https://planetscale.com) - MySQL (Prisma ile uyumlu)
+
+---
+
+## 🔧 ADIM 4: Post-Deployment Kontroller
+
+### 4.1. Environment Variables Güncellemesi
+Domain bağlandıktan sonra `NEXTAUTH_URL`'i güncelleyin:
+
+```
+NEXTAUTH_URL=https://turuyakala.com
+```
+
+AWS Amplify'da:
+1. **App settings** > **Environment variables**
+2. `NEXTAUTH_URL`'i düzenleyin
+3. **Save** > **Redeploy** yapın
+
+### 4.2. Database Migration
+İlk deployment'tan sonra database'i migrate edin:
+
+```bash
+npx prisma migrate deploy
+```
+
+Veya AWS Amplify build aşamasına ekleyin:
+```yaml
+build:
+  commands:
+    - npx prisma migrate deploy
+    - npm run build
+```
+
+### 4.3. Test Etme
+- [ ] Ana sayfa yükleniyor mu?
+- [ ] Login/Register çalışıyor mu?
+- [ ] Veritabanı bağlantısı aktif mi?
+- [ ] SSL (HTTPS) çalışıyor mu?
+- [ ] www ve root domain düzgün yönleniyor mu?
+
+---
+
+## 🔄 ADIM 5: Otomatik Deployment
+
+AWS Amplify, GitHub/GitLab'da yaptığınız her commit'i otomatik olarak deploy eder:
+
+1. Kodu GitHub'a push edin
+2. AWS Amplify otomatik olarak build başlatır
+3. Build başarılı olursa canlıya alır
+4. Hata varsa deploy durur ve size bildirim gönderir
+
+### Branch Stratejisi
+- `main` branch → Production (turuyakala.com)
+- `develop` branch → Staging (develop.turuyakala.com)
+
+---
+
+## 🐛 Sık Karşılaşılan Sorunlar
+
+### 1. "Module not found: Can't resolve '@prisma/client'"
+**Çözüm:** `amplify.yml` dosyasına `npx prisma generate` ekleyin:
+```yaml
+preBuild:
+  commands:
+    - npm ci
+    - npx prisma generate
+```
+
+### 2. "Database connection failed"
+**Çözüm:** 
+- `DATABASE_URL` environment variable doğru mu kontrol edin
+- RDS Security Group'ta Amplify IP'lerini whitelist'e ekleyin
+- Veya dış sağlayıcı kullanın (Neon, Supabase)
+
+### 3. "NEXTAUTH_URL mismatch"
+**Çözüm:** 
+- Domain bağlandıktan sonra `NEXTAUTH_URL`'i güncelleyin
+- Redeploy yapın
+
+### 4. Domain yönlenmiyor
 **Çözüm:**
-```bash
-# package.json içinde olduğundan emin olun:
-"scripts": {
-  "postinstall": "prisma generate"
-}
-```
+- DNS kayıtlarını kontrol edin
+- 48 saat bekleyin
+- DNS cache'i temizleyin: `ipconfig /flushdns` (Windows)
 
-### Database Connection Error
-
-**Problem:** `Can't reach database server`
-
+### 5. SSL hatası (Mixed content)
 **Çözüm:**
-1. RDS Security Group'unda 5432 portunu açın
-2. Public access enabled olmalı
-3. DATABASE_URL doğru mu kontrol edin
-
-### Cron Jobs Not Running
-
-**Problem:** EventBridge çalışmıyor
-
-**Çözüm:**
-1. EventBridge rule enabled mı?
-2. Target URL doğru mu?
-3. Authorization header doğru mu?
-4. CloudWatch Logs'u kontrol edin
+- Tüm içeriklerinizin HTTPS kullandığından emin olun
+- Next.js config'de `images.unoptimized: true` ayarını kontrol edin
 
 ---
 
-## 💰 10. Cost Estimation
+## 💰 Maliyet Tahmini
 
-### Free Tier (İlk 12 Ay)
+### AWS Amplify Hosting
+- İlk 1000 build dakikası: Ücretsiz
+- İlk 15 GB bandwidth: Ücretsiz
+- Sonrası: ~$0.01/build dakikası, ~$0.15/GB bandwidth
 
-- **Amplify:** 1000 build dakikası/ay, 15 GB serve
-- **RDS:** db.t3.micro (750 saat/ay)
-- **EventBridge:** 1M event/ay ücretsiz
+### AWS RDS (Free Tier)
+- 12 ay ücretsiz: 750 saat/ay db.t2.micro veya db.t3.micro
+- 20 GB storage
+- Sonrası: ~$15-30/ay
 
-### Ortalama Aylık Maliyet (Free Tier Sonrası)
+### Alternatif (Daha Ucuz)
+- **Amplify Hosting**: ~$0 (low traffic için)
+- **Neon/Supabase DB**: Ücretsiz (hobby projeler için)
+- **Domain**: ~$10-15/yıl
 
-- **Amplify:** ~$10-15 (build + hosting)
-- **RDS PostgreSQL (db.t3.micro):** ~$15-20
-- **EventBridge:** ~$1 (minimal)
-
-**Toplam:** ~$25-35/ay
-
----
-
-## 📚 11. Useful Commands
-
-### Local Development
-```bash
-npm run dev              # Development server
-npm run build            # Production build test
-npm run db:studio        # Prisma Studio (local)
-```
-
-### Database
-```bash
-npx prisma migrate dev   # Create migration
-npx prisma migrate deploy # Deploy migration (prod)
-npx prisma studio        # Open Prisma Studio
-npx prisma db push       # Push schema without migration
-```
-
-### Git
-```bash
-git status               # Check changes
-git add .                # Stage all
-git commit -m "message"  # Commit
-git push origin main     # Deploy to Amplify
-```
+**Toplam:** İlk yıl ~$10-15 (sadece domain), sonraki yıllar ~$0-50/ay
 
 ---
 
-## 🔗 12. Useful Links
+## 📚 Faydalı Linkler
 
-- [AWS Amplify Console](https://console.aws.amazon.com/amplify)
-- [AWS RDS Console](https://console.aws.amazon.com/rds)
-- [AWS EventBridge Console](https://console.aws.amazon.com/events)
-- [Amplify Documentation](https://docs.amplify.aws/)
-- [Prisma Documentation](https://www.prisma.io/docs)
-- [Next.js Documentation](https://nextjs.org/docs)
+- [AWS Amplify Docs](https://docs.amplify.aws/)
+- [Next.js Deployment](https://nextjs.org/docs/deployment)
+- [Prisma with Amplify](https://www.prisma.io/docs/guides/deployment/deployment-guides/deploying-to-aws-amplify)
+- [Custom Domain Setup](https://docs.aws.amazon.com/amplify/latest/userguide/custom-domains.html)
 
 ---
 
-## ✅ Deployment Checklist
+## 🆘 Yardıma mı İhtiyacınız Var?
 
-- [ ] AWS hesabı oluşturuldu
-- [ ] RDS PostgreSQL database kuruldu
-- [ ] Amplify'da repository bağlandı
-- [ ] Environment variables ayarlandı
-- [ ] İlk build başarılı
-- [ ] Database migration çalıştı
-- [ ] Uygulama çalışıyor
-- [ ] EventBridge cron rules oluşturuldu
-- [ ] Cleanup cron test edildi
-- [ ] Sync cron test edildi
-- [ ] Custom domain bağlandı (opsiyonel)
-- [ ] SSL sertifikası aktif
+Takıldığınız bir yer varsa:
+1. Bu dosyadaki ilgili bölümü tekrar okuyun
+2. AWS Console'daki hata mesajlarını kontrol edin
+3. CloudWatch Logs'u inceleyin (Amplify > Monitoring > Logs)
+4. GitHub Issues'ta benzer sorunlar arayın
 
 ---
 
-**Hazırlayan:** LastMinuteTour Team  
-**Tarih:** Ekim 2025  
-**Platform:** AWS Amplify + RDS + EventBridge
-
+**Son Güncelleme:** 13 Ekim 2025
+**Proje:** LastMinuteTour (turuyakala.com)
+**Next.js Versiyon:** 15.5.4
