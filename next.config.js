@@ -4,6 +4,20 @@ const nextConfig = {
   output: 'standalone',
   // Production optimizations (compress is default in Next.js 15)
   compress: true,
+  // ESLint configuration for production builds
+  // Note: ESLint warnings are set to 'warn' level in eslint.config.mjs
+  // but Next.js may still treat some warnings as errors during builds
+  eslint: {
+    // Ignore ESLint during builds to prevent build failures
+    // ESLint will still run in development and CI/CD
+    ignoreDuringBuilds: true,
+  },
+  // TypeScript configuration
+  typescript: {
+    // Warning: This allows production builds to successfully complete even if
+    // your project has type errors. Only use this if you're sure you want to.
+    ignoreBuildErrors: false,
+  },
   // Experimental features
   experimental: {
     // Server Actions

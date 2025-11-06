@@ -41,11 +41,11 @@ export function validateRow(row: any, mapping: ColumnMapping, rowNumber: number)
 
   for (const dbField of requiredFields) {
     const csvColumn = Object.keys(mapping).find(key => mapping[key] === dbField);
-    if (!csvColumn || !row[csvColumn] || row[csvColumn].trim() === '') {
+    if (!csvColumn || !row[csvColumn] || (typeof row[csvColumn] === 'string' && row[csvColumn].trim() === '')) {
       errors.push({
         row: rowNumber,
         field: dbField,
-        value: row[csvColumn] || '',
+        value: csvColumn ? (row[csvColumn] || '') : '',
         error: `${dbField} alanı zorunludur`,
       });
     }

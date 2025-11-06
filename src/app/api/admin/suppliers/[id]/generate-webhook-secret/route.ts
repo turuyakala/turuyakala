@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generateWebhookSecret } from '@/lib/webhooks/webhookUtils';
+import { auth } from '@/lib/auth';
 
 type RouteContext = {
   params: Promise<{ id: string }>;

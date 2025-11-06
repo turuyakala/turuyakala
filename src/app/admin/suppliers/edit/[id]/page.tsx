@@ -343,7 +343,7 @@ export default function EditSupplierPage({ params }: PageProps) {
         {/* Submit Buttons */}
         <div className="flex gap-4">
           <Link
-            href={`/admin/suppliers/${id}/webhooks`}
+            href={`/admin/suppliers/${resolvedParams.id}/webhooks`}
             className="px-6 py-3 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors font-semibold text-center"
           >
             🔔 Webhook Ayarları

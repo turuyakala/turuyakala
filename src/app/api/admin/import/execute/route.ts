@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseCSV, importRows, generateErrorCSV, ColumnMapping } from '@/lib/import/csvImportService';
 import { prisma } from '@/lib/prisma';
+import { auth } from '@/lib/auth';
 
 /**
  * POST /api/admin/import/execute
@@ -85,12 +86,21 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Import execution error:', error);
 
+    // Try to get session for audit log (may fail if auth failed)
+    let userId: string | null = null;
+    try {
+      const session = await auth();
+      userId = session?.user ? (session.user as any)?.id : null;
+    } catch {
+      // Ignore auth errors in catch block
+    }
+
     // Create error audit log
     await prisma.auditLog.create({
       data: {
         action: 'csv_import_failed',
         entity: 'offer',
-        userId: (session.user as any)?.id,
+        userId,
         statusCode: 500,
         error: error instanceof Error ? error.message : 'Unknown error',
         metadata: JSON.stringify({

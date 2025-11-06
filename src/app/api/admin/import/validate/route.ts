@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { parseCSV, validateRow, ColumnMapping } from '@/lib/import/csvImportService';
+import { auth } from '@/lib/auth';
 
 /**
  * POST /api/admin/import/validate

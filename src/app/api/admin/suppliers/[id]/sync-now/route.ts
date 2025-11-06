@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import crypto from 'crypto';
 import { mapToOfferBatch } from '@/lib/integrations/mappers';
 import type { SupplierOfferInput } from '@/lib/integrations/mappers';
+import { auth } from '@/lib/auth';
 
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'your-32-char-secret-key-here!!';
 
@@ -113,12 +114,10 @@ export async function POST(request: NextRequest, context: RouteContext) {
     // Upsert offers to database
     for (const offer of successful) {
       try {
-        const existing = await prisma.offer.findUnique({
+        const existing = await prisma.offer.findFirst({
           where: {
-            vendorOfferId_supplierId: {
-              vendorOfferId: offer.vendorOfferId,
-              supplierId: offer.supplierId,
-            },
+            vendorOfferId: offer.vendorOfferId,
+            supplierId: offer.supplierId,
           },
         });
 
@@ -126,10 +125,7 @@ export async function POST(request: NextRequest, context: RouteContext) {
         // Update existing offer - set status to 'active'
         await prisma.offer.update({
           where: {
-            vendorOfferId_supplierId: {
-              vendorOfferId: offer.vendorOfferId,
-              supplierId: offer.supplierId,
-            },
+            id: existing.id,
           },
           data: {
             ...offer,

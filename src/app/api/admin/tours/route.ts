@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
+import { auth } from '@/lib/auth';
 
 const tourSchema = z.object({
   category: z.enum(['tour', 'bus', 'flight', 'cruise']),

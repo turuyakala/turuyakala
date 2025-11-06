@@ -22,11 +22,11 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    // Add price filter
+    // Add price filter (convert to priceMinor: cents/kuruş)
     if (minPrice || maxPrice) {
-      where.price = {};
-      if (minPrice) where.price.gte = parseFloat(minPrice);
-      if (maxPrice) where.price.lte = parseFloat(maxPrice);
+      where.priceMinor = {};
+      if (minPrice) where.priceMinor.gte = Math.round(parseFloat(minPrice) * 100);
+      if (maxPrice) where.priceMinor.lte = Math.round(parseFloat(maxPrice) * 100);
     }
 
     // Determine sort order
@@ -37,10 +37,10 @@ export async function GET(request: NextRequest) {
         orderBy = { startAt: 'desc' };
         break;
       case 'price-asc':
-        orderBy = { price: 'asc' };
+        orderBy = { priceMinor: 'asc' };
         break;
       case 'price-desc':
-        orderBy = { price: 'desc' };
+        orderBy = { priceMinor: 'desc' };
         break;
       case 'seats-asc':
         orderBy = { seatsLeft: 'asc' };
@@ -65,7 +65,7 @@ export async function GET(request: NextRequest) {
         startAt: true,
         seatsTotal: true,
         seatsLeft: true,
-        price: true,
+        priceMinor: true,
         currency: true,
         supplier: true,
         contact: true,
@@ -78,11 +78,15 @@ export async function GET(request: NextRequest) {
       },
     });
 
-    // Parse contact JSON
-    const parsedTours = tours.map(tour => ({
-      ...tour,
-      contact: tour.contact ? JSON.parse(tour.contact) : null,
-    }));
+    // Parse contact JSON and convert priceMinor to price
+    const parsedTours = tours.map(tour => {
+      const { priceMinor, ...rest } = tour;
+      return {
+        ...rest,
+        price: priceMinor / 100, // Convert minor units to major
+        contact: tour.contact ? JSON.parse(tour.contact) : null,
+      };
+    });
 
     return NextResponse.json({ tours: parsedTours }, { status: 200 });
   } catch (error) {

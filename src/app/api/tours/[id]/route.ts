@@ -21,7 +21,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
         startAt: true,
         seatsTotal: true,
         seatsLeft: true,
-        price: true,
+        priceMinor: true,
         currency: true,
         supplier: true,
         contact: true,
@@ -39,13 +39,17 @@ export async function GET(request: NextRequest, context: RouteContext) {
       return NextResponse.json({ error: 'Tur bulunamadı' }, { status: 404 });
     }
 
-    // Parse contact JSON if exists
+    // Parse contact JSON if exists and convert priceMinor to price
     const parsedTour = {
       ...tour,
+      price: tour.priceMinor / 100, // Convert minor units to major
       contact: tour.contact ? JSON.parse(tour.contact as string) : null,
     };
+    
+    // Remove priceMinor from response
+    const { priceMinor, ...tourResponse } = parsedTour;
 
-    return NextResponse.json(parsedTour, { status: 200 });
+    return NextResponse.json(tourResponse, { status: 200 });
   } catch (error) {
     console.error('Tour fetch error:', error);
     return NextResponse.json({ error: 'Tur yüklenemedi' }, { status: 500 });

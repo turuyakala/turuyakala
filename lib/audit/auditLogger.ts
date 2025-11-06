@@ -59,7 +59,7 @@ export async function createAuditLog(options: AuditLogOptions): Promise<void> {
     } = options;
 
     // Extract network info if request provided
-    let networkInfo = { ip: undefined, userAgent: undefined, payloadSize: undefined };
+    let networkInfo: { ip: string; userAgent: string; payloadSize: number } | null = null;
     if (request) {
       networkInfo = extractNetworkInfo(request);
     }
@@ -75,9 +75,9 @@ export async function createAuditLog(options: AuditLogOptions): Promise<void> {
         statusCode,
         error,
         metadata: metadata ? JSON.stringify(metadata) : null,
-        ip: networkInfo.ip,
-        userAgent: networkInfo.userAgent,
-        payloadSize: networkInfo.payloadSize,
+        ip: networkInfo?.ip || null,
+        userAgent: networkInfo?.userAgent || null,
+        payloadSize: networkInfo?.payloadSize || null,
       },
     });
   } catch (err) {

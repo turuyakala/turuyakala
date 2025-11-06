@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getRecentErrorCount, getRecentErrorsByAction } from '@/lib/audit/auditLogger';
+import { auth } from '@/lib/auth';
 
 /**
  * GET /api/admin/dashboard/error-flag

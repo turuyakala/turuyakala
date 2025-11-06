@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { auth } from '@/lib/auth';
 
 /**
  * GET /api/health/integrations
@@ -22,8 +23,6 @@ export async function GET() {
         id: true,
         name: true,
         integrationMode: true,
-        pullEnabled: true,
-        pullSchedule: true,
       },
       orderBy: {
         name: 'asc',
@@ -66,7 +65,8 @@ export async function GET() {
 
       // Calculate next cron time (if pull enabled)
       let nextCronTime = null;
-      if (supplier.pullEnabled && supplier.pullSchedule) {
+      const isPullEnabled = supplier.integrationMode === 'pull';
+      if (isPullEnabled) {
         // Simple calculation: assume every 15 minutes (can be enhanced with cron parser)
         const lastPullTime = lastSuccessfulPull?.createdAt || new Date(0);
         const minutesSinceLastPull = Math.floor((now.getTime() - lastPullTime.getTime()) / 60000);
@@ -80,7 +80,7 @@ export async function GET() {
       let healthMessage = 'Normal';
 
       // Check if last pull was more than 1 hour ago (for pull-enabled suppliers)
-      if (supplier.pullEnabled) {
+      if (isPullEnabled) {
         const hoursSinceLastPull = lastSuccessfulPull
           ? (now.getTime() - lastSuccessfulPull.createdAt.getTime()) / (60 * 60 * 1000)
           : 999;
@@ -117,7 +117,7 @@ export async function GET() {
         nextCronTime,
         healthStatus,
         healthMessage,
-        pullEnabled: supplier.pullEnabled,
+        pullEnabled: isPullEnabled,
       });
     }
 
