@@ -1,7 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
+  // Remove 'standalone' output for Vercel compatibility
+  // Vercel handles deployment automatically
+  // output: 'standalone',
   // Production optimizations (compress is default in Next.js 15)
   compress: true,
   // ESLint configuration for production builds

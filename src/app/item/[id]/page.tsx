@@ -11,21 +11,14 @@ import ShareButtons from '@/components/ShareButtons';
 import MapSection from '@/components/MapSection';
 import { prisma } from '@/lib/prisma';
 
+// Force dynamic rendering - this page needs real-time data
+// This prevents build-time database queries and ensures pages are rendered at request time
+export const dynamic = 'force-dynamic';
+export const dynamicParams = true;
+
 type PageProps = {
   params: Promise<{ id: string }>;
 };
-
-// Generate static params for static export
-export async function generateStaticParams() {
-  // For static export, return sample IDs
-  return [
-    { id: '1' },
-    { id: '2' },
-    { id: '3' },
-    { id: '4' },
-    { id: '5' },
-  ];
-}
 
 export default async function ItemDetailPage({ params }: PageProps) {
   const { id } = await params;
