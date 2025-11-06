@@ -128,8 +128,3 @@ const slides = [
 
 
 
-
-
-
-
-

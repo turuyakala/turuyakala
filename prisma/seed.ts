@@ -123,7 +123,7 @@ async function main() {
       startAt: hoursFromNow(48),
       seatsTotal: 20,
       seatsLeft: 3,
-      priceMinor: 280000, // 2800 TRY
+      priceMinor: 1000000, // 10000 TRY
       currency: 'TRY',
       image: '/images/hero-1.jpg',
       terms: 'Kalkıştan 24 saat önce iptal edilirse %80 iade. Sonrasında iade yok.',
@@ -175,14 +175,14 @@ async function main() {
     create: {
       supplierId: supplier3.id,
       vendorOfferId: 'CRUSE-BOD-001',
-      category: 'cruise',
+      category: 'tour',
       title: 'Akdeniz Cruise Turu - Sürpriz Rota',
       from: 'Bodrum',
       to: 'Gizli Destinasyon',
       startAt: hoursFromNow(60),
       seatsTotal: 50,
       seatsLeft: 8,
-      priceMinor: 550000, // 5500 TRY
+      priceMinor: 1000000, // 10000 TRY
       currency: 'TRY',
       image: '/images/hero-3.jpg',
       terms: '3 gece 4 gün - Tam pansiyon dahil.',
@@ -243,7 +243,7 @@ async function main() {
       startAt: hoursFromNow(54),
       seatsTotal: 30,
       seatsLeft: 4,
-      priceMinor: 180000, // 1800 TRY
+      priceMinor: 1000000, // 10000 TRY
       currency: 'TRY',
       image: '/images/hero-1.jpg',
       terms: '1 gece 2 gün - Otel ve ulaşım dahil.',
@@ -283,64 +283,64 @@ async function main() {
     },
   });
 
-  // Offer 7: Efes Tour (42 hours)
+  // Offer 7: Paris Tour (42 hours)
   const offer7 = await prisma.offer.upsert({
     where: {
       vendor_offer_unique: {
-        vendorOfferId: 'TOUR-EFES-777',
+        vendorOfferId: 'TOUR-PARIS-777',
         supplierId: supplier1.id,
       },
     },
     update: {},
     create: {
       supplierId: supplier1.id,
-      vendorOfferId: 'TOUR-EFES-777',
+      vendorOfferId: 'TOUR-PARIS-777',
       category: 'tour',
-      title: 'Efes Antik Kenti ve Meryem Ana Evi Turu',
-      from: 'İzmir',
-      to: 'Selçuk',
+      title: 'Paris Romantik Şehir Turu',
+      from: 'İstanbul',
+      to: 'Paris',
       startAt: hoursFromNow(42),
       seatsTotal: 40,
       seatsLeft: 15,
-      priceMinor: 120000, // 1200 TRY
+      priceMinor: 1000000, // 10000 TRY
       currency: 'TRY',
       image: '/images/hero-3.jpg',
-      terms: 'Rehberli tur - Öğle yemeği dahil.',
-      transport: 'Klimalı Otobüs',
+      terms: '3 gece 4 gün - Otel ve kahvaltı dahil.',
+      transport: 'Uçak + Transfer',
       isSurprise: false,
-      requiresPassport: false,
-      rawJson: JSON.stringify({ includes: ['guide', 'lunch', 'entrance'] }),
+      requiresPassport: true,
+      rawJson: JSON.stringify({ includes: ['hotel', 'breakfast', 'guide', 'museum'] }),
       status: 'active',
     },
   });
 
-  // Offer 8: İstanbul-Bursa Bus (28 hours)
+  // Offer 8: Roma Tour (28 hours)
   const offer8 = await prisma.offer.upsert({
     where: {
       vendor_offer_unique: {
-        vendorOfferId: 'BUS-IST-BRS-888',
+        vendorOfferId: 'TOUR-ROMA-888',
         supplierId: supplier2.id,
       },
     },
     update: {},
     create: {
       supplierId: supplier2.id,
-      vendorOfferId: 'BUS-IST-BRS-888',
-      category: 'bus',
-      title: 'İstanbul - Bursa Günübirlik Tur',
+      vendorOfferId: 'TOUR-ROMA-888',
+      category: 'tour',
+      title: 'Roma Antik Şehir Turu',
       from: 'İstanbul',
-      to: 'Bursa',
+      to: 'Roma',
       startAt: hoursFromNow(28),
       seatsTotal: 50,
       seatsLeft: 8,
-      priceMinor: 75000, // 750 TRY
+      priceMinor: 1000000, // 10000 TRY
       currency: 'TRY',
       image: '/images/hero-4.jpg',
-      terms: 'Günübirlik - Kahvaltı ve öğle yemeği dahil.',
-      transport: '2+1 Otobüs',
+      terms: '4 gece 5 gün - Otel ve yarım pansiyon dahil.',
+      transport: 'Uçak + Transfer',
       isSurprise: false,
-      requiresPassport: false,
-      rawJson: JSON.stringify({ includes: ['breakfast', 'lunch', 'guide'] }),
+      requiresPassport: true,
+      rawJson: JSON.stringify({ includes: ['hotel', 'meals', 'guide', 'museum'] }),
       status: 'active',
     },
   });
@@ -376,33 +376,34 @@ async function main() {
     },
   });
 
-  // Offer 10: Çanakkale Tour (38 hours)
+  // Offer 10: Dubai Tour (38 hours)
   const offer10 = await prisma.offer.upsert({
     where: {
       vendor_offer_unique: {
-        vendorOfferId: 'TOUR-CAN-101',
+        vendorOfferId: 'TOUR-DUBAI-101',
         supplierId: supplier1.id,
       },
     },
     update: {},
     create: {
       supplierId: supplier1.id,
-      vendorOfferId: 'TOUR-CAN-101',
+      vendorOfferId: 'TOUR-DUBAI-101',
       category: 'tour',
-      title: 'Çanakkale Şehitlikleri ve Truva Atı Turu',
+      title: 'Dubai Lüks Şehir Turu',
       from: 'İstanbul',
-      to: 'Çanakkale',
+      to: 'Dubai',
       startAt: hoursFromNow(38),
       seatsTotal: 35,
       seatsLeft: 12,
-      priceMinor: 95000, // 950 TRY
+      priceMinor: 1000000, // 10000 TRY
       currency: 'TRY',
       image: '/images/hero-2.jpg',
-      terms: '1 gece konaklama dahil - Kahvaltı dahil.',
-      transport: 'Otobüs ile',
+      terms: '3 gece 4 gün - 5 yıldızlı otel ve kahvaltı dahil.',
+      transport: 'Uçak + Lüks Transfer',
       isSurprise: false,
-      requiresPassport: false,
-      rawJson: JSON.stringify({ includes: ['hotel', 'breakfast', 'guide'] }),
+      requiresPassport: true,
+      requiresVisa: true,
+      rawJson: JSON.stringify({ includes: ['hotel', 'breakfast', 'guide', 'desert_safari'] }),
       status: 'active',
     },
   });
@@ -471,12 +472,18 @@ async function main() {
 
   console.log('✅ Created 12 sample offers:');
   console.log('   🎁 Sürpriz Turlar: 3 adet (isSurprise: true)');
-  console.log('   🏛️ Normal Turlar: 3 adet');
-  console.log('   ✈️ Uçak: 3 adet');
-  console.log('   🚌 Otobüs: 3 adet');
-  console.log('   🚢 Cruise: 2 adet');
+  console.log('      - Kapadokya Balon Turu - Sürpriz Paket (10.000 ₺)');
+  console.log('      - Akdeniz Cruise Turu - Sürpriz Rota (10.000 ₺)');
+  console.log('      - Sürpriz Termal Tur Paketi (10.000 ₺)');
+  console.log('   🌍 Yurtdışı Turlar: 3 adet');
+  console.log('      - Paris Romantik Şehir Turu (10.000 ₺)');
+  console.log('      - Roma Antik Şehir Turu (10.000 ₺)');
+  console.log('      - Dubai Lüks Şehir Turu (10.000 ₺)');
+  console.log('   ✈️ Uçak Biletleri: 3 adet');
+  console.log('   🚌 Otobüs Biletleri: 3 adet');
+  console.log('   🚢 Cruise Turları: 2 adet');
   console.log('   ⏰ Tümü 24-72 saat arasında kalkış yapacak');
-  console.log('   💰 Fiyatlar: 350 ₺ - 5.500 ₺ arası');
+  console.log('   💰 Tüm turlar: 10.000 ₺');
 
   // Create sample reviews
   console.log('\n💬 Creating sample reviews...');

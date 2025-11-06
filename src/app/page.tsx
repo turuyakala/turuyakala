@@ -7,7 +7,7 @@ import HeroSlider from '@/components/HeroSlider';
 import ReviewsSection from '@/components/ReviewsSection';
 import Footer from '@/components/Footer';
 import { sortOptions } from '@/lib/sort';
-import { Item } from '@/lib/types';
+import { Item, Category } from '@/lib/types';
 import { prisma } from '@/lib/prisma';
 import { toNum } from '@/lib/utils';
 
@@ -99,8 +99,6 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         supplier: {
           select: {
             name: true,
-            contactEmail: true,
-            contactPhone: true,
           },
         },
       },
@@ -117,8 +115,6 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         supplier: {
           select: {
             name: true,
-            contactEmail: true,
-            contactPhone: true,
           },
         },
       },
@@ -146,9 +142,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         isSurprise: true,
         category: 'tour',
         supplier: {
-          name: 'Test Acentesi',
-          contactEmail: 'info@test.com',
-          contactPhone: '+90 555 123 4567'
+          name: 'Test Acentesi'
         }
       }
     ];
@@ -170,9 +164,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         isSurprise: false,
         category: 'tour',
         supplier: {
-          name: 'Test Acentesi',
-          contactEmail: 'info@test.com',
-          contactPhone: '+90 555 123 4567'
+          name: 'Test Acentesi'
         }
       },
       {
@@ -191,9 +183,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         isSurprise: false,
         category: 'tour',
         supplier: {
-          name: 'Test Acentesi',
-          contactEmail: 'info@test.com',
-          contactPhone: '+90 555 123 4567'
+          name: 'Test Acentesi'
         }
       }
     ];
@@ -204,40 +194,53 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
     id: offer.id,
     title: offer.title,
     description: offer.description || '',
-    priceMinor: offer.priceMinor,
-    currency: offer.currency,
+    price: offer.priceMinor / 100, // Convert from minor units to major units
+    currency: offer.currency as 'TRY' | 'EUR' | 'USD',
     from: offer.from,
     to: offer.to,
-    startAt: offer.startAt,
+    startAt: offer.startAt.toISOString(),
     seatsLeft: offer.seatsLeft,
     transport: offer.transport || 'Uçak',
-    duration: offer.duration || '1 gün',
-    images: offer.images || [],
+    images: offer.image ? [offer.image] : [],
     isSurprise: true,
-    category: offer.category,
-    supplier: offer.supplier,
+    category: offer.category as Category,
+    supplier: offer.supplier?.name || 'Tedarikçi',
+    terms: offer.terms || undefined,
+    image: offer.image || undefined,
+    requiresVisa: offer.requiresVisa,
+    requiresPassport: offer.requiresPassport,
   }));
 
   const mainItems: Item[] = mainOffers.map((offer) => ({
     id: offer.id,
     title: offer.title,
     description: offer.description || '',
-    priceMinor: offer.priceMinor,
-    currency: offer.currency,
+    price: offer.priceMinor / 100, // Convert from minor units to major units
+    currency: offer.currency as 'TRY' | 'EUR' | 'USD',
     from: offer.from,
     to: offer.to,
-    startAt: offer.startAt,
+    startAt: offer.startAt.toISOString(),
     seatsLeft: offer.seatsLeft,
     transport: offer.transport || 'Uçak',
-    duration: offer.duration || '1 gün',
-    images: offer.images || [],
+    images: offer.image ? [offer.image] : [],
     isSurprise: false,
-    category: offer.category,
-    supplier: offer.supplier,
+    category: offer.category as Category,
+    supplier: offer.supplier?.name || 'Tedarikçi',
+    terms: offer.terms || undefined,
+    image: offer.image || undefined,
+    requiresVisa: offer.requiresVisa,
+    requiresPassport: offer.requiresPassport,
   }));
 
   // Combine surprise tours at top + main offers
   const allItems = [...surpriseItems, ...mainItems];
+
+  // Calculate price range from all items
+  const prices = allItems.map(item => item.priceMinor / 100);
+  const priceRange = {
+    min: prices.length > 0 ? Math.floor(Math.min(...prices)) : 0,
+    max: prices.length > 0 ? Math.ceil(Math.max(...prices)) : 10000,
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -267,7 +270,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Fiyat Aralığı
               </label>
-              <SimplePriceFilter />
+              <SimplePriceFilter priceRange={priceRange} />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

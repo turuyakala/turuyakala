@@ -1,6 +1,5 @@
-import { NextAuthOptions } from 'next-auth';
+import { NextAuthConfig } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaAdapter } from '@auth/prisma-adapter';
 import bcrypt from 'bcrypt';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
@@ -11,7 +10,7 @@ const loginSchema = z.object({
   password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
 });
 
-export const authOptions: NextAuthOptions = {
+export const authConfig: NextAuthConfig = {
   session: {
     strategy: 'jwt',
   },
@@ -81,9 +80,12 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
   },
-  secret: process.env.NEXTAUTH_SECRET,
 };
 
-// NextAuth v5 auth function
-export const { auth, handlers, signIn, signOut } = NextAuth(authOptions);
+// NextAuth v5
+export const { auth, handlers, signIn, signOut } = NextAuth({
+  ...authConfig,
+  secret: process.env.NEXTAUTH_SECRET,
+  trustHost: true,
+});
 
