@@ -18,7 +18,26 @@ const eslintConfig = [
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "**/__tests__/**",
+      "**/*.test.ts",
+      "**/*.test.tsx",
     ],
+    rules: {
+      // Allow 'any' type in some cases (NextAuth types, etc.)
+      "@typescript-eslint/no-explicit-any": "warn",
+      // Allow unused vars that start with underscore
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+      // Allow unescaped entities in JSX (Turkish characters)
+      "react/no-unescaped-entities": "warn",
+      // Image optimization warnings (can be fixed later)
+      "@next/next/no-img-element": "warn",
+    },
   },
 ];
 

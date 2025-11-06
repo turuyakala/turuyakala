@@ -1,6 +1,14 @@
 import { requireAuth } from '@/lib/middleware/admin';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+
+type UserRole = 'admin' | 'seller' | 'user';
+
+interface ExtendedUser {
+  id?: string;
+  email?: string | null;
+  name?: string | null;
+  role?: UserRole;
+}
 
 export default async function ProfilePage() {
   const session = await requireAuth();
@@ -55,17 +63,17 @@ export default async function ProfilePage() {
                     Hesap Türü
                   </label>
                   <div className="px-4 py-3 bg-gray-50 rounded-lg">
-                    {(session.user as any)?.role === 'admin' && (
+                    {(session.user as ExtendedUser)?.role === 'admin' && (
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
                         👑 Admin
                       </span>
                     )}
-                    {(session.user as any)?.role === 'seller' && (
+                    {(session.user as ExtendedUser)?.role === 'seller' && (
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                         🏢 Satıcı
                       </span>
                     )}
-                    {(session.user as any)?.role === 'user' && (
+                    {(session.user as ExtendedUser)?.role === 'user' && (
                       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
                         👤 Kullanıcı
                       </span>
@@ -102,7 +110,7 @@ export default async function ProfilePage() {
           </div>
         </div>
 
-        {(session.user as any)?.role === 'admin' && (
+        {(session.user as ExtendedUser)?.role === 'admin' && (
           <div className="mt-6 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-lg shadow-md p-6">
             <div className="flex items-center justify-between">
               <div>

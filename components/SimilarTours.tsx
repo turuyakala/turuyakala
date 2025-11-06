@@ -1,6 +1,7 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Item } from '@/lib/types';
-import { formatDate, getTimeUntilDeparture } from '@/lib/time';
+import { getTimeUntilDeparture } from '@/lib/time';
 
 type SimilarToursProps = {
   tours: Item[];
@@ -30,10 +31,12 @@ export default function SimilarTours({ tours }: SimilarToursProps) {
               {/* Fotoğraf */}
               <div className="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200">
                 {tour.image ? (
-                  <img
+                  <Image
                     src={tour.image}
                     alt={tour.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-300"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-5xl opacity-40">

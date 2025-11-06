@@ -1,19 +1,12 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Item } from '@/lib/types';
 import { formatDateShort, getTimeUntilDeparture } from '@/lib/time';
 import { formatPrice } from '@/lib/price';
 import { toNum, toString } from '@/lib/utils';
-import Badge from './Badge';
 
 type OfferCardProps = {
   item: Item;
-};
-
-const categoryLabels: Record<Item['category'], string> = {
-  tour: '🏞️ Tur',
-  bus: '🚌 Otobüs',
-  flight: '✈️ Uçak',
-  cruise: '🚢 Gemi',
 };
 
 const categoryColors: Record<Item['category'], { bg: string; border: string }> = {
@@ -41,11 +34,12 @@ export default function OfferCard({ item }: OfferCardProps) {
         {isSurprise ? (
           <div className="text-9xl animate-bounce-slow text-white drop-shadow-2xl">❓</div>
         ) : item.image ? (
-          <img
+          <Image
             src={item.image}
             alt={item.title}
-            className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-            loading="lazy"
+            fill
+            className="object-cover hover:scale-110 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
           <div className="text-7xl opacity-40" aria-hidden="true">

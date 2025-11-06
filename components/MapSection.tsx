@@ -9,10 +9,9 @@ type MapSectionProps = {
 };
 
 export default function MapSection({ location }: MapSectionProps) {
-  const mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${location.lat},${location.lng}&zoom=15`;
-  
   // API key olmadığında statik harita göster
-  const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${location.lat},${location.lng}&zoom=15&size=600x400&markers=color:red%7C${location.lat},${location.lng}&key=YOUR_GOOGLE_MAPS_API_KEY`;
+  // const mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${location.lat},${location.lng}&zoom=15`;
+  // const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${location.lat},${location.lng}&zoom=15&size=600x400&markers=color:red%7C${location.lat},${location.lng}&key=YOUR_GOOGLE_MAPS_API_KEY`;
 
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden">

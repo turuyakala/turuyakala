@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Item } from '@/lib/types';
 import { getTimeUntilDeparture } from '@/lib/time';
 
@@ -52,10 +53,12 @@ export default function SimilarTours({ tours, currentTourId }: SimilarToursProps
               {/* Fotoğraf - Sol taraf, dar */}
               <div className="relative w-20 flex-shrink-0 bg-gradient-to-br from-gray-100 to-gray-200">
                 {tour.image ? (
-                  <img
+                  <Image
                     src={isSurprise ? '/images/surprise.jpg' : tour.image}
                     alt={tour.title}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="80px"
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-2xl">

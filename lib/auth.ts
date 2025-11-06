@@ -5,6 +5,8 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import NextAuth from 'next-auth';
 
+type UserRole = 'admin' | 'seller' | 'user';
+
 const loginSchema = z.object({
   email: z.string().email('Geçerli bir e-posta adresi girin'),
   password: z.string().min(6, 'Şifre en az 6 karakter olmalıdır'),
@@ -68,14 +70,17 @@ export const authConfig: NextAuthConfig = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         token.role = (user as any).role || 'user';
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.id;
-        (session.user as any).role = token.role;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (session.user as any).id = token.id as string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (session.user as any).role = token.role as UserRole;
       }
       return session;
     },

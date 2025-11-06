@@ -33,7 +33,11 @@ export default function TourTabs({
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
+            onClick={() => {
+              if (tab.id === 'program' || tab.id === 'included' || tab.id === 'info' || tab.id === 'cancel') {
+                setActiveTab(tab.id);
+              }
+            }}
             className={`flex-1 px-6 py-4 font-semibold text-sm md:text-base transition-all whitespace-nowrap ${
               activeTab === tab.id
                 ? 'bg-[#91A8D0] text-white border-b-2 border-[#91A8D0]'

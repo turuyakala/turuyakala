@@ -23,10 +23,12 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
       {/* Ana Fotoğraf */}
       <div className="relative h-96 md:h-[500px] bg-gray-100">
-        <img
+        <Image
           src={images[selectedImage]}
           alt={`${title} - Fotoğraf ${selectedImage + 1}`}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         
         {/* Fotoğraf Sayacı */}
@@ -69,9 +71,11 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
                     : 'border-gray-300 hover:border-[#91A8D0] opacity-70 hover:opacity-100'
                 }`}
               >
-                <img
+                <Image
                   src={img}
                   alt={`Thumbnail ${index + 1}`}
+                  width={96}
+                  height={96}
                   className="w-full h-full object-cover"
                 />
               </button>

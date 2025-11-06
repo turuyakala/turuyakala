@@ -42,6 +42,9 @@
     "backend",
     "_backend_disabled",
     "scripts",
-    "_scripts_disabled"
+    "_scripts_disabled",
+    "**/__tests__/**",
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }

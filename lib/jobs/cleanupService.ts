@@ -34,10 +34,10 @@ export async function cleanupExpiredOffers(): Promise<{
 
     console.log(`⏰ Marked ${expiredResult.count} offers as EXPIRED (startAt < now)`);
 
-    // Mark offers with availableSeats <= 0 as SOLD_OUT
+    // Mark offers with seatsLeft <= 0 as SOLD_OUT
     const soldOutResult = await prisma.offer.updateMany({
       where: {
-        availableSeats: {
+        seatsLeft: {
           lte: 0,
         },
         status: {
@@ -49,7 +49,7 @@ export async function cleanupExpiredOffers(): Promise<{
       },
     });
 
-    console.log(`🎟️ Marked ${soldOutResult.count} offers as SOLD_OUT (availableSeats <= 0)`);
+    console.log(`🎟️ Marked ${soldOutResult.count} offers as SOLD_OUT (seatsLeft <= 0)`);
 
     // Create audit log
     await prisma.auditLog.create({

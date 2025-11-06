@@ -6,7 +6,6 @@ import AuthButtons from '@/components/AuthButtons';
 import HeroSlider from '@/components/HeroSlider';
 import ReviewsSection from '@/components/ReviewsSection';
 import Footer from '@/components/Footer';
-import { sortOptions } from '@/lib/sort';
 import { Item, Category } from '@/lib/types';
 import { prisma } from '@/lib/prisma';
 import { toNum } from '@/lib/utils';
@@ -29,7 +28,15 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
   const windowEnd = new Date(now.getTime() + 72 * 60 * 60 * 1000);
 
   // Build where clause for Offer table
-  const where: any = {
+  const where: {
+    category: string;
+    status: string;
+    startAt: { gte: Date; lte: Date };
+    from?: { contains: string; mode: 'insensitive' };
+    to?: { contains: string; mode: 'insensitive' };
+    priceMinor?: { gte?: number; lte?: number };
+    isSurprise?: boolean;
+  } = {
     category: 'tour',
     status: 'active', // Only active offers
     startAt: {
@@ -57,7 +64,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
 
   // Determine sort order (adapted for Offer table)
   const sortBy = params.sort || 'departure-asc';
-  let orderBy: any = { startAt: 'asc' };
+  let orderBy: { startAt?: 'asc' | 'desc'; priceMinor?: 'asc' | 'desc'; seatsLeft?: 'asc' | 'desc' } = { startAt: 'asc' };
   
   switch (sortBy) {
     case 'departure-desc':
@@ -80,7 +87,9 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
   }
 
   // For production, use sample data if database is not available
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let surpriseTours: any[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let mainOffers: any[] = [];
 
   try {
@@ -190,7 +199,24 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
   }
 
   // Convert to Item format
-  const surpriseItems: Item[] = surpriseTours.map((offer) => ({
+  const surpriseItems: Item[] = surpriseTours.map((offer: {
+    id: string;
+    title: string;
+    description?: string | null;
+    priceMinor: number;
+    currency: string;
+    from: string;
+    to: string;
+    startAt: Date;
+    seatsLeft: number;
+    transport?: string | null;
+    image?: string | null;
+    category: string;
+    supplier?: { name: string | null };
+    terms?: string | null;
+    requiresVisa?: boolean | null;
+    requiresPassport?: boolean | null;
+  }) => ({
     id: offer.id,
     title: offer.title,
     description: offer.description || '',
@@ -207,11 +233,28 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
     supplier: offer.supplier?.name || 'Tedarikçi',
     terms: offer.terms || undefined,
     image: offer.image || undefined,
-    requiresVisa: offer.requiresVisa,
-    requiresPassport: offer.requiresPassport,
+    requiresVisa: offer.requiresVisa || undefined,
+    requiresPassport: offer.requiresPassport || undefined,
   }));
 
-  const mainItems: Item[] = mainOffers.map((offer) => ({
+  const mainItems: Item[] = mainOffers.map((offer: {
+    id: string;
+    title: string;
+    description?: string | null;
+    priceMinor: number;
+    currency: string;
+    from: string;
+    to: string;
+    startAt: Date;
+    seatsLeft: number;
+    transport?: string | null;
+    image?: string | null;
+    category: string;
+    supplier?: { name: string | null };
+    terms?: string | null;
+    requiresVisa?: boolean | null;
+    requiresPassport?: boolean | null;
+  }) => ({
     id: offer.id,
     title: offer.title,
     description: offer.description || '',
@@ -228,15 +271,15 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
     supplier: offer.supplier?.name || 'Tedarikçi',
     terms: offer.terms || undefined,
     image: offer.image || undefined,
-    requiresVisa: offer.requiresVisa,
-    requiresPassport: offer.requiresPassport,
+    requiresVisa: offer.requiresVisa || undefined,
+    requiresPassport: offer.requiresPassport || undefined,
   }));
 
   // Combine surprise tours at top + main offers
   const allItems = [...surpriseItems, ...mainItems];
 
   // Calculate price range from all items
-  const prices = allItems.map(item => item.priceMinor / 100);
+  const prices = allItems.map(item => item.price);
   const priceRange = {
     min: prices.length > 0 ? Math.floor(Math.min(...prices)) : 0,
     max: prices.length > 0 ? Math.ceil(Math.max(...prices)) : 10000,
@@ -276,7 +319,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Sıralama
               </label>
-              <SortSelect options={sortOptions} />
+              <SortSelect />
             </div>
           </div>
         </div>
