@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import OfferCard from '@/components/OfferCard';
 import SortSelect from '@/components/SortSelect';
 import SimplePriceFilter from '@/components/SimplePriceFilter';
@@ -6,6 +7,7 @@ import AuthButtons from '@/components/AuthButtons';
 import HeroSlider from '@/components/HeroSlider';
 import ReviewsSection from '@/components/ReviewsSection';
 import Footer from '@/components/Footer';
+import Logo from '@/components/Logo';
 import { Item, Category } from '@/lib/types';
 import { prisma } from '@/lib/prisma';
 import { toNum } from '@/lib/utils';
@@ -288,11 +290,11 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="bg-[#563C5C] text-white shadow-lg">
+      <nav className="bg-[#E7E393] text-gray-900 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-bold">TuruYakala</h1>
+              <Logo />
             </div>
             <div className="flex items-center space-x-4">
               <AuthButtons />

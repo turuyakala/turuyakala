@@ -4,7 +4,7 @@ export default function HakkimizdaPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#563C5C] shadow-sm sticky top-0 z-40">
+      <header className="bg-[#E7E393] shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link
@@ -27,7 +27,7 @@ export default function HakkimizdaPage() {
           
           <div className="prose prose-lg max-w-none">
             <p className="text-gray-700 leading-relaxed mb-6">
-              <strong className="text-[#563C5C]">TuruYakala</strong>, seyahat tutkunlarını 
+              <strong className="text-[#E7E393]">TuruYakala</strong>, seyahat tutkunlarını 
               avantajlı fırsatlarla buluşturmak için kurulmuş yenilikçi bir platformdur.
             </p>
 
@@ -60,23 +60,23 @@ export default function HakkimizdaPage() {
             <h2 className="text-2xl font-bold text-gray-900 mb-4 mt-8">Neden Bizi Tercih Etmelisiniz?</h2>
             <ul className="text-gray-700 leading-relaxed space-y-3">
               <li className="flex items-start gap-3">
-                <span className="text-[#563C5C] font-bold">✅</span>
+                <span className="text-[#E7E393] font-bold">✅</span>
                 <span>Gerçek zamanlı güncellenen fırsatlar</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-[#563C5C] font-bold">✅</span>
+                <span className="text-[#E7E393] font-bold">✅</span>
                 <span>Güvenilir acentelerle çalışıyoruz</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-[#563C5C] font-bold">✅</span>
+                <span className="text-[#E7E393] font-bold">✅</span>
                 <span>Kolay filtreleme ve hızlı rezervasyon</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-[#563C5C] font-bold">✅</span>
+                <span className="text-[#E7E393] font-bold">✅</span>
                 <span>Aracı komisyonu yok, şeffaf fiyat politikası</span>
               </li>
               <li className="flex items-start gap-3">
-                <span className="text-[#563C5C] font-bold">✅</span>
+                <span className="text-[#E7E393] font-bold">✅</span>
                 <span>Türkiye'de ilk ve tek "son dakika fırsat" platformu</span>
               </li>
             </ul>
@@ -87,7 +87,7 @@ export default function HakkimizdaPage() {
             </p>
 
             <p className="text-gray-700 leading-relaxed mb-6">
-              <strong className="text-[#563C5C]">TuruYakala</strong>, seyahatin son dakikasına kadar 
+              <strong className="text-[#E7E393]">TuruYakala</strong>, seyahatin son dakikasına kadar 
               fırsatın var olduğunu hatırlatır.
             </p>
           </div>

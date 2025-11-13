@@ -5,7 +5,7 @@ export default function KVKKPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 shadow-lg">
         <div className="container mx-auto px-4">
-          <Link href="/" className="inline-flex items-center text-[#563C5C] hover:text-[#563C5C]/80 mb-3">
+          <Link href="/" className="inline-flex items-center text-[#E7E393] hover:text-[#E7E393]/80 mb-3">
             ← Ana Sayfaya Dön
           </Link>
           <h1 className="text-3xl font-bold">KVKK Aydınlatma Metni</h1>

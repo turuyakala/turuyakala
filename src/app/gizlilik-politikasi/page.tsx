@@ -4,7 +4,7 @@ export default function GizlilikPolitikasiPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#563C5C] shadow-sm sticky top-0 z-40">
+      <header className="bg-[#E7E393] shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link

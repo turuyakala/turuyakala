@@ -140,7 +140,7 @@ export default function IntegrationsHealthPage() {
         </div>
         <button
           onClick={fetchHealth}
-          className="px-4 py-2 bg-[#563C5C] text-white rounded-lg hover:bg-[#563C5C]/90 transition-colors"
+          className="px-4 py-2 bg-[#E7E393] text-white rounded-lg hover:bg-[#E7E393]/90 transition-colors"
         >
           🔄 Yenile
         </button>

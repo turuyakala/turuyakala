@@ -182,7 +182,7 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
       <div className="flex gap-3 mt-6">
         <button
           onClick={handleApply}
-          className="flex-1 px-6 py-2.5 bg-[#563C5C] text-white font-medium rounded-lg hover:bg-[#563C5C]/90 transition-colors focus:outline-none focus:ring-4 focus:ring-[#563C5C]/50"
+          className="flex-1 px-6 py-2.5 bg-[#E7E393] text-white font-medium rounded-lg hover:bg-[#E7E393]/90 transition-colors focus:outline-none focus:ring-4 focus:ring-[#E7E393]/50"
           aria-label="Filtreleri uygula"
         >
           🔍 Uygula

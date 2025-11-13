@@ -78,7 +78,7 @@ export default function LoginPage() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Veya{' '}
-            <Link href="/auth/register" className="font-medium text-[#563C5C] hover:text-[#563C5C]/80">
+            <Link href="/auth/register" className="font-medium text-[#E7E393] hover:text-[#E7E393]/80">
               yeni hesap oluşturun
             </Link>
           </p>
@@ -148,7 +148,7 @@ export default function LoginPage() {
           <div className="text-center">
             <Link
               href="/"
-              className="text-sm font-medium text-[#563C5C] hover:text-[#563C5C]/80"
+              className="text-sm font-medium text-[#E7E393] hover:text-[#E7E393]/80"
             >
               ← Ana Sayfaya Dön
             </Link>

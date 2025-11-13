@@ -57,7 +57,7 @@ export default function IletisimPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#563C5C] shadow-sm sticky top-0 z-40">
+      <header className="bg-[#E7E393] shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link
@@ -85,7 +85,7 @@ export default function IletisimPage() {
               
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[#563C5C] rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-[#E7E393] rounded-full flex items-center justify-center flex-shrink-0">
                     <img src="/images/icons/email.svg" alt="Email" className="w-6 h-6" />
                   </div>
                   <div>
@@ -96,7 +96,7 @@ export default function IletisimPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[#563C5C] rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-[#E7E393] rounded-full flex items-center justify-center flex-shrink-0">
                     <img src="/images/icons/phone.svg" alt="Phone" className="w-6 h-6" />
                   </div>
                   <div>
@@ -107,7 +107,7 @@ export default function IletisimPage() {
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-[#563C5C] rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="w-12 h-12 bg-[#E7E393] rounded-full flex items-center justify-center flex-shrink-0">
                     <img src="/images/icons/whatsapp.svg" alt="WhatsApp" className="w-6 h-6" />
                   </div>
                   <div>
@@ -135,7 +135,7 @@ export default function IletisimPage() {
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#563C5C] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E7E393] focus:border-transparent"
                     required
                   />
                 </div>
@@ -150,7 +150,7 @@ export default function IletisimPage() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#563C5C] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E7E393] focus:border-transparent"
                     required
                   />
                 </div>
@@ -164,7 +164,7 @@ export default function IletisimPage() {
                     name="subject"
                     value={formData.subject}
                     onChange={handleInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#563C5C] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E7E393] focus:border-transparent"
                     required
                   >
                     <option value="">Konu seçin</option>
@@ -186,7 +186,7 @@ export default function IletisimPage() {
                     value={formData.message}
                     onChange={handleInputChange}
                     rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#563C5C] focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E7E393] focus:border-transparent"
                     required
                   ></textarea>
                 </div>
@@ -204,7 +204,7 @@ export default function IletisimPage() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full px-6 py-3 bg-[#563C5C] text-white font-semibold rounded-lg hover:bg-[#563C5C]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full px-6 py-3 bg-[#E7E393] text-white font-semibold rounded-lg hover:bg-[#E7E393]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? 'Gönderiliyor...' : 'Mesaj Gönder'}
                 </button>

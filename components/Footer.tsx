@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#563C5C] text-white py-12 mt-16">
+    <footer className="bg-[#E7E393] text-white py-12 mt-16">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo ve Slogan */}
@@ -15,7 +15,7 @@ export default function Footer() {
             {/* Sosyal Medya İkonları */}
             <div className="flex gap-4 mb-6">
               <a 
-                href="https://instagram.com/lastminutetours" 
+                href="https://instagram.com/turuyakala" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
@@ -28,28 +28,28 @@ export default function Footer() {
                 />
               </a>
               <a 
-                href="https://facebook.com/lastminutetours" 
+                href="https://x.com/turuyakala" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-                aria-label="Facebook"
+                aria-label="X (Twitter)"
               >
                 <img 
-                  src="/images/social/facebook.svg" 
-                  alt="Facebook" 
+                  src="/images/social/x.svg" 
+                  alt="X" 
                   className="w-6 h-6"
                 />
               </a>
               <a 
-                href="https://twitter.com/lastminutetours" 
+                href="https://tiktok.com/@turuyakala" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
-                aria-label="Twitter"
+                aria-label="TikTok"
               >
                 <img 
-                  src="/images/social/twitter.svg" 
-                  alt="Twitter" 
+                  src="/images/social/tiktok.svg" 
+                  alt="TikTok" 
                   className="w-6 h-6"
                 />
               </a>

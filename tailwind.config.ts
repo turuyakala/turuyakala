@@ -17,7 +17,7 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        'english-violet': '#563C5C',
+        'english-violet': '#E7E393',
       },
       animation: {
         'pulse-slow': 'pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

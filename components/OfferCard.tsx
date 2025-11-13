@@ -153,7 +153,7 @@ export default function OfferCard({ item }: OfferCardProps) {
 
           <Link
             href={`/item/${item.id}`}
-            className="px-5 py-2.5 bg-[#563C5C] text-white text-sm font-semibold rounded-lg hover:bg-[#563C5C]/90 hover:scale-105 transition-all shadow-md"
+            className="px-5 py-2.5 bg-[#E7E393] text-white text-sm font-semibold rounded-lg hover:bg-[#E7E393]/90 hover:scale-105 transition-all shadow-md"
           >
             Detay →
           </Link>

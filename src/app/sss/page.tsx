@@ -55,7 +55,7 @@ export default function SSSPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#563C5C] shadow-sm sticky top-0 z-40">
+      <header className="bg-[#E7E393] shadow-sm sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link
@@ -79,7 +79,7 @@ export default function SSSPage() {
           <div className="space-y-6">
             {faqs.map((faq, index) => (
               <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
-                <h2 className="text-xl font-semibold text-[#563C5C] mb-3">
+                <h2 className="text-xl font-semibold text-[#E7E393] mb-3">
                   {faq.question}
                 </h2>
                 <p className="text-gray-700 leading-relaxed">
@@ -98,7 +98,7 @@ export default function SSSPage() {
             </p>
             <Link
               href="/iletisim"
-              className="inline-block px-6 py-2 bg-[#563C5C] text-white rounded-lg hover:bg-[#563C5C]/90 transition-colors"
+              className="inline-block px-6 py-2 bg-[#E7E393] text-white rounded-lg hover:bg-[#E7E393]/90 transition-colors"
             >
               İletişime Geç
             </Link>

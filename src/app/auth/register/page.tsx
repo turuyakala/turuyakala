@@ -84,7 +84,7 @@ export default function RegisterPage() {
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Zaten hesabınız var mı?{' '}
-            <Link href="/auth/login" className="font-medium text-[#563C5C] hover:text-[#563C5C]/80">
+            <Link href="/auth/login" className="font-medium text-[#E7E393] hover:text-[#E7E393]/80">
               Giriş yapın
             </Link>
           </p>
@@ -205,7 +205,7 @@ export default function RegisterPage() {
           <div className="text-center">
             <Link
               href="/"
-              className="text-sm font-medium text-[#563C5C] hover:text-[#563C5C]/80"
+              className="text-sm font-medium text-[#E7E393] hover:text-[#E7E393]/80"
             >
               ← Ana Sayfaya Dön
             </Link>

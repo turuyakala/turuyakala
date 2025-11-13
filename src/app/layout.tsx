@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/site.webmanifest',
-  themeColor: '#563C5C',
+  themeColor: '#E7E393',
 };
 
 export default function RootLayout({

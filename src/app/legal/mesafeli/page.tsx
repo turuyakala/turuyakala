@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function MesafeliPage() {
   return (
     <div className="min-h-screen bg-gray-50">
-      <header className="bg-[#563C5C] text-white py-6 shadow-lg">
+      <header className="bg-[#E7E393] text-white py-6 shadow-lg">
         <div className="container mx-auto px-4">
           <Link href="/" className="inline-flex items-center text-white hover:text-white/80 mb-3">
             ← Ana Sayfaya Dön
@@ -21,13 +21,13 @@ export default function MesafeliPage() {
               <section>
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Taraflar</h2>
                 <p className="text-gray-700 leading-relaxed">
-                  Bu Mesafeli Satış Sözleşmesi ("Sözleşme"), <strong className="text-[#563C5C]">LastMinuteTour</strong> internet sitesi 
+                  Bu Mesafeli Satış Sözleşmesi ("Sözleşme"), <strong className="text-[#E7E393]">LastMinuteTour</strong> internet sitesi 
                   ("Platform") üzerinden hizmet sağlayan tedarikçi firma ile ("Satıcı") bu hizmeti satın alan kullanıcı 
                   ("Alıcı") arasında, 6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli Sözleşmeler Yönetmeliği 
                   hükümlerine uygun olarak düzenlenmiştir.
                 </p>
                 <p className="text-gray-700 leading-relaxed mt-4">
-                  <strong className="text-[#563C5C]">LastMinuteTour</strong>, yalnızca aracı platformdur.
+                  <strong className="text-[#E7E393]">LastMinuteTour</strong>, yalnızca aracı platformdur.
                 </p>
               </section>
 
@@ -67,7 +67,7 @@ export default function MesafeliPage() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Ödeme ve Faturalandırma</h2>
                 <ul className="text-gray-700 leading-relaxed space-y-2">
                   <li>• Ödemeler ilgili tedarikçi firmanın sisteminde gerçekleşir.</li>
-                  <li>• <strong className="text-[#563C5C]">LastMinuteTour</strong> bu süreçte yalnızca yönlendirme yapar.</li>
+                  <li>• <strong className="text-[#E7E393]">LastMinuteTour</strong> bu süreçte yalnızca yönlendirme yapar.</li>
                 </ul>
               </section>
 
@@ -103,7 +103,7 @@ export default function MesafeliPage() {
 
               <div className="border-t border-gray-200 pt-8 mt-8">
                 <div className="bg-gray-50 p-6 rounded-lg">
-                  <h3 className="text-xl font-bold text-[#563C5C] mb-2">LastMinuteTour</h3>
+                  <h3 className="text-xl font-bold text-[#E7E393] mb-2">LastMinuteTour</h3>
                   <p className="text-gray-700 mb-2">
                     TÜRSAB'a kayıtlı acentelerle iş birliği yapan aracı platform.
                   </p>
