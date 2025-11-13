@@ -26,10 +26,10 @@ export default function OfferCard({ item }: OfferCardProps) {
 
   return (
     <div className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 ${
-      isSurprise ? 'border-4 border-red-500 ring-4 ring-red-300' : `border-l-4 ${categoryColor.border}`
+      isSurprise ? 'border-4 border-[#DD7230] ring-4 ring-[#DD7230]/30' : `border-l-4 ${categoryColor.border}`
     } ${isCritical ? 'animate-pulse-slow ring-2 ring-red-400' : ''}`}>
       <div className={`relative h-56 flex items-center justify-center overflow-hidden ${
-        isSurprise ? 'bg-gradient-to-br from-red-500 to-pink-600' : `bg-gradient-to-br ${categoryColor.bg}`
+        isSurprise ? 'bg-gradient-to-br from-[#DD7230] to-[#DD7230]/80' : `bg-gradient-to-br ${categoryColor.bg}`
       }`}>
         {isSurprise ? (
           <div className="text-9xl animate-bounce-slow text-white drop-shadow-2xl">❓</div>
@@ -54,7 +54,7 @@ export default function OfferCard({ item }: OfferCardProps) {
           <div className="absolute top-3 left-3 z-10">
             <div className={`px-3 py-1 backdrop-blur-sm text-xs font-medium rounded-md shadow-sm ${
               isSurprise 
-                ? 'bg-red-600 text-white font-bold' 
+                ? 'bg-[#DD7230] text-white font-bold' 
                 : 'bg-white/90 text-gray-700'
             }`}>
               {toString(item?.transport, 'Uçak')}
@@ -103,7 +103,7 @@ export default function OfferCard({ item }: OfferCardProps) {
           </div>
         )}
         {isCritical && (
-          <div className="absolute inset-0 bg-red-500/10 animate-pulse" />
+          <div className={`absolute inset-0 ${isSurprise ? 'bg-[#DD7230]/10' : 'bg-red-500/10'} animate-pulse`} />
         )}
       </div>
 
