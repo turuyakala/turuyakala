@@ -103,3 +103,95 @@
   animation: hourglass-flip 2s ease-in-out infinite;
   display: inline-block;
 }
+
+/* Surprise Tour Background Animations */
+.surprise-bg-animated {
+  background: linear-gradient(135deg, #DD7230 0%, #F4C95D 50%, #DD7230 100%);
+  background-size: 200% 200%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes gradient-shift-reverse {
+  0% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.3;
+  }
+  33% {
+    transform: translate(20px, -20px) scale(1.1);
+    opacity: 0.4;
+  }
+  66% {
+    transform: translate(-15px, 15px) scale(0.9);
+    opacity: 0.25;
+  }
+}
+
+@keyframes float-delayed {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.2;
+  }
+  33% {
+    transform: translate(-25px, 25px) scale(1.15);
+    opacity: 0.3;
+  }
+  66% {
+    transform: translate(20px, -15px) scale(0.85);
+    opacity: 0.15;
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.25;
+  }
+  50% {
+    transform: translate(15px, 20px) scale(1.2);
+    opacity: 0.35;
+  }
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 4s ease infinite;
+}
+
+.animate-gradient-shift-reverse {
+  animation: gradient-shift-reverse 5s ease infinite;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 8s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 10s ease-in-out infinite;
+}

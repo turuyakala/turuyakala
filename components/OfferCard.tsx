@@ -29,10 +29,22 @@ export default function OfferCard({ item }: OfferCardProps) {
       isSurprise ? 'border-4 border-[#DD7230] ring-4 ring-[#DD7230]/30' : `border-l-4 ${categoryColor.border}`
     } ${isCritical ? 'animate-pulse-slow ring-2 ring-red-400' : ''}`}>
       <div className={`relative h-56 flex items-center justify-center overflow-hidden ${
-        isSurprise ? 'bg-gradient-to-br from-[#DD7230] to-[#DD7230]/80' : `bg-gradient-to-br ${categoryColor.bg}`
+        isSurprise ? 'surprise-bg-animated' : `bg-gradient-to-br ${categoryColor.bg}`
       }`}>
         {isSurprise ? (
-          <div className="text-9xl animate-bounce-slow text-white drop-shadow-2xl">❓</div>
+          <>
+            {/* Animated background layers */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#DD7230] via-[#F4C95D] to-[#DD7230] opacity-75 animate-gradient-shift"></div>
+            <div className="absolute inset-0 bg-gradient-to-tl from-[#F4C95D] via-[#DD7230] to-[#F4C95D] opacity-50 animate-gradient-shift-reverse"></div>
+            {/* Glowing particles effect */}
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-[#F4C95D] rounded-full opacity-30 blur-2xl animate-float"></div>
+              <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-[#DD7230] rounded-full opacity-20 blur-3xl animate-float-delayed"></div>
+              <div className="absolute top-1/2 right-1/3 w-24 h-24 bg-[#F4C95D] rounded-full opacity-25 blur-xl animate-float-slow"></div>
+            </div>
+            {/* Question mark */}
+            <div className="relative z-10 text-9xl animate-bounce-slow text-white drop-shadow-2xl filter drop-shadow-[0_0_20px_rgba(244,201,93,0.8)]">❓</div>
+          </>
         ) : item.image ? (
           <Image
             src={item.image}
