@@ -195,3 +195,50 @@
 .animate-float-slow {
   animation: float-slow 10s ease-in-out infinite;
 }
+
+/* Paper Plane Animation - Tur satın alındığında kartın kağıt uçağa dönüşüp uçması */
+@keyframes paper-plane-fold {
+  0% {
+    transform: perspective(1000px) rotateX(0deg) rotateY(0deg) rotateZ(0deg) scale(1) translateY(0);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  15% {
+    transform: perspective(1000px) rotateX(20deg) rotateY(-10deg) rotateZ(-5deg) scale(0.95) translateY(-10px);
+    opacity: 0.95;
+    filter: brightness(1.1);
+  }
+  30% {
+    transform: perspective(1000px) rotateX(45deg) rotateY(-25deg) rotateZ(-15deg) scale(0.85) translateY(-30px);
+    opacity: 0.9;
+    filter: brightness(1.2);
+  }
+  50% {
+    transform: perspective(1000px) rotateX(70deg) rotateY(-45deg) rotateZ(-35deg) scale(0.6) translateY(-80px) translateX(50px);
+    opacity: 0.7;
+    filter: brightness(1.3);
+  }
+  70% {
+    transform: perspective(1000px) rotateX(100deg) rotateY(-70deg) rotateZ(-50deg) scale(0.4) translateY(-150px) translateX(150px);
+    opacity: 0.5;
+    filter: brightness(1.4);
+  }
+  85% {
+    transform: perspective(1000px) rotateX(130deg) rotateY(-85deg) rotateZ(-60deg) scale(0.25) translateY(-250px) translateX(250px);
+    opacity: 0.3;
+    filter: brightness(1.5);
+  }
+  100% {
+    transform: perspective(1000px) rotateX(180deg) rotateY(-90deg) rotateZ(-70deg) scale(0.1) translateY(-400px) translateX(500px);
+    opacity: 0;
+    filter: brightness(2);
+  }
+}
+
+.paper-plane-animation {
+  animation: paper-plane-fold 2.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  transform-origin: center center;
+  pointer-events: none;
+  z-index: 1000;
+  position: relative;
+}

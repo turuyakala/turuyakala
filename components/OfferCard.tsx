@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Item } from '@/lib/types';
@@ -17,6 +20,11 @@ const categoryColors: Record<Item['category'], { bg: string; border: string }> =
 };
 
 export default function OfferCard({ item }: OfferCardProps) {
+  const [isSoldOut, setIsSoldOut] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [currentSeatsLeft, setCurrentSeatsLeft] = useState(toNum(item?.seatsLeft, 0));
+  const [previousSeatsLeft, setPreviousSeatsLeft] = useState(toNum(item?.seatsLeft, 0));
+
   // Güvenli değer okuma
   const departureDate = new Date(item?.startAt || Date.now());
   const timeInfo = getTimeUntilDeparture(departureDate);
@@ -24,10 +32,59 @@ export default function OfferCard({ item }: OfferCardProps) {
   const isCritical = toNum(timeInfo?.totalHours, 0) <= 3;
   const categoryColor = categoryColors[item?.category] || categoryColors.tour;
 
+  // Koltuk sayısını düzenli olarak kontrol et (her 5 saniyede bir)
+  useEffect(() => {
+    const checkSeats = async () => {
+      try {
+        const response = await fetch(`/api/tours/${item.id}`);
+        if (response.ok) {
+          const data = await response.json();
+          const newSeatsLeft = toNum(data.seatsLeft, 0);
+          
+          // Koltuk sayısı azaldıysa animasyonu tetikle
+          if (previousSeatsLeft > 0 && newSeatsLeft < previousSeatsLeft && !isAnimating) {
+            setIsAnimating(true);
+            setTimeout(() => {
+              setIsSoldOut(true);
+            }, 2500); // Animasyon süresi (2.5 saniye)
+          }
+          
+          setCurrentSeatsLeft(newSeatsLeft);
+          
+          // Eğer koltuk kalmadıysa animasyonu tetikle
+          if (newSeatsLeft === 0 && !isSoldOut && !isAnimating) {
+            setIsAnimating(true);
+            setTimeout(() => {
+              setIsSoldOut(true);
+            }, 2500);
+          }
+          
+          setPreviousSeatsLeft(newSeatsLeft);
+        }
+      } catch (error) {
+        console.error('Error checking seats:', error);
+      }
+    };
+
+    // İlk kontrol
+    checkSeats();
+
+    // Her 5 saniyede bir kontrol et
+    const interval = setInterval(checkSeats, 5000);
+
+    return () => clearInterval(interval);
+  }, [item.id, previousSeatsLeft, isSoldOut, isAnimating]);
+
+  if (isSoldOut) {
+    return null; // Kartı tamamen kaldır
+  }
+
   return (
     <div className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 ${
       isSurprise ? 'border-4 border-[#DD7230] ring-4 ring-[#DD7230]/30' : `border-l-4 ${categoryColor.border}`
-    } ${isCritical ? 'animate-pulse-slow ring-2 ring-red-400' : ''}`}>
+    } ${isCritical ? 'animate-pulse-slow ring-2 ring-red-400' : ''} ${
+      isAnimating ? 'paper-plane-animation' : ''
+    }`}>
       <div className={`relative h-56 flex items-center justify-center overflow-hidden ${
         isSurprise ? 'surprise-bg-animated' : `bg-gradient-to-br ${categoryColor.bg}`
       }`}>
@@ -106,12 +163,12 @@ export default function OfferCard({ item }: OfferCardProps) {
         )}
 
         {/* Sağ alt (kartın içinde): Kalan koltuk - Kırmızı yuvarlak */}
-        {toNum(item?.seatsLeft, 0) <= 2 && !isSurprise && (
+        {currentSeatsLeft <= 2 && !isSurprise && (
           <div className="absolute bottom-3 right-3 z-10">
             <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center shadow-lg animate-pulse">
               <div className="text-center">
                 <div className="text-white font-bold text-lg leading-tight">SON</div>
-                <div className="text-white font-bold text-2xl leading-tight">{toNum(item?.seatsLeft, 0)}</div>
+                <div className="text-white font-bold text-2xl leading-tight">{currentSeatsLeft}</div>
                 <div className="text-white font-bold text-xs leading-tight">KOLTUK</div>
               </div>
             </div>

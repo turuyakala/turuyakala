@@ -10,7 +10,8 @@ export async function GET(request: NextRequest, context: RouteContext) {
   try {
     const { id } = await context.params;
     
-    const tour = await prisma.inventoryItem.findUnique({
+    // Try Offer table first (new schema)
+    let tour = await prisma.offer.findUnique({
       where: { id },
       select: {
         id: true,
@@ -23,30 +24,60 @@ export async function GET(request: NextRequest, context: RouteContext) {
         seatsLeft: true,
         priceMinor: true,
         currency: true,
-        supplier: true,
-        contact: true,
-        terms: true,
         image: true,
         transport: true,
         isSurprise: true,
         requiresVisa: true,
         requiresPassport: true,
         createdAt: true,
+        supplier: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
+
+    // Fallback to InventoryItem if not found in Offer
+    if (!tour) {
+      tour = await prisma.inventoryItem.findUnique({
+        where: { id },
+        select: {
+          id: true,
+          category: true,
+          title: true,
+          from: true,
+          to: true,
+          startAt: true,
+          seatsTotal: true,
+          seatsLeft: true,
+          priceMinor: true,
+          currency: true,
+          supplier: true,
+          contact: true,
+          terms: true,
+          image: true,
+          transport: true,
+          isSurprise: true,
+          requiresVisa: true,
+          requiresPassport: true,
+          createdAt: true,
+        },
+      }) as any;
+    }
 
     if (!tour) {
       return NextResponse.json({ error: 'Tur bulunamadı' }, { status: 404 });
     }
 
-    // Parse contact JSON if exists and convert priceMinor to price
+    // Parse and format response
     const parsedTour = {
       ...tour,
-      price: tour.priceMinor / 100, // Convert minor units to major
-      contact: tour.contact ? JSON.parse(tour.contact as string) : null,
+      seatsLeft: tour.seatsLeft,
+      supplier: tour.supplier?.name || (tour as any).supplier || 'TuruYakala',
     };
     
-    // Remove priceMinor from response
+    // Remove priceMinor from response if exists
     const { priceMinor, ...tourResponse } = parsedTour;
 
     return NextResponse.json(tourResponse, { status: 200 });
