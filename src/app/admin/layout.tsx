@@ -28,76 +28,22 @@ export default async function AdminLayout({
                     📊 Dashboard
                   </Link>
                   <Link
-                    href="/admin/tours"
-                    className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                  >
-                    🏞️ Turlar
-                  </Link>
-                <Link
-                  href="/admin/offers"
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  📦 Envanter
-                </Link>
-                <Link
-                  href="/admin/import"
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  📥 Veri İçe Aktar
-                </Link>
-                <Link
-                  href="/admin/suppliers"
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  🔌 Tedarikçiler
-                </Link>
-                <Link
-                  href="/admin/jobs"
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  ⚙️ Görevler
-                </Link>
-                <Link
-                  href="/admin/audit-logs"
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  📊 Audit Logs
-                </Link>
-                <Link
-                  href="/admin/errors"
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  🚨 Hatalar
-                </Link>
-                <Link
-                  href="/admin/integrations-health"
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  🔌 Entegrasyon Sağlığı
-                </Link>
-                <Link
-                  href="/admin/reviews"
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  💬 Yorumlar
-                </Link>
-                <Link
-                  href="/admin/contact-messages"
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  📧 Mesajlar
-                </Link>
-                <Link
-                  href="/admin/stats"
-                  className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-                >
-                  📈 İstatistikler
-                </Link>
-                  <Link
                     href="/admin/users"
                     className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
                   >
                     👥 Kullanıcılar
+                  </Link>
+                  <Link
+                    href="/admin/reviews"
+                    className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+                  >
+                    💬 Yorumlar
+                  </Link>
+                  <Link
+                    href="/admin/suppliers"
+                    className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+                  >
+                    🔌 API Girişleri
                   </Link>
                 </nav>
               </div>
