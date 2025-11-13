@@ -65,24 +65,27 @@ export default function OfferCard({ item }: OfferCardProps) {
         {/* Sağ üst: Geri sayım ibaresi */}
         {timeInfo && (
           <div className="absolute top-3 right-3 z-10">
-            <div className={`px-3 py-2 backdrop-blur-sm text-xs font-bold rounded-md shadow-lg ${
-              isCritical 
-                ? 'bg-red-600 text-white animate-pulse' 
-                : toNum(timeInfo?.totalHours, 0) <= 24
-                ? 'bg-orange-500 text-white'
-                : 'bg-blue-600 text-white'
-            }`}>
-              <div className="flex flex-col items-center leading-tight">
-                <div className="text-[10px] opacity-90">KALKIŞA</div>
+            <div className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-lg ${
+              isSurprise 
+                ? 'bg-[#F4C95D] text-white' 
+                : 'bg-[#DD7230] text-white'
+            } ${isCritical ? 'animate-pulse' : ''}`}>
+              {/* Kum Saati İkonu */}
+              <div className="hourglass-icon text-xl">
+                ⏳
+              </div>
+              {/* Sayaç */}
+              <div className="flex flex-col items-center leading-tight min-w-[50px]">
+                <div className="text-[9px] opacity-90 font-semibold uppercase tracking-wide">KALKIŞA</div>
                 {toNum(timeInfo?.totalHours, 0) < 24 ? (
                   <>
-                    <div className="text-lg">{timeInfo.hours}</div>
-                    <div className="text-[10px]">SAAT</div>
+                    <div className="text-xl font-bold font-mono tabular-nums">{timeInfo.hours}</div>
+                    <div className="text-[9px] font-semibold uppercase">SAAT</div>
                   </>
                 ) : (
                   <>
-                    <div className="text-lg">{timeInfo.days}</div>
-                    <div className="text-[10px]">GÜN</div>
+                    <div className="text-xl font-bold font-mono tabular-nums">{timeInfo.days}</div>
+                    <div className="text-[9px] font-semibold uppercase">GÜN</div>
                   </>
                 )}
               </div>
