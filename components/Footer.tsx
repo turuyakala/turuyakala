@@ -18,39 +18,39 @@ export default function Footer() {
                 href="https://instagram.com/turuyakala" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+                className="w-12 h-12 bg-[#DD7230] rounded-full flex items-center justify-center hover:bg-[#DD7230]/90 transition-colors shadow-md"
                 aria-label="Instagram"
               >
                 <img 
                   src="/images/social/instagram.svg" 
                   alt="Instagram" 
-                  className="w-6 h-6"
+                  className="w-6 h-6 brightness-0 invert"
                 />
               </a>
               <a 
                 href="https://x.com/turuyakala" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+                className="w-12 h-12 bg-[#DD7230] rounded-full flex items-center justify-center hover:bg-[#DD7230]/90 transition-colors shadow-md"
                 aria-label="X (Twitter)"
               >
                 <img 
                   src="/images/social/x.svg" 
                   alt="X" 
-                  className="w-6 h-6"
+                  className="w-6 h-6 brightness-0 invert"
                 />
               </a>
               <a 
                 href="https://tiktok.com/@turuyakala" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors"
+                className="w-12 h-12 bg-[#DD7230] rounded-full flex items-center justify-center hover:bg-[#DD7230]/90 transition-colors shadow-md"
                 aria-label="TikTok"
               >
                 <img 
                   src="/images/social/tiktok.svg" 
                   alt="TikTok" 
-                  className="w-6 h-6"
+                  className="w-6 h-6 brightness-0 invert"
                 />
               </a>
             </div>

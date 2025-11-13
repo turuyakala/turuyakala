@@ -10,13 +10,13 @@ export default function Logo() {
   return (
     <Link href="/" className="flex items-center">
       {!logoError ? (
-        <div className="relative h-14 w-auto">
+        <div className="relative h-20 w-auto">
           <Image 
             src="/logo.png" 
             alt="TuruYakala Logo" 
-            width={200}
-            height={60}
-            className="h-14 w-auto object-contain"
+            width={250}
+            height={80}
+            className="h-20 w-auto object-contain"
             priority
             onError={() => setLogoError(true)}
           />
