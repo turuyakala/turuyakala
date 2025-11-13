@@ -59,6 +59,13 @@ export default async function ItemDetailPage({ params }: PageProps) {
     requiresVisa: tourData.requiresVisa,
     requiresPassport: tourData.requiresPassport,
     createdAt: tourData.createdAt.toISOString(),
+    // Optional fields for detail page
+    description: undefined,
+    program: undefined,
+    included: undefined,
+    excluded: undefined,
+    importantInfo: undefined,
+    departureLocation: undefined,
   };
 
   const departureDate = new Date(item.startAt);
@@ -170,11 +177,11 @@ export default async function ItemDetailPage({ params }: PageProps) {
           <div className="flex items-center justify-between">
             <Link
               href="/"
-              className="flex items-center gap-2 text-white hover:text-white/80 font-semibold transition-colors"
+              className="flex items-center gap-2 text-gray-900 hover:text-gray-700 font-semibold transition-colors"
             >
               ← Ana Sayfaya Dön
             </Link>
-            <h1 className="text-xl font-bold font-montserrat text-white hidden md:block">
+            <h1 className="text-xl font-bold font-montserrat text-gray-900 hidden md:block">
               TuruYakala
             </h1>
           </div>
