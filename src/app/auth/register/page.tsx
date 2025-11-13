@@ -211,6 +211,23 @@ export default function RegisterPage() {
             </Link>
           </div>
         </form>
+
+        <div className="mt-4">
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              const form = document.querySelector('form');
+              if (form) {
+                form.requestSubmit();
+              }
+            }}
+            disabled={isLoading || success}
+            className="group relative w-full flex justify-center py-2.5 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-english-violet hover:bg-english-violet/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-english-violet disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            {isLoading ? 'Kaydediliyor...' : success ? 'Başarılı!' : 'Kayıt Ol'}
+          </button>
+        </div>
       </div>
     </div>
   );
