@@ -10,19 +10,19 @@ export default function Logo() {
   return (
     <Link href="/" className="flex items-center">
       {!logoError ? (
-        <div className="relative h-28 md:h-32 w-auto">
+        <div className="relative h-36 md:h-44 w-auto">
           <Image 
             src="/logo.png" 
             alt="TuruYakala Logo" 
-            width={350}
-            height={120}
-            className="h-28 md:h-32 w-auto object-contain"
+            width={450}
+            height={150}
+            className="h-36 md:h-44 w-auto object-contain"
             priority
             onError={() => setLogoError(true)}
           />
         </div>
       ) : (
-        <h1 className="text-2xl md:text-3xl font-bold">TuruYakala</h1>
+        <h1 className="text-3xl md:text-4xl font-bold">TuruYakala</h1>
       )}
     </Link>
   );
