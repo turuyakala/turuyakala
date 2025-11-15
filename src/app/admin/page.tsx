@@ -1,7 +1,11 @@
 import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/middleware/admin';
 import Link from 'next/link';
 
 export default async function AdminPage() {
+  // Admin kontrolü
+  await requireAdmin();
+
   // Basit istatistikler
   const [usersCount, reviewsCount, suppliersCount, pendingReviewsCount] = await Promise.all([
     prisma.user.count(),

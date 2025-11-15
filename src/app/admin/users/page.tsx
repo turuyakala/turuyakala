@@ -1,7 +1,9 @@
 import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/middleware/admin';
 import { formatDate } from '@/lib/time';
 
 export default async function AdminUsersPage() {
+  await requireAdmin();
   const users = await prisma.user.findMany({
     include: {
       orders: true,
