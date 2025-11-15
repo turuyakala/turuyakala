@@ -37,14 +37,16 @@ export default function ReviewsSection() {
   };
 
   const maskName = (fullName: string | null) => {
-    if (!fullName) return 'A*** B***';
+    if (!fullName) return 'A**** Y****';
     
-    const parts = fullName.trim().split(' ');
+    const parts = fullName.trim().split(' ').filter(p => p.length > 0);
+    if (parts.length === 0) return 'A**** Y****';
     if (parts.length === 1) {
-      return parts[0][0] + '***';
+      return parts[0][0] + '****';
     }
     
-    return parts.map(part => part[0] + '***').join(' ');
+    // İlk kelimenin ilk harfi + ****, ikinci kelimenin ilk harfi + ****
+    return parts.slice(0, 2).map(part => part[0] + '****').join(' ');
   };
 
   const renderStars = (rating: number) => {
@@ -114,10 +116,7 @@ export default function ReviewsSection() {
                 {/* User Info */}
                 <div className="border-t pt-4">
                   <div className="font-semibold text-gray-900">
-                    — {maskName(review.user.name)}
-                  </div>
-                  <div className="text-sm text-gray-600 mt-1">
-                    {review.tourName}
+                    — {maskName(review.user.name)} - {review.tourName}
                   </div>
                 </div>
               </div>

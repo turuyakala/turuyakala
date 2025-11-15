@@ -1,5 +1,12 @@
-import { requireAuth } from '@/lib/middleware/admin';
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import ReviewModal from '@/components/ReviewModal';
+import { formatDate } from '@/lib/time';
+import { formatPrice } from '@/lib/price';
 
 type UserRole = 'admin' | 'seller' | 'user';
 
@@ -10,8 +17,93 @@ interface ExtendedUser {
   role?: UserRole;
 }
 
-export default async function ProfilePage() {
-  const session = await requireAuth();
+type Order = {
+  id: string;
+  seats: number;
+  totalPrice: number;
+  paymentStatus: string;
+  pnrCode: string | null;
+  createdAt: string;
+  inventoryItem: {
+    id: string;
+    title: string;
+    from: string;
+    to: string;
+    startAt: string;
+    image: string | null;
+    category: string;
+  };
+  reviews: Array<{
+    id: string;
+    rating: number;
+    comment: string;
+    isApproved: boolean;
+    isPublished: boolean;
+    createdAt: string;
+  }>;
+};
+
+export default function ProfilePage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (status === 'authenticated') {
+      fetchOrders();
+    }
+  }, [status, router]);
+
+  const fetchOrders = async () => {
+    try {
+      const response = await fetch('/api/profile/orders');
+      if (response.ok) {
+        const data = await response.json();
+        setOrders(data.orders);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleReviewClick = (order: Order) => {
+    // Check if already reviewed
+    if (order.reviews.length > 0) {
+      alert('Bu tur için zaten yorum yaptınız. Yorumunuz onay bekliyor.');
+      return;
+    }
+    setSelectedOrder(order);
+    setIsReviewModalOpen(true);
+  };
+
+  const handleReviewSuccess = () => {
+    fetchOrders(); // Refresh orders to show the new review
+  };
+
+  if (status === 'loading' || isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4 animate-bounce">⏳</div>
+          <p className="text-gray-600">Yükleniyor...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!session?.user) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -87,11 +179,101 @@ export default async function ProfilePage() {
 
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4">Siparişlerim</h2>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-blue-800 text-sm">
-                  ℹ️ Sipariş geçmişiniz henüz eklenmedi. Bu özellik yakında aktif olacak.
-                </p>
-              </div>
+              {orders.length === 0 ? (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-blue-800 text-sm">
+                    ℹ️ Henüz tur satın almadınız. Turlarımıza göz atmak için{' '}
+                    <Link href="/" className="underline font-semibold">
+                      ana sayfaya
+                    </Link>{' '}
+                    gidin.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {orders.map((order) => {
+                    const hasReview = order.reviews.length > 0;
+                    const review = hasReview ? order.reviews[0] : null;
+                    const departureDate = new Date(order.inventoryItem.startAt);
+
+                    return (
+                      <div
+                        key={order.id}
+                        className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                          {/* Left: Tour Info */}
+                          <div className="flex-1">
+                            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                              {order.inventoryItem.title}
+                            </h3>
+                            <div className="space-y-1 text-sm text-gray-600">
+                              <div>
+                                <span className="font-medium">Rota:</span> {order.inventoryItem.from} → {order.inventoryItem.to}
+                              </div>
+                              <div>
+                                <span className="font-medium">Kalkış:</span> {formatDate(departureDate)}
+                              </div>
+                              <div>
+                                <span className="font-medium">Koltuk Sayısı:</span> {order.seats}
+                              </div>
+                              <div>
+                                <span className="font-medium">Toplam Tutar:</span>{' '}
+                                {formatPrice(order.totalPrice, 'TRY')}
+                              </div>
+                              {order.pnrCode && (
+                                <div>
+                                  <span className="font-medium">PNR:</span> {order.pnrCode}
+                                </div>
+                              )}
+                            </div>
+                            {review && (
+                              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <div className="flex">
+                                    {[1, 2, 3, 4, 5].map((star) => (
+                                      <span
+                                        key={star}
+                                        className={`text-lg ${
+                                          star <= review.rating ? 'text-yellow-400' : 'text-gray-300'
+                                        }`}
+                                      >
+                                        ★
+                                      </span>
+                                    ))}
+                                  </div>
+                                  <span className="text-xs text-gray-600">
+                                    {review.isPublished ? '✅ Yayında' : '⏳ Onay Bekliyor'}
+                                  </span>
+                                </div>
+                                <p className="text-sm text-gray-700 italic">&ldquo;{review.comment}&rdquo;</p>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Right: Action Button */}
+                          <div className="flex-shrink-0">
+                            {!hasReview ? (
+                              <button
+                                onClick={() => handleReviewClick(order)}
+                                className="px-6 py-2.5 bg-[#DD7230] text-white font-medium rounded-lg hover:bg-[#DD7230]/90 transition-colors shadow-md whitespace-nowrap"
+                              >
+                                ⭐ Puan Ver ve Yorum Yap
+                              </button>
+                            ) : (
+                              <div className="text-center">
+                                <div className="px-6 py-2.5 bg-gray-100 text-gray-600 font-medium rounded-lg whitespace-nowrap">
+                                  {review.isPublished ? '✅ Yorumunuz Yayında' : '⏳ Onay Bekliyor'}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             <hr className="border-gray-200" />
@@ -133,6 +315,20 @@ export default async function ProfilePage() {
           </div>
         )}
       </main>
+
+      {/* Review Modal */}
+      {selectedOrder && (
+        <ReviewModal
+          isOpen={isReviewModalOpen}
+          onClose={() => {
+            setIsReviewModalOpen(false);
+            setSelectedOrder(null);
+          }}
+          orderId={selectedOrder.id}
+          tourName={selectedOrder.inventoryItem.title}
+          onSuccess={handleReviewSuccess}
+        />
+      )}
     </div>
   );
 }

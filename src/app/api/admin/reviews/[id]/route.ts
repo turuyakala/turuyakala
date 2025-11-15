@@ -20,14 +20,18 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 
     const { id } = await context.params;
     const body = await request.json();
-    const { isApproved, isPublished } = body;
+    const { isApproved, isPublished, rating, comment, tourName } = body;
+
+    const updateData: any = {};
+    if (isApproved !== undefined) updateData.isApproved = isApproved;
+    if (isPublished !== undefined) updateData.isPublished = isPublished;
+    if (rating !== undefined) updateData.rating = rating;
+    if (comment !== undefined) updateData.comment = comment;
+    if (tourName !== undefined) updateData.tourName = tourName;
 
     const review = await prisma.review.update({
       where: { id },
-      data: {
-        isApproved: isApproved !== undefined ? isApproved : undefined,
-        isPublished: isPublished !== undefined ? isPublished : undefined,
-      },
+      data: updateData,
     });
 
     return NextResponse.json({ review }, { status: 200 });
