@@ -1,6 +1,5 @@
 import { requireAuth } from '@/lib/middleware/admin';
 import Link from 'next/link';
-import Footer from '@/components/Footer';
 
 type UserRole = 'admin' | 'seller' | 'user';
 
@@ -134,9 +133,6 @@ export default async function ProfilePage() {
           </div>
         )}
       </main>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }

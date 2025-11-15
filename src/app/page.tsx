@@ -6,7 +6,6 @@ import SimplePriceFilter from '@/components/SimplePriceFilter';
 import AuthButtons from '@/components/AuthButtons';
 import HeroSlider from '@/components/HeroSlider';
 import ReviewsSection from '@/components/ReviewsSection';
-import Footer from '@/components/Footer';
 import Logo from '@/components/Logo';
 import { Item, Category } from '@/lib/types';
 import { prisma } from '@/lib/prisma';
@@ -357,9 +356,6 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         {/* Reviews Section */}
         <ReviewsSection />
       </div>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 }
