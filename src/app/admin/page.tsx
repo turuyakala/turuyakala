@@ -3,8 +3,13 @@ import { requireAdmin } from '@/lib/middleware/admin';
 import Link from 'next/link';
 
 export default async function AdminPage() {
-  // Admin kontrolü
-  await requireAdmin();
+  // Admin kontrolü (layout'ta zaten yapılıyor ama ekstra güvenlik için)
+  try {
+    await requireAdmin();
+  } catch (error) {
+    console.error('Admin page error:', error);
+    throw error;
+  }
 
   // Basit istatistikler
   const [usersCount, reviewsCount, suppliersCount, pendingReviewsCount] = await Promise.all([

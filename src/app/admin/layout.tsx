@@ -7,7 +7,14 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await requireAdmin();
+  let session;
+  try {
+    session = await requireAdmin();
+  } catch (error) {
+    console.error('Admin layout error:', error);
+    // Redirect will be handled by requireAdmin
+    return null;
+  }
 
   return (
     <ToastProvider>
