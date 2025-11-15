@@ -16,7 +16,7 @@ export default async function ProfilePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#91A8D0] text-white py-6 shadow-lg">
+      <header className="bg-[#DD7230] text-white py-6 shadow-lg">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
@@ -99,10 +99,10 @@ export default async function ProfilePage() {
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4">Hesap İşlemleri</h2>
               <div className="flex gap-3">
-                <button className="px-6 py-2.5 bg-[#91A8D0] text-white font-medium rounded-lg hover:bg-[#7a90bb] transition-colors">
+                <button className="px-6 py-2.5 bg-[#DD7230] text-white font-medium rounded-lg hover:bg-[#DD7230]/90 transition-colors shadow-md">
                   Şifre Değiştir
                 </button>
-                <button className="px-6 py-2.5 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors">
+                <button className="px-6 py-2.5 bg-[#DD7230]/10 text-[#DD7230] font-medium rounded-lg hover:bg-[#DD7230]/20 transition-colors border border-[#DD7230]/30">
                   Bilgilerimi Güncelle
                 </button>
               </div>
