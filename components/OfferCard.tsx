@@ -24,6 +24,7 @@ export default function OfferCard({ item }: OfferCardProps) {
   const [isAnimating, setIsAnimating] = useState(false);
   const [currentSeatsLeft, setCurrentSeatsLeft] = useState(toNum(item?.seatsLeft, 0));
   const [previousSeatsLeft, setPreviousSeatsLeft] = useState(toNum(item?.seatsLeft, 0));
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   // Güvenli değer okuma
   const departureDate = new Date(item?.startAt || Date.now());
@@ -31,6 +32,31 @@ export default function OfferCard({ item }: OfferCardProps) {
   const isSurprise = item?.isSurprise === true;
   const isCritical = toNum(timeInfo?.totalHours, 0) <= 3;
   const categoryColor = categoryColors[item?.category] || categoryColors.tour;
+
+  // Gerçek zamanlı sayaç için her saniye güncelle
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Kalan süreyi hesapla (saat:dakika:saniye)
+  const getTimeRemaining = () => {
+    const now = currentTime.getTime();
+    const departure = departureDate.getTime();
+    const diff = Math.max(0, departure - now);
+
+    const totalSeconds = Math.floor(diff / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return { hours, minutes, seconds, totalSeconds };
+  };
+
+  const timeRemaining = getTimeRemaining();
 
   // Koltuk sayısını düzenli olarak kontrol et (her 5 saniyede bir)
   useEffect(() => {
@@ -132,31 +158,22 @@ export default function OfferCard({ item }: OfferCardProps) {
         )}
 
         {/* Sağ üst: Geri sayım ibaresi */}
-        {timeInfo && (
+        {timeRemaining.totalSeconds > 0 && (
           <div className="absolute top-3 right-3 z-10">
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-lg shadow-lg ${
+            <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md shadow-lg ${
               isSurprise 
                 ? 'bg-[#F4C95D] text-white' 
                 : 'bg-[#DD7230] text-white'
             } ${isCritical ? 'animate-pulse' : ''}`}>
               {/* Kum Saati İkonu */}
-              <div className="hourglass-icon text-xl">
+              <div className="hourglass-icon text-sm">
                 ⏳
               </div>
-              {/* Sayaç */}
-              <div className="flex flex-col items-center leading-tight min-w-[50px]">
-                <div className="text-[9px] opacity-90 font-semibold uppercase tracking-wide">KALKIŞA</div>
-                {toNum(timeInfo?.totalHours, 0) < 24 ? (
-                  <>
-                    <div className="text-xl font-bold font-mono tabular-nums">{timeInfo.hours}</div>
-                    <div className="text-[9px] font-semibold uppercase">SAAT</div>
-                  </>
-                ) : (
-                  <>
-                    <div className="text-xl font-bold font-mono tabular-nums">{timeInfo.days}</div>
-                    <div className="text-[9px] font-semibold uppercase">GÜN</div>
-                  </>
-                )}
+              {/* Sayaç - Enine dikdörtgen */}
+              <div className="flex items-center gap-1 font-mono tabular-nums text-xs font-bold">
+                {String(timeRemaining.hours).padStart(2, '0')}:
+                {String(timeRemaining.minutes).padStart(2, '0')}:
+                {String(timeRemaining.seconds).padStart(2, '0')}
               </div>
             </div>
           </div>
