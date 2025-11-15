@@ -385,7 +385,7 @@ model Review {
   
   // User & Order
   userId      String
-  orderId     String?
+  orderId     String?  // Optional for sample reviews
   
   // Review Content
   rating      Int      // 1-5 stars
@@ -405,7 +405,7 @@ model Review {
   updatedAt   DateTime @updatedAt
   
   // Indexes
-  @@unique([userId, orderId])
+  @@unique([userId, orderId], name: "userId_orderId_unique")
   @@index([isPublished])
   @@index([rating])
   @@index([createdAt])

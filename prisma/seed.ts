@@ -533,79 +533,65 @@ async function main() {
     },
   });
 
-  // Create sample reviews directly (without orders for now)
-  const review1 = await prisma.review.create({
-    data: {
+  // Create sample reviews - delete existing first, then create new ones
+  await prisma.review.deleteMany({});
+  
+  const reviews = [
+    {
       userId: user.id,
-      orderId: null, // No order ID for sample reviews
+      orderId: 'seed-order-1',
       rating: 5,
       comment: 'Muhteşem bir deneyimdi! Sürpriz destinasyon Kapadokya çıktı ve balon turu unutulmazdı. Rehberimiz çok bilgiliydi.',
       tourName: 'Kapadokya Balon Turu - Sürpriz Paket',
       isApproved: true,
       isPublished: true,
     },
-  });
-
-  const review2 = await prisma.review.create({
-    data: {
+    {
       userId: user2.id,
-      orderId: null,
+      orderId: 'seed-order-2',
       rating: 4,
       comment: 'Efes Antik Kenti gerçekten büyüleyici. Rehberimiz çok bilgiliydi ve tarihi çok güzel anlattı.',
       tourName: 'Efes Antik Kenti ve Meryem Ana Evi Turu',
       isApproved: true,
       isPublished: true,
     },
-  });
-
-  const review3 = await prisma.review.create({
-    data: {
+    {
       userId: user3.id,
-      orderId: null,
+      orderId: 'seed-order-3',
       rating: 5,
       comment: 'Çanakkale\'de tarihi yerleri gezmek çok duygusal bir deneyimdi. Rehberimiz çok detaylı anlattı.',
       tourName: 'Çanakkale Şehitlikleri ve Truva Atı Turu',
       isApproved: true,
       isPublished: true,
     },
-  });
-
-  const review4 = await prisma.review.create({
-    data: {
+    {
       userId: user4.id,
-      orderId: null,
+      orderId: 'seed-order-4',
       rating: 5,
       comment: 'Efes Antik Kenti gerçekten etkileyici. Rehberimiz tarihi çok güzel anlattı. Meryem Ana Evi de çok huzurluydu.',
       tourName: 'Efes Antik Kenti ve Meryem Ana Evi Turu',
       isApproved: true,
       isPublished: true,
     },
-  });
-
-  const review5 = await prisma.review.create({
-    data: {
+    {
       userId: user5.id,
-      orderId: null,
+      orderId: 'seed-order-5',
       rating: 4,
       comment: 'Bursa\'nın tarihi yerlerini gördük. İskender kebabı harikaydı! Otobüs konforluydu.',
       tourName: 'İstanbul - Bursa Günübirlik Tur',
       isApproved: true,
       isPublished: true,
     },
-  });
+  ];
 
-  // Test review - pending approval
-  const testReview = await prisma.review.create({
-    data: {
-      userId: user.id,
-      orderId: null,
-      rating: 3,
-      comment: 'Tur güzeldi ama rehber biraz hızlı konuşuyordu. Genel olarak memnun kaldım.',
-      tourName: 'Efes Antik Kenti ve Meryem Ana Evi Turu',
-      isApproved: false, // Pending approval
-      isPublished: false,
-    },
-  });
+  for (const reviewData of reviews) {
+    try {
+      await prisma.review.create({ data: reviewData });
+    } catch (error) {
+      // Skip if already exists
+      console.log(`Review already exists, skipping: ${reviewData.tourName}`);
+    }
+  }
 
   console.log('✅ Created 6 sample reviews (TUR ONLY):');
   console.log('   ⭐ Kapadokya Sürpriz Tur: 5/5 yıldız (Yayında)');
