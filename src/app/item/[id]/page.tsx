@@ -21,23 +21,28 @@ type PageProps = {
 };
 
 export default async function ItemDetailPage({ params }: PageProps) {
-  const { id } = await params;
-  
-  // Fetch the tour from database (using Offer table)
-  const tourData = await prisma.offer.findUnique({
-    where: { id },
-    include: {
-      supplier: {
-        select: {
-          name: true,
+  try {
+    const { id } = await params;
+    
+    if (!id) {
+      notFound();
+    }
+    
+    // Fetch the tour from database (using Offer table)
+    const tourData = await prisma.offer.findUnique({
+      where: { id },
+      include: {
+        supplier: {
+          select: {
+            name: true,
+          },
         },
       },
-    },
-  });
+    });
 
-  if (!tourData) {
-    notFound();
-  }
+    if (!tourData) {
+      notFound();
+    }
 
   // Convert to Item format
   const item: Item = {
