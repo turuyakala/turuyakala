@@ -99,12 +99,18 @@ export default async function ProfilePage() {
             <div>
               <h2 className="text-xl font-bold text-gray-900 mb-4">Hesap İşlemleri</h2>
               <div className="flex gap-3">
-                <button className="px-6 py-2.5 bg-[#DD7230] text-white font-medium rounded-lg hover:bg-[#DD7230]/90 transition-colors shadow-md">
+                <Link
+                  href="/profile/change-password"
+                  className="px-6 py-2.5 bg-[#DD7230] text-white font-medium rounded-lg hover:bg-[#DD7230]/90 transition-colors shadow-md inline-block text-center"
+                >
                   Şifre Değiştir
-                </button>
-                <button className="px-6 py-2.5 bg-[#DD7230]/10 text-[#DD7230] font-medium rounded-lg hover:bg-[#DD7230]/20 transition-colors border border-[#DD7230]/30">
+                </Link>
+                <Link
+                  href="/profile/update"
+                  className="px-6 py-2.5 bg-[#DD7230]/10 text-[#DD7230] font-medium rounded-lg hover:bg-[#DD7230]/20 transition-colors border border-[#DD7230]/30 inline-block text-center"
+                >
                   Bilgilerimi Güncelle
-                </button>
+                </Link>
               </div>
             </div>
           </div>
