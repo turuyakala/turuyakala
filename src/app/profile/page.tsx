@@ -1,5 +1,6 @@
 import { requireAuth } from '@/lib/middleware/admin';
 import Link from 'next/link';
+import Footer from '@/components/Footer';
 
 type UserRole = 'admin' | 'seller' | 'user';
 
@@ -20,7 +21,7 @@ export default async function ProfilePage() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold font-montserrat">👤 Profilim</h1>
+              <h1 className="text-3xl font-bold font-montserrat">Profilim</h1>
               <p className="text-white/80 mt-1">Hesap bilgileriniz ve ayarlarınız</p>
             </div>
             <Link
@@ -133,6 +134,9 @@ export default async function ProfilePage() {
           </div>
         )}
       </main>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
