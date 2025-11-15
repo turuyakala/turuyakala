@@ -82,7 +82,7 @@ export default function ReservationBox({ price, currency, seatsLeft, contact }: 
       {/* Rezervasyon Butonu */}
       <button
         onClick={handleReservation}
-        className="w-full bg-[#E7E393] hover:bg-[#E7E393]/90 text-white font-bold text-lg py-4 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg"
+        className="w-full bg-[#DD7230] hover:bg-[#DD7230]/90 text-white font-bold text-lg py-4 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg"
       >
         🎫 Hemen Rezervasyon Yap
       </button>
