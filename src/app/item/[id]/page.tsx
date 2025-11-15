@@ -246,8 +246,8 @@ export default async function ItemDetailPage({ params }: PageProps) {
             {/* Sağ Kolon - Fiyat ve Rezervasyon */}
             <div className="lg:col-span-1">
               <div className="sticky top-24 space-y-4">
-                {/* Fiyat Kutusu - Non-photo Blue */}
-                <div className="bg-gradient-to-br from-[#a4dded] to-[#8cc5d8] rounded-xl shadow-lg p-6 text-white">
+                {/* Fiyat Kutusu - #DD7230 */}
+                <div className="bg-gradient-to-br from-[#DD7230] to-[#c45f1f] rounded-xl shadow-lg p-6 text-white">
                   <div className="text-sm opacity-90 mb-2">Kişi Başı Fiyat</div>
                   <div className="text-5xl font-bold mb-1">
                     {formatPrice(item.price * 100, item.currency)}
