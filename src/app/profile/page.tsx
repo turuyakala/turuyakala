@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -51,18 +51,7 @@ export default function ProfilePage() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/auth/login');
-      return;
-    }
-
-    if (status === 'authenticated') {
-      fetchOrders();
-    }
-  }, [status, router]);
-
-  const fetchOrders = async () => {
+  const fetchOrders = useCallback(async () => {
     try {
       const response = await fetch('/api/profile/orders');
       if (response.ok) {
@@ -74,7 +63,18 @@ export default function ProfilePage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (status === 'unauthenticated') {
+      router.push('/auth/login');
+      return;
+    }
+
+    if (status === 'authenticated') {
+      fetchOrders();
+    }
+  }, [status, router, fetchOrders]);
 
   const handleReviewClick = (order: Order) => {
     // Check if already reviewed
