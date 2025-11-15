@@ -216,7 +216,7 @@ async function main() {
       seatsLeft: 5,
       priceMinor: 35000, // 350 TRY
       currency: 'TRY',
-      image: '/images/hero-4.jpg',
+      image: '/images/hero-1.jpg',
       terms: 'Kalkıştan 6 saat önce iptal edilirse %50 iade.',
       transport: '2+1 VIP Koltuk',
       rawJson: JSON.stringify({ company: 'Metro Turizm', bus_type: 'VIP' }),
@@ -245,7 +245,7 @@ async function main() {
       seatsLeft: 4,
       priceMinor: 1000000, // 10000 TRY
       currency: 'TRY',
-      image: '/images/hero-1.jpg',
+      image: '/images/hero-2.jpg',
       terms: '1 gece 2 gün - Otel ve ulaşım dahil.',
       transport: 'Otobüs ile',
       isSurprise: true,
@@ -276,7 +276,7 @@ async function main() {
       seatsLeft: 2,
       priceMinor: 65000, // 650 TRY
       currency: 'TRY',
-      image: '/images/hero-2.jpg',
+      image: '/images/hero-3.jpg',
       terms: 'Son 2 koltuk! İade ve değişiklik yapılamaz.',
       rawJson: JSON.stringify({ flight_number: 'PC789', duration: '45min' }),
       status: 'active',
@@ -304,7 +304,7 @@ async function main() {
       seatsLeft: 15,
       priceMinor: 1000000, // 10000 TRY
       currency: 'TRY',
-      image: '/images/hero-3.jpg',
+      image: '/images/hero-4.jpg',
       terms: '3 gece 4 gün - Otel ve kahvaltı dahil.',
       transport: 'Uçak + Transfer',
       isSurprise: false,
@@ -335,7 +335,7 @@ async function main() {
       seatsLeft: 8,
       priceMinor: 1000000, // 10000 TRY
       currency: 'TRY',
-      image: '/images/hero-4.jpg',
+      image: '/images/hero-1.jpg',
       terms: '4 gece 5 gün - Otel ve yarım pansiyon dahil.',
       transport: 'Uçak + Transfer',
       isSurprise: false,
@@ -366,7 +366,7 @@ async function main() {
       seatsLeft: 6,
       priceMinor: 85000, // 850 TRY
       currency: 'TRY',
-      image: '/images/hero-1.jpg',
+      image: '/images/hero-2.jpg',
       terms: 'Transfer dahil - İade yapılamaz.',
       transport: 'Uçak + Transfer',
       isSurprise: false,
@@ -397,7 +397,7 @@ async function main() {
       seatsLeft: 12,
       priceMinor: 1000000, // 10000 TRY
       currency: 'TRY',
-      image: '/images/hero-2.jpg',
+      image: '/images/hero-3.jpg',
       terms: '3 gece 4 gün - 5 yıldızlı otel ve kahvaltı dahil.',
       transport: 'Uçak + Lüks Transfer',
       isSurprise: false,
@@ -429,7 +429,7 @@ async function main() {
       seatsLeft: 3,
       priceMinor: 45000, // 450 TRY
       currency: 'TRY',
-      image: '/images/hero-3.jpg',
+      image: '/images/hero-4.jpg',
       terms: 'Günübirlik - Plaj girişi dahil.',
       transport: 'Klimalı Minibüs',
       isSurprise: false,
