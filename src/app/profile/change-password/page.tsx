@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { z } from 'zod';
+import Navigation from '@/components/Navigation';
 
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1, 'Mevcut şifrenizi girin'),
@@ -95,23 +96,8 @@ export default function ChangePasswordPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-[#DD7230] text-white py-6 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold font-montserrat">🔐 Şifre Değiştir</h1>
-              <p className="text-white/80 mt-1">Hesap güvenliğiniz için şifrenizi güncelleyin</p>
-            </div>
-            <Link
-              href="/profile"
-              className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-            >
-              ← Profilime Dön
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-2xl">

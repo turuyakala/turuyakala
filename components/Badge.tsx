@@ -5,10 +5,10 @@ type BadgeProps = {
 
 export default function Badge({ variant, children }: BadgeProps) {
   const variants = {
-    urgent: 'bg-red-600 text-white',
-    'last-seats': 'bg-orange-600 text-white',
-    discount: 'bg-green-600 text-white',
-    default: 'bg-gray-600 text-white',
+    urgent: 'bg-[#E63946] text-white',
+    'last-seats': 'bg-[#E63946] text-white',
+    discount: 'bg-[#1A2A5A] text-white',
+    default: 'bg-[#DAE4F2] text-[#1A2A5A]',
   };
 
   return (

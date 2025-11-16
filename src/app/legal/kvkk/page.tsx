@@ -5,7 +5,7 @@ export default function KVKKPage() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-6 shadow-lg">
         <div className="container mx-auto px-4">
-          <Link href="/" className="inline-flex items-center text-[#E7E393] hover:text-[#E7E393]/80 mb-3">
+          <Link href="/" className="inline-flex items-center text-secondary hover:text-secondary/80 mb-3">
             ← Ana Sayfaya Dön
           </Link>
           <h1 className="text-3xl font-bold">KVKK Aydınlatma Metni</h1>
@@ -14,9 +14,9 @@ export default function KVKKPage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="bg-white rounded-lg shadow-md p-8 max-w-4xl mx-auto">
-          <h2 className="text-2xl font-semibold mb-4">Kişisel Verilerin Korunması</h2>
+          <h2 className="text-2xl font-semibold mb-4 text-primary">Kişisel Verilerin Korunması</h2>
           
-          <div className="space-y-4 text-gray-700">
+          <div className="space-y-4 text-primary">
             <p>
               6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, LastMinuteTour 
               olarak kişisel verilerinizin güvenliği konusunda azami hassasiyeti göstermekteyiz.

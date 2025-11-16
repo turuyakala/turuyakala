@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const path = require('path');
+
 const nextConfig = {
   reactStrictMode: true,
   // Remove 'standalone' output for Vercel compatibility
@@ -6,6 +8,8 @@ const nextConfig = {
   // output: 'standalone',
   // Production optimizations (compress is default in Next.js 15)
   compress: true,
+  // Silence the lockfile warning by setting outputFileTracingRoot
+  outputFileTracingRoot: path.join(__dirname),
   // ESLint configuration for production builds
   // Note: ESLint warnings are set to 'warn' level in eslint.config.mjs
   // but Next.js may still treat some warnings as errors during builds

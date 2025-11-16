@@ -26,7 +26,7 @@ export default function SimilarTours({ tours }: SimilarToursProps) {
             <Link
               key={tour.id}
               href={`/item/${tour.id}`}
-              className="group bg-white border-2 border-gray-200 rounded-lg overflow-hidden hover:border-[#91A8D0] hover:shadow-lg transition-all"
+              className="group bg-white border-2 border-gray-200 rounded-lg overflow-hidden hover:border-[#1A2A5A] hover:shadow-lg transition-all"
             >
               {/* Fotoğraf */}
               <div className="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200">
@@ -46,7 +46,7 @@ export default function SimilarTours({ tours }: SimilarToursProps) {
                 
                 {/* Kalan Süre Badge */}
                 {timeInfo.totalHours <= 24 && (
-                  <div className="absolute top-2 right-2 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                  <div className="absolute top-2 right-2 bg-[#E63946] text-white px-3 py-1 rounded-full text-xs font-bold">
                     🔥 {timeInfo.totalHours}h
                   </div>
                 )}
@@ -54,7 +54,7 @@ export default function SimilarTours({ tours }: SimilarToursProps) {
 
               {/* İçerik */}
               <div className="p-4">
-                <h4 className="font-bold text-gray-900 line-clamp-2 mb-2 group-hover:text-[#91A8D0] transition-colors">
+                <h4 className="font-bold text-gray-900 line-clamp-2 mb-2 group-hover:text-[#1A2A5A] transition-colors">
                   {tour.title}
                 </h4>
                 <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
@@ -63,12 +63,12 @@ export default function SimilarTours({ tours }: SimilarToursProps) {
                   <span>{tour.to}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="text-2xl font-bold text-[#91A8D0]">
+                  <div className="text-2xl font-bold text-[#1A2A5A]">
                     {tour.price.toLocaleString('tr-TR')}
                     <span className="text-sm ml-1">{tour.currency === 'TRY' ? '₺' : tour.currency}</span>
                   </div>
                   {tour.seatsLeft <= 3 && (
-                    <div className="bg-red-100 text-red-600 px-2 py-1 rounded text-xs font-bold">
+                    <div className="bg-[#E63946] text-white px-2 py-1 rounded text-xs font-bold">
                       {tour.seatsLeft} koltuk
                     </div>
                   )}

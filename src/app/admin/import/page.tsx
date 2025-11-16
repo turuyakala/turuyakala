@@ -228,7 +228,7 @@ export default function ImportWizardPage() {
             />
             <label
               htmlFor="csv-upload"
-              className="inline-block px-6 py-3 bg-[#E7E393] text-white rounded-lg hover:bg-[#E7E393]/90 cursor-pointer transition-colors"
+              className="inline-block px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 cursor-pointer transition-colors"
             >
               Dosya Seç
             </label>
@@ -336,7 +336,7 @@ export default function ImportWizardPage() {
             </button>
             <button
               onClick={handleValidate}
-              className="flex-1 px-6 py-3 bg-[#E7E393] text-white rounded-lg hover:bg-[#E7E393]/90 transition-colors font-semibold"
+              className="flex-1 px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors font-semibold"
             >
               Devam Et →
             </button>
@@ -391,7 +391,7 @@ export default function ImportWizardPage() {
             <button
               onClick={handleImport}
               disabled={isImporting}
-              className="flex-1 px-6 py-3 bg-[#E7E393] text-white rounded-lg hover:bg-[#E7E393]/90 transition-colors font-semibold disabled:opacity-50"
+              className="flex-1 px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors font-semibold disabled:opacity-50"
             >
               {isImporting ? '⏳ İçe Aktarılıyor...' : '✓ İçe Aktar'}
             </button>
@@ -440,7 +440,7 @@ export default function ImportWizardPage() {
           <div className="flex gap-4">
             <Link
               href="/admin/offers"
-              className="flex-1 px-6 py-3 bg-[#E7E393] text-white rounded-lg hover:bg-[#E7E393]/90 transition-colors font-semibold text-center"
+              className="flex-1 px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors font-semibold text-center"
             >
               Envantere Git →
             </Link>

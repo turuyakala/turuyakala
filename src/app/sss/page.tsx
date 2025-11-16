@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Navigation from '@/components/Navigation';
 
 export default function SSSPage() {
   const faqs = [
@@ -54,35 +55,21 @@ export default function SSSPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-[#E7E393] shadow-sm sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-white hover:text-white/80 font-semibold transition-colors"
-            >
-              ← Ana Sayfaya Dön
-            </Link>
-            <h1 className="text-xl font-bold font-montserrat text-white hidden md:block">
-              TuruYakala
-            </h1>
-          </div>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-6">Sıkça Sorulan Sorular</h1>
+          <h1 className="text-4xl font-bold text-primary mb-6">Sıkça Sorulan Sorular</h1>
           
           <div className="space-y-6">
             {faqs.map((faq, index) => (
               <div key={index} className="border-b border-gray-200 pb-6 last:border-b-0">
-                <h2 className="text-xl font-semibold text-[#E7E393] mb-3">
+                <h2 className="text-xl font-semibold text-secondary mb-3">
                   {faq.question}
                 </h2>
-                <p className="text-gray-700 leading-relaxed">
+                <p className="text-primary leading-relaxed">
                   {faq.answer}
                 </p>
               </div>
@@ -90,15 +77,15 @@ export default function SSSPage() {
           </div>
 
           <div className="mt-8 p-6 bg-gray-50 rounded-lg">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-primary mb-2">
               Sorunuzun cevabını bulamadınız mı?
             </h3>
-            <p className="text-gray-700 mb-4">
+            <p className="text-primary mb-4">
               İletişim sayfamızdan bize ulaşın, size yardımcı olmaktan mutluluk duyarız.
             </p>
             <Link
               href="/iletisim"
-              className="inline-block px-6 py-2 bg-[#E7E393] text-white rounded-lg hover:bg-[#E7E393]/90 transition-colors"
+              className="inline-block px-6 py-2 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors"
             >
               İletişime Geç
             </Link>

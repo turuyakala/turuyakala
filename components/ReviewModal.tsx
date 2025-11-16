@@ -95,7 +95,7 @@ export default function ReviewModal({ isOpen, onClose, orderId, tourName, onSucc
             {/* Rating */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                Puanınız <span className="text-red-500">*</span>
+                Puanınız <span className="text-secondary">*</span>
               </label>
               <div className="flex gap-2">
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -107,7 +107,7 @@ export default function ReviewModal({ isOpen, onClose, orderId, tourName, onSucc
                     onMouseLeave={() => setHoverRating(0)}
                     className={`text-4xl transition-transform hover:scale-110 ${
                       star <= (hoverRating || rating)
-                        ? 'text-yellow-400'
+                        ? 'text-primary'
                         : 'text-gray-300'
                     }`}
                     disabled={isSubmitting}
@@ -130,14 +130,14 @@ export default function ReviewModal({ isOpen, onClose, orderId, tourName, onSucc
             {/* Comment */}
             <div>
               <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-2">
-                Yorumunuz <span className="text-red-500">*</span>
+                Yorumunuz <span className="text-secondary">*</span>
               </label>
               <textarea
                 id="comment"
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 rows={6}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DD7230] focus:border-[#DD7230] resize-none"
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary resize-none"
                 placeholder="Tur deneyiminizi paylaşın... (En az 10 karakter)"
                 disabled={isSubmitting}
                 required
@@ -149,8 +149,8 @@ export default function ReviewModal({ isOpen, onClose, orderId, tourName, onSucc
 
             {/* Error */}
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-sm text-red-800">{error}</p>
+              <div className="bg-secondary/10 border border-secondary/30 rounded-lg p-3">
+                <p className="text-sm text-secondary">{error}</p>
               </div>
             )}
 
@@ -166,7 +166,7 @@ export default function ReviewModal({ isOpen, onClose, orderId, tourName, onSucc
               </button>
               <button
                 type="submit"
-                className="flex-1 px-4 py-2.5 bg-[#DD7230] text-white rounded-lg hover:bg-[#DD7230]/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-2.5 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={isSubmitting || rating === 0 || comment.length < 10}
               >
                 {isSubmitting ? 'Gönderiliyor...' : 'Yorumu Gönder'}

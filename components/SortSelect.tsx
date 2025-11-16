@@ -23,7 +23,7 @@ export default function SortSelect() {
         id="sort-select"
         value={currentSort}
         onChange={(e) => handleSortChange(e.target.value)}
-        className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#91A8D0] min-w-[280px]"
+        className="px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-[#1A2A5A] min-w-[280px]"
         aria-label="Sıralama seçeneği"
       >
         {sortOptions.map((option) => (

@@ -6,6 +6,9 @@ import { z } from 'zod';
 const updateProfileSchema = z.object({
   name: z.string().min(2, 'Ad soyad en az 2 karakter olmalıdır'),
   email: z.string().email('Geçerli bir e-posta adresi girin'),
+  phone: z.string().optional().or(z.literal('')),
+  passportNumber: z.string().optional().or(z.literal('')),
+  passportExpiry: z.string().optional().or(z.literal('')),
 });
 
 export async function POST(request: NextRequest) {
@@ -31,7 +34,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { name, email } = validation.data;
+    const { name, email, phone, passportNumber, passportExpiry } = validation.data;
 
     // Get current user
     const currentUser = await prisma.user.findUnique({
@@ -65,6 +68,9 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         email,
+        phone: phone || null,
+        passportNumber: passportNumber || null,
+        passportExpiry: passportExpiry ? new Date(passportExpiry) : null,
       },
     });
 

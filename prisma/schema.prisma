@@ -17,6 +17,11 @@ model User {
   image         String?
   role          String    @default("user") // user, seller, admin
   
+  // Profile info
+  phone         String?   // Telefon numarası
+  passportNumber String?  // Pasaport numarası
+  passportExpiry DateTime? // Pasaport geçerlilik tarihi
+  
   accounts      Account[]
   sessions      Session[]
   orders        Order[]
@@ -108,9 +113,30 @@ model InventoryItem {
   
   // Additional Info
   image             String?
+  images            String?                        // JSON array: ["/images/tour-1.jpg", "/images/tour-2.jpg", ...]
   terms             String?
   contact           String?                        // JSON: {phone, whatsapp}
   transport         String?                        // Ulaşım şekli
+  
+  // Detailed Tour Info (for tour detail page)
+  description       String?                        // Detaylı açıklama
+  program           String?                        // JSON array: ["Gün 1: ...", "Gün 2: ..."]
+  included          String?                        // JSON array: ["Kahvaltı", "Öğle yemeği", ...]
+  excluded          String?                        // JSON array: ["İçecekler", "Ekstra aktiviteler", ...]
+  importantInfo     String?                        // JSON array: ["Pasaport gerekli", "Vize gerekli", ...]
+  departureLocation String?                        // JSON: {address: string, lat: number, lng: number}
+  
+  // Additional Tour Details
+  checkInTime       String?                        // Giriş zamanı (örn: "14:00")
+  checkOutTime      String?                        // Çıkış zamanı (örn: "11:00")
+  roomRules         String?                        // Oda kuralları (JSON array veya text)
+  petFriendly       Boolean       @default(false)  // Hayvan girebilir mi?
+  languages         String?                        // JSON array: ["Türkçe", "İngilizce", ...]
+  paymentMethods    String?                        // JSON array: ["Nakit", "Kredi Kartı", ...]
+  
+  // Flight & Hotel Details
+  flightInfo        String?                        // JSON: {airline, flightNumber, departureAirport, arrivalAirport, departureTime, arrivalTime, ...}
+  hotelInfo         String?                        // JSON: {name, stars, location, address, amenities, extraInfoUrl, ...}
   
   // Flags
   isSurprise        Boolean       @default(false)  // Sürpriz tur mu?

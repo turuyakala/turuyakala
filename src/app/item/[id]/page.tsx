@@ -174,133 +174,121 @@ export default async function ItemDetailPage({ params }: PageProps) {
     createdAt: tour.createdAt.toISOString(),
   }));
 
-    return (
-      <div className="min-h-screen bg-gray-50">
-        {/* Header */}
-        <header className="bg-[#E7E393] shadow-sm sticky top-0 z-40">
-          <div className="container mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <Link
-                href="/"
-                className="flex items-center gap-2 text-gray-900 hover:text-gray-700 font-semibold transition-colors"
-              >
-                ← Ana Sayfaya Dön
-              </Link>
-              <h1 className="text-xl font-bold font-montserrat text-gray-900 hidden md:block">
-                TuruYakala
-              </h1>
-            </div>
-          </div>
-        </header>
+          return (
+            <div className="min-h-screen bg-gray-50">
+              {/* Navigation */}
+              <Navigation />
 
-        {/* Main Content */}
-        <main className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Sol Kolon - Ana İçerik */}
-            <div className="lg:col-span-2 space-y-6">
-              {/* Başlık */}
-              <div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                  {item.title}
-                </h1>
-                <div className="flex flex-wrap items-center gap-4 text-gray-600">
-                  <div className="flex items-center gap-2">
-                    <img src="/images/icons/location.svg" alt="Konum" className="w-5 h-5 text-gray-600" />
-                    <span className="font-medium">{item.from} → {item.to}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <img src="/images/icons/calendar.svg" alt="Tarih" className="w-5 h-5 text-gray-600" />
-                    <span>{formatDate(departureDate)}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <img src="/images/icons/transport.svg" alt="Ulaşım" className="w-5 h-5 text-gray-600" />
-                    <span>{item.transport || 'Ulaşım bilgisi yok'}</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Fotoğraf Galerisi */}
-              <ImageGallery images={gallery} title={item.title} />
-
-              {/* Sosyal Medya Paylaşım */}
-              <ShareButtons title={item.title} />
-
-              {/* Sekmeler: Program, Dahil/Hariç, Önemli Bilgiler, İptal */}
-              <TourTabs
-                description={item.description}
-                program={item.program}
-                included={item.included}
-                excluded={item.excluded}
-                importantInfo={item.importantInfo}
-              />
-
-              {/* Harita */}
-              {item.departureLocation && (
-                <MapSection location={item.departureLocation} />
-              )}
-
-              {/* Benzer Turlar */}
-              <SimilarTours tours={similarToursRecommendations} />
-            </div>
-
-            {/* Sağ Kolon - Fiyat ve Rezervasyon */}
-            <div className="lg:col-span-1">
-              <div className="sticky top-24 space-y-4">
-                {/* Fiyat Kutusu - #DD7230 */}
-                <div className="bg-gradient-to-br from-[#DD7230] to-[#c45f1f] rounded-xl shadow-lg p-6 text-white">
-                  <div className="text-sm opacity-90 mb-2">Kişi Başı Fiyat</div>
-                  <div className="text-5xl font-bold mb-1">
-                    {formatPrice(item.price * 100, item.currency)}
-                  </div>
-                  <div className="text-sm opacity-90 mt-2">
-                    ⏰ Kalkışa {Math.floor(timeInfo.totalHours)} saat kaldı
-                  </div>
-                </div>
-
-                {/* Koltuk Durumu - Fiyatın hemen altında */}
-                {item.seatsLeft <= 5 && (
-                  <div className="bg-gradient-to-br from-red-500 to-red-600 rounded-xl shadow-lg p-4 text-center text-white animate-pulse-slow">
-                    <div className="text-4xl mb-2">🔥</div>
-                    <div className="font-bold text-2xl">
-                      Son {item.seatsLeft} Koltuk!
-                    </div>
-                    <div className="text-sm mt-1 opacity-90">
-                      Hemen rezervasyon yapın
-                    </div>
-                  </div>
-                )}
-
-                {/* İptal Politikası - Vanilla */}
-                <div className="bg-gradient-to-br from-[#F3E5AB] to-[#E8D596] rounded-xl shadow-lg p-6">
-                  <div className="flex items-start gap-3">
-                    <span className="text-3xl">⚠️</span>
+              {/* Main Content */}
+              <main className="container mx-auto px-4 py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                  {/* Sol Kolon - Ana İçerik */}
+                  <div className="lg:col-span-2 space-y-6">
+                    {/* Başlık */}
                     <div>
-                      <h3 className="font-bold text-gray-900 text-lg mb-1">
-                        İptal Politikası
-                      </h3>
-                      <p className="text-gray-900 font-semibold">
-                        ❌ Bu tur kesinlikle iptal edilemez!
-                      </p>
-                      <p className="text-sm text-gray-800 mt-2">
-                        Son dakika turu olduğu için iptal ve iade kabul edilmemektedir.
-                      </p>
+                      <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
+                        {item.title}
+                      </h1>
+                      <div className="flex flex-wrap items-center gap-4 text-gray-600">
+                        <div className="flex items-center gap-2">
+                          <img src="/images/icons/location.svg" alt="Konum" className="w-5 h-5 text-gray-600" />
+                          <span className="font-medium">{item.from} → {item.to}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img src="/images/icons/calendar.svg" alt="Tarih" className="w-5 h-5 text-gray-600" />
+                          <span>{formatDate(departureDate)}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <img src="/images/icons/transport.svg" alt="Ulaşım" className="w-5 h-5 text-gray-600" />
+                          <span>{item.transport || 'Ulaşım bilgisi yok'}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Fotoğraf Galerisi */}
+                    <ImageGallery images={gallery} title={item.title} />
+
+                    {/* Sosyal Medya Paylaşım */}
+                    <ShareButtons title={item.title} />
+
+                    {/* Sekmeler: Program, Dahil/Hariç, Önemli Bilgiler, İptal */}
+                    <TourTabs
+                      description={item.description}
+                      program={item.program}
+                      included={item.included}
+                      excluded={item.excluded}
+                      importantInfo={item.importantInfo}
+                    />
+
+                    {/* Harita */}
+                    {item.departureLocation && (
+                      <MapSection location={item.departureLocation} />
+                    )}
+
+                    {/* Benzer Turlar */}
+                    <SimilarTours tours={similarToursRecommendations} />
+                  </div>
+
+                  {/* Sağ Kolon - Fiyat ve Rezervasyon */}
+                  <div className="lg:col-span-1">
+                    <div className="sticky top-24 space-y-4">
+                      {/* Fiyat Kutusu */}
+                      <div className="bg-gradient-to-br from-[#1A2A5A] to-[#1A2A5A]/90 rounded-xl shadow-lg p-6 text-white">
+                        <div className="text-sm opacity-90 mb-2">Kişi Başı Fiyat</div>
+                        <div className="text-5xl font-bold mb-1">
+                          {formatPrice(item.price * 100, item.currency)}
+                        </div>
+                        <div className="text-sm opacity-90 mt-2">
+                          ⏰ Kalkışa {Math.floor(timeInfo.totalHours)} saat kaldı
+                        </div>
+                      </div>
+
+                      {/* Koltuk Durumu - Fiyatın hemen altında */}
+                      {item.seatsLeft <= 5 && (
+                        <div className="bg-gradient-to-br from-[#E63946] to-[#E63946]/90 rounded-xl shadow-lg p-4 text-center text-white animate-pulse-slow">
+                          <div className="text-4xl mb-2">🔥</div>
+                          <div className="font-bold text-2xl">
+                            Son {item.seatsLeft} Koltuk!
+                          </div>
+                          <div className="text-sm mt-1 opacity-90">
+                            Hemen rezervasyon yapın
+                          </div>
+                        </div>
+                      )}
+
+                      {/* İptal Politikası - Vanilla */}
+                      <div className="bg-gradient-to-br from-[#F3E5AB] to-[#E8D596] rounded-xl shadow-lg p-6">
+                        <div className="flex items-start gap-3">
+                          <span className="text-3xl">⚠️</span>
+                          <div>
+                            <h3 className="font-bold text-gray-900 text-lg mb-1">
+                              İptal Politikası
+                            </h3>
+                            <p className="text-gray-900 font-semibold">
+                              ❌ Bu tur kesinlikle iptal edilemez!
+                            </p>
+                            <p className="text-sm text-gray-800 mt-2">
+                              Son dakika turu olduğu için iptal ve iade kabul edilmemektedir.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Rezervasyon Kutusu */}
+                      <ReservationBox
+                        tourId={item.id}
+                        price={item.price}
+                        currency={item.currency}
+                        seatsLeft={item.seatsLeft}
+                        requiresPassport={item.requiresPassport}
+                        contact={item.contact}
+                      />
                     </div>
                   </div>
                 </div>
-
-                {/* Rezervasyon Kutusu */}
-                <ReservationBox
-                  price={item.price}
-                  currency={item.currency}
-                  seatsLeft={item.seatsLeft}
-                  contact={item.contact}
-                />
-              </div>
+              </main>
             </div>
-          </div>
-        </main>
-      </div>
-    );
+          );
   } catch (error) {
     console.error('Error loading tour detail:', error);
     notFound();

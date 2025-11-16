@@ -5,10 +5,14 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { z } from 'zod';
+import Navigation from '@/components/Navigation';
 
 const updateProfileSchema = z.object({
   name: z.string().min(2, 'Ad soyad en az 2 karakter olmalıdır'),
   email: z.string().email('Geçerli bir e-posta adresi girin'),
+  phone: z.string().optional(),
+  passportNumber: z.string().optional(),
+  passportExpiry: z.string().optional(),
 });
 
 type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
@@ -19,7 +23,11 @@ export default function UpdateProfilePage() {
   const [formData, setFormData] = useState<UpdateProfileInput>({
     name: '',
     email: '',
+    phone: '',
+    passportNumber: '',
+    passportExpiry: '',
   });
+  const [userProfile, setUserProfile] = useState<any>(null);
   const [errors, setErrors] = useState<Partial<Record<keyof UpdateProfileInput, string>>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -27,12 +35,28 @@ export default function UpdateProfilePage() {
 
   useEffect(() => {
     if (session?.user) {
-      setFormData({
-        name: session.user.name || '',
-        email: session.user.email || '',
-      });
+      fetchUserProfile();
     }
   }, [session]);
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch('/api/profile');
+      if (response.ok) {
+        const data = await response.json();
+        setUserProfile(data.user);
+        setFormData({
+          name: data.user.name || '',
+          email: data.user.email || '',
+          phone: data.user.phone || '',
+          passportNumber: data.user.passportNumber || '',
+          passportExpiry: data.user.passportExpiry ? new Date(data.user.passportExpiry).toISOString().split('T')[0] : '',
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,23 +116,8 @@ export default function UpdateProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-[#DD7230] text-white py-6 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold font-montserrat">✏️ Bilgilerimi Güncelle</h1>
-              <p className="text-white/80 mt-1">Hesap bilgilerinizi düzenleyin</p>
-            </div>
-            <Link
-              href="/profile"
-              className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-            >
-              ← Profilime Dön
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-2xl">
@@ -139,7 +148,7 @@ export default function UpdateProfilePage() {
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.name
                     ? 'border-red-300 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-[#DD7230]'
+                    : 'border-gray-300 focus:ring-[#1A2A5A]'
                 }`}
                 placeholder="Adınız ve soyadınız"
               />
@@ -161,7 +170,7 @@ export default function UpdateProfilePage() {
                 className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 ${
                   errors.email
                     ? 'border-red-300 focus:ring-red-500'
-                    : 'border-gray-300 focus:ring-[#DD7230]'
+                    : 'border-gray-300 focus:ring-[#1A2A5A]'
                 }`}
                 placeholder="ornek@email.com"
               />
@@ -170,11 +179,64 @@ export default function UpdateProfilePage() {
               )}
             </div>
 
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                Telefon Numarası
+              </label>
+              <input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1A2A5A]"
+                placeholder="+90 555 123 4567"
+              />
+              <p className="mt-1 text-xs text-gray-500">Rezervasyon yaparken otomatik doldurulacak</p>
+            </div>
+
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 space-y-4">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">📘</span>
+                <h3 className="text-lg font-semibold text-gray-900">Pasaport Bilgileri</h3>
+              </div>
+              <p className="text-sm text-gray-600 mb-4">Yurtdışı turları için pasaport bilgilerinizi kaydedin. Rezervasyon yaparken otomatik doldurulacak.</p>
+              
+              <div>
+                <label htmlFor="passportNumber" className="block text-sm font-medium text-gray-700 mb-2">
+                  Pasaport Numarası
+                </label>
+                <input
+                  id="passportNumber"
+                  name="passportNumber"
+                  type="text"
+                  value={formData.passportNumber}
+                  onChange={(e) => setFormData({ ...formData, passportNumber: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1A2A5A]"
+                  placeholder="A12345678"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="passportExpiry" className="block text-sm font-medium text-gray-700 mb-2">
+                  Pasaport Geçerlilik Tarihi
+                </label>
+                <input
+                  id="passportExpiry"
+                  name="passportExpiry"
+                  type="date"
+                  value={formData.passportExpiry}
+                  onChange={(e) => setFormData({ ...formData, passportExpiry: e.target.value })}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#1A2A5A]"
+                />
+              </div>
+            </div>
+
             <div className="flex gap-3 pt-4">
               <button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 px-6 py-3 bg-[#DD7230] text-white font-medium rounded-lg hover:bg-[#DD7230]/90 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-6 py-3 bg-[#1A2A5A] text-white font-medium rounded-lg hover:bg-[#1A2A5A]/90 transition-colors shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isLoading ? 'Güncelleniyor...' : 'Bilgileri Güncelle'}
               </button>

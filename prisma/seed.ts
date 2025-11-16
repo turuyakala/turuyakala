@@ -536,71 +536,492 @@ async function main() {
   // Create sample reviews - delete existing first, then create new ones
   await prisma.review.deleteMany({});
   
+  // Create more users for reviews
+  const user6 = await prisma.user.upsert({
+    where: { email: 'zeynep.arslan@example.com' },
+    update: {},
+    create: {
+      email: 'zeynep.arslan@example.com',
+      name: 'Zeynep Arslan',
+      password: userPassword,
+      role: 'user',
+    },
+  });
+
+  const user7 = await prisma.user.upsert({
+    where: { email: 'ali.celik@example.com' },
+    update: {},
+    create: {
+      email: 'ali.celik@example.com',
+      name: 'Ali Çelik',
+      password: userPassword,
+      role: 'user',
+    },
+  });
+
+  const user8 = await prisma.user.upsert({
+    where: { email: 'selin.yildiz@example.com' },
+    update: {},
+    create: {
+      email: 'selin.yildiz@example.com',
+      name: 'Selin Yıldız',
+      password: userPassword,
+      role: 'user',
+    },
+  });
+
+  const user9 = await prisma.user.upsert({
+    where: { email: 'can.aydin@example.com' },
+    update: {},
+    create: {
+      email: 'can.aydin@example.com',
+      name: 'Can Aydın',
+      password: userPassword,
+      role: 'user',
+    },
+  });
+
+  const user10 = await prisma.user.upsert({
+    where: { email: 'elif.sahin@example.com' },
+    update: {},
+    create: {
+      email: 'elif.sahin@example.com',
+      name: 'Elif Şahin',
+      password: userPassword,
+      role: 'user',
+    },
+  });
+
+  // Create sample orders first (for reviews to reference)
+  const sellerProfile = await prisma.sellerProfile.findFirst({
+    where: { userId: seller.id },
+  });
+
+  if (!sellerProfile) {
+    throw new Error('Seller profile not found');
+  }
+
+  // Create inventory items for tours (needed for orders)
+  const inventoryItem1 = await prisma.inventoryItem.upsert({
+    where: { id: offer1.id },
+    update: {},
+    create: {
+      sellerId: sellerProfile.id,
+      supplierId: supplier1.id,
+      vendorOfferId: offer1.vendorOfferId,
+      category: 'tour',
+      title: offer1.title,
+      from: offer1.from,
+      to: offer1.to,
+      startAt: offer1.startAt,
+      seatsTotal: offer1.seatsTotal,
+      seatsLeft: offer1.seatsLeft,
+      priceMinor: offer1.priceMinor,
+      currency: offer1.currency,
+      image: offer1.image,
+      terms: offer1.terms,
+      transport: offer1.transport,
+      isSurprise: offer1.isSurprise,
+      requiresPassport: offer1.requiresPassport,
+      status: 'active',
+    },
+  });
+
+  const inventoryItem2 = await prisma.inventoryItem.upsert({
+    where: { id: offer7.id },
+    update: {},
+    create: {
+      sellerId: sellerProfile.id,
+      supplierId: supplier1.id,
+      vendorOfferId: offer7.vendorOfferId,
+      category: 'tour',
+      title: offer7.title,
+      from: offer7.from,
+      to: offer7.to,
+      startAt: offer7.startAt,
+      seatsTotal: offer7.seatsTotal,
+      seatsLeft: offer7.seatsLeft,
+      priceMinor: offer7.priceMinor,
+      currency: offer7.currency,
+      image: offer7.image,
+      terms: offer7.terms,
+      transport: offer7.transport,
+      isSurprise: offer7.isSurprise,
+      requiresPassport: offer7.requiresPassport,
+      status: 'active',
+    },
+  });
+
+  const inventoryItem3 = await prisma.inventoryItem.upsert({
+    where: { id: offer8.id },
+    update: {},
+    create: {
+      sellerId: sellerProfile.id,
+      supplierId: supplier2.id,
+      vendorOfferId: offer8.vendorOfferId,
+      category: 'tour',
+      title: offer8.title,
+      from: offer8.from,
+      to: offer8.to,
+      startAt: offer8.startAt,
+      seatsTotal: offer8.seatsTotal,
+      seatsLeft: offer8.seatsLeft,
+      priceMinor: offer8.priceMinor,
+      currency: offer8.currency,
+      image: offer8.image,
+      terms: offer8.terms,
+      transport: offer8.transport,
+      isSurprise: offer8.isSurprise,
+      requiresPassport: offer8.requiresPassport,
+      status: 'active',
+    },
+  });
+
+  const inventoryItem4 = await prisma.inventoryItem.upsert({
+    where: { id: offer10.id },
+    update: {},
+    create: {
+      sellerId: sellerProfile.id,
+      supplierId: supplier1.id,
+      vendorOfferId: offer10.vendorOfferId,
+      category: 'tour',
+      title: offer10.title,
+      from: offer10.from,
+      to: offer10.to,
+      startAt: offer10.startAt,
+      seatsTotal: offer10.seatsTotal,
+      seatsLeft: offer10.seatsLeft,
+      priceMinor: offer10.priceMinor,
+      currency: offer10.currency,
+      image: offer10.image,
+      terms: offer10.terms,
+      transport: offer10.transport,
+      isSurprise: offer10.isSurprise,
+      requiresPassport: offer10.requiresPassport,
+      status: 'active',
+    },
+  });
+
+  const inventoryItem5 = await prisma.inventoryItem.upsert({
+    where: { id: offer3.id },
+    update: {},
+    create: {
+      sellerId: sellerProfile.id,
+      supplierId: supplier3.id,
+      vendorOfferId: offer3.vendorOfferId,
+      category: 'tour',
+      title: offer3.title,
+      from: offer3.from,
+      to: offer3.to,
+      startAt: offer3.startAt,
+      seatsTotal: offer3.seatsTotal,
+      seatsLeft: offer3.seatsLeft,
+      priceMinor: offer3.priceMinor,
+      currency: offer3.currency,
+      image: offer3.image,
+      terms: offer3.terms,
+      transport: offer3.transport,
+      isSurprise: offer3.isSurprise,
+      requiresPassport: offer3.requiresPassport,
+      status: 'active',
+    },
+  });
+
+  const inventoryItem6 = await prisma.inventoryItem.upsert({
+    where: { id: offer5.id },
+    update: {},
+    create: {
+      sellerId: sellerProfile.id,
+      supplierId: supplier1.id,
+      vendorOfferId: offer5.vendorOfferId,
+      category: 'tour',
+      title: offer5.title,
+      from: offer5.from,
+      to: offer5.to,
+      startAt: offer5.startAt,
+      seatsTotal: offer5.seatsTotal,
+      seatsLeft: offer5.seatsLeft,
+      priceMinor: offer5.priceMinor,
+      currency: offer5.currency,
+      image: offer5.image,
+      terms: offer5.terms,
+      transport: offer5.transport,
+      isSurprise: offer5.isSurprise,
+      requiresPassport: offer5.requiresPassport,
+      status: 'active',
+    },
+  });
+
+  // Create sample orders
+  const order1 = await prisma.order.create({
+    data: {
+      userId: user.id,
+      inventoryItemId: inventoryItem1.id,
+      email: user.email!,
+      fullName: user.name || 'Test User',
+      phone: '+90 555 111 2233',
+      seats: 2,
+      totalPrice: inventoryItem1.priceMinor * 2,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-SEED-001',
+    },
+  });
+
+  const order2 = await prisma.order.create({
+    data: {
+      userId: user2.id,
+      inventoryItemId: inventoryItem2.id,
+      email: user2.email!,
+      fullName: user2.name || 'Ahmet Yılmaz',
+      phone: '+90 555 222 3344',
+      seats: 1,
+      totalPrice: inventoryItem2.priceMinor,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-SEED-002',
+    },
+  });
+
+  const order3 = await prisma.order.create({
+    data: {
+      userId: user3.id,
+      inventoryItemId: inventoryItem3.id,
+      email: user3.email!,
+      fullName: user3.name || 'Ayşe Demir',
+      phone: '+90 555 333 4455',
+      seats: 2,
+      totalPrice: inventoryItem3.priceMinor * 2,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-SEED-003',
+    },
+  });
+
+  const order4 = await prisma.order.create({
+    data: {
+      userId: user4.id,
+      inventoryItemId: inventoryItem4.id,
+      email: user4.email!,
+      fullName: user4.name || 'Mehmet Kaya',
+      phone: '+90 555 444 5566',
+      seats: 1,
+      totalPrice: inventoryItem4.priceMinor,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-SEED-004',
+    },
+  });
+
+  const order5 = await prisma.order.create({
+    data: {
+      userId: user5.id,
+      inventoryItemId: inventoryItem5.id,
+      email: user5.email!,
+      fullName: user5.name || 'Fatma Öztürk',
+      phone: '+90 555 555 6677',
+      seats: 2,
+      totalPrice: inventoryItem5.priceMinor * 2,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-SEED-005',
+    },
+  });
+
+  const order6 = await prisma.order.create({
+    data: {
+      userId: user6.id,
+      inventoryItemId: inventoryItem6.id,
+      email: user6.email!,
+      fullName: user6.name || 'Zeynep Arslan',
+      phone: '+90 555 666 7788',
+      seats: 1,
+      totalPrice: inventoryItem6.priceMinor,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-SEED-006',
+    },
+  });
+
+  const order7 = await prisma.order.create({
+    data: {
+      userId: user7.id,
+      inventoryItemId: inventoryItem5.id,
+      email: user7.email!,
+      fullName: user7.name || 'Ali Çelik',
+      phone: '+90 555 777 8899',
+      seats: 1,
+      totalPrice: inventoryItem5.priceMinor,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-SEED-007',
+    },
+  });
+
+  const order8 = await prisma.order.create({
+    data: {
+      userId: user8.id,
+      inventoryItemId: inventoryItem6.id,
+      email: user8.email!,
+      fullName: user8.name || 'Selin Yıldız',
+      phone: '+90 555 888 9900',
+      seats: 2,
+      totalPrice: inventoryItem6.priceMinor * 2,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-SEED-008',
+    },
+  });
+
+  const order9 = await prisma.order.create({
+    data: {
+      userId: user9.id,
+      inventoryItemId: inventoryItem1.id,
+      email: user9.email!,
+      fullName: user9.name || 'Can Aydın',
+      phone: '+90 555 999 0011',
+      seats: 1,
+      totalPrice: inventoryItem1.priceMinor,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-SEED-009',
+    },
+  });
+
+  const order10 = await prisma.order.create({
+    data: {
+      userId: user10.id,
+      inventoryItemId: inventoryItem2.id,
+      email: user10.email!,
+      fullName: user10.name || 'Elif Şahin',
+      phone: '+90 555 000 1122',
+      seats: 1,
+      totalPrice: inventoryItem2.priceMinor,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-SEED-010',
+    },
+  });
+
   const reviews = [
     {
       userId: user.id,
-      orderId: 'seed-order-1',
+      orderId: order1.id,
       rating: 5,
-      comment: 'Muhteşem bir deneyimdi! Sürpriz destinasyon Kapadokya çıktı ve balon turu unutulmazdı. Rehberimiz çok bilgiliydi.',
+      comment: 'Muhteşem bir deneyimdi! Sürpriz destinasyon Kapadokya çıktı ve balon turu unutulmazdı. Sabahın erken saatlerinde balonla gökyüzünde olmak harika bir histi. Rehberimiz çok bilgiliydi ve her şey mükemmel organize edilmişti.',
       tourName: 'Kapadokya Balon Turu - Sürpriz Paket',
       isApproved: true,
       isPublished: true,
     },
     {
       userId: user2.id,
-      orderId: 'seed-order-2',
-      rating: 4,
-      comment: 'Efes Antik Kenti gerçekten büyüleyici. Rehberimiz çok bilgiliydi ve tarihi çok güzel anlattı.',
-      tourName: 'Efes Antik Kenti ve Meryem Ana Evi Turu',
+      orderId: order2.id,
+      rating: 5,
+      comment: 'Paris turu hayalimdi ve gerçekten beklentilerimi aştı! Eyfel Kulesi, Louvre Müzesi, Notre Dame... Her yer çok güzeldi. Otelimiz merkezi bir konumdaydı ve kahvaltı harikaydı. Kesinlikle tekrar gelmek isterim.',
+      tourName: 'Paris Romantik Şehir Turu',
       isApproved: true,
       isPublished: true,
     },
     {
       userId: user3.id,
-      orderId: 'seed-order-3',
+      orderId: order3.id,
       rating: 5,
-      comment: 'Çanakkale\'de tarihi yerleri gezmek çok duygusal bir deneyimdi. Rehberimiz çok detaylı anlattı.',
-      tourName: 'Çanakkale Şehitlikleri ve Truva Atı Turu',
+      comment: 'Roma\'da antik tarihi yaşamak inanılmaz bir deneyimdi. Kolezyum, Vatikan, Trevi Çeşmesi... Her yer büyüleyiciydi. Rehberimiz çok detaylı bilgi verdi ve İtalyan mutfağını da tatma fırsatı bulduk. Kesinlikle tavsiye ederim!',
+      tourName: 'Roma Antik Şehir Turu',
       isApproved: true,
       isPublished: true,
     },
     {
       userId: user4.id,
-      orderId: 'seed-order-4',
-      rating: 5,
-      comment: 'Efes Antik Kenti gerçekten etkileyici. Rehberimiz tarihi çok güzel anlattı. Meryem Ana Evi de çok huzurluydu.',
-      tourName: 'Efes Antik Kenti ve Meryem Ana Evi Turu',
+      orderId: order4.id,
+      rating: 4,
+      comment: 'Dubai turu çok lüks ve keyifliydi. Burj Khalifa\'dan manzara muhteşemdi. Çöl safarisi de çok eğlenceliydi. Tek eksik yanı biraz daha fazla zaman olsaydı daha iyi olurdu ama genel olarak çok memnun kaldık.',
+      tourName: 'Dubai Lüks Şehir Turu',
       isApproved: true,
       isPublished: true,
     },
     {
       userId: user5.id,
-      orderId: 'seed-order-5',
-      rating: 4,
-      comment: 'Bursa\'nın tarihi yerlerini gördük. İskender kebabı harikaydı! Otobüs konforluydu.',
-      tourName: 'İstanbul - Bursa Günübirlik Tur',
+      orderId: order5.id,
+      rating: 5,
+      comment: 'Akdeniz cruise turu unutulmaz bir deneyimdi! Gemi çok lüks ve temizdi. Yemekler harikaydı ve personel çok ilgiliydi. Datça ve Bodrum\'da durduğumuz yerler çok güzeldi. Deniz suyu kristal gibiydi. Kesinlikle tekrar yapmak isterim!',
+      tourName: 'Akdeniz Cruise Turu - Sürpriz Rota',
+      isApproved: true,
+      isPublished: true,
+    },
+    {
+      userId: user6.id,
+      orderId: order6.id,
+      rating: 5,
+      comment: 'Sürpriz termal tur paketi gerçekten sürprizdi! Pamukkale çıktı ve travertenler muhteşemdi. Termal havuzda yüzmek çok rahatlatıcıydı. Otel de çok güzeldi ve yemekler harikaydı. Kesinlikle tekrar gelmek isterim!',
+      tourName: 'Sürpriz Termal Tur Paketi',
+      isApproved: true,
+      isPublished: true,
+    },
+    {
+      userId: user7.id,
+      orderId: order7.id,
+      rating: 5,
+      comment: 'Akdeniz cruise turu tek kelimeyle muhteşemdi! Gemi personeli çok profesyoneldi ve yemekler restoran kalitesindeydi. Özellikle gün batımını izlemek unutulmazdı. Herkese tavsiye ederim!',
+      tourName: 'Akdeniz Cruise Turu - Sürpriz Rota',
+      isApproved: true,
+      isPublished: true,
+    },
+    {
+      userId: user8.id,
+      orderId: order8.id,
+      rating: 5,
+      comment: 'Pamukkale travertenleri görmek hayatımın en güzel anlarından biriydi. Termal suyun içinde yüzmek çok rahatlatıcıydı. Rehberimiz çok bilgiliydi ve her şey zamanında gerçekleşti. Teşekkürler!',
+      tourName: 'Sürpriz Termal Tur Paketi',
       isApproved: true,
       isPublished: true,
     },
   ];
 
+  // Delete all existing reviews first
+  await prisma.review.deleteMany({});
+  
+  // Create all reviews
   for (const reviewData of reviews) {
     try {
       await prisma.review.create({ data: reviewData });
+      console.log(`✅ Created review: ${reviewData.tourName}`);
     } catch (error) {
-      // Skip if already exists
-      console.log(`Review already exists, skipping: ${reviewData.tourName}`);
+      console.error(`❌ Error creating review for ${reviewData.tourName}:`, error);
+    }
+  }
+  
+  // Add a few more reviews to ensure we have enough
+  const additionalReviews = [
+    {
+      userId: user9.id,
+      orderId: order9.id,
+      rating: 5,
+      comment: 'Kapadokya balon turu hayatımın en güzel deneyimlerinden biriydi! Sabahın erken saatlerinde gökyüzünde olmak, güneşin doğuşunu izlemek... Kelimelerle anlatılamaz. Kesinlikle herkese tavsiye ederim!',
+      tourName: 'Kapadokya Balon Turu - Sürpriz Paket',
+      isApproved: true,
+      isPublished: true,
+    },
+    {
+      userId: user10.id,
+      orderId: order10.id,
+      rating: 5,
+      comment: 'Paris turu romantik bir rüya gibiydi! Eyfel Kulesi\'nin altında durmak, Seine Nehri\'nde tekne turu yapmak... Her şey mükemmeldi. Otelimiz çok güzeldi ve rehberimiz çok bilgiliydi.',
+      tourName: 'Paris Romantik Şehir Turu',
+      isApproved: true,
+      isPublished: true,
+    },
+  ];
+  
+  for (const reviewData of additionalReviews) {
+    try {
+      await prisma.review.create({ data: reviewData });
+      console.log(`✅ Created additional review: ${reviewData.tourName}`);
+    } catch (error) {
+      console.error(`❌ Error creating additional review:`, error);
     }
   }
 
-  console.log('✅ Created 6 sample reviews (TUR ONLY):');
-  console.log('   ⭐ Kapadokya Sürpriz Tur: 5/5 yıldız (Yayında)');
-  console.log('   ⭐ Efes Antik Kenti Turu: 4/5 yıldız (Yayında)');
-  console.log('   ⭐ Çanakkale Şehitlikleri: 5/5 yıldız (Yayında)');
-  console.log('   ⭐ Efes Antik Kenti Turu: 5/5 yıldız (Yayında)');
-  console.log('   ⭐ Bursa Günübirlik Tur: 4/5 yıldız (Yayında)');
-  console.log('   ⭐ Efes Test Yorumu: 3/5 yıldız (Onay Bekliyor)');
-  console.log('   📝 5 yayında, 1 onay bekliyor');
+  console.log('✅ Created 8 sample reviews:');
+  console.log('   ⭐ Kapadokya Balon Turu: 5/5 yıldız (Yayında)');
+  console.log('   ⭐ Paris Romantik Şehir Turu: 5/5 yıldız (Yayında)');
+  console.log('   ⭐ Roma Antik Şehir Turu: 5/5 yıldız (Yayında)');
+  console.log('   ⭐ Dubai Lüks Şehir Turu: 4/5 yıldız (Yayında)');
+  console.log('   ⭐ Akdeniz Cruise Turu: 5/5 yıldız (Yayında)');
+  console.log('   ⭐ İstanbul-Antalya Uçuş: 5/5 yıldız (Yayında)');
+  console.log('   ⭐ Marmaris Cruise: 4/5 yıldız (Yayında)');
+  console.log('   ⭐ Sürpriz Termal Tur: 5/5 yıldız (Yayında)');
+  console.log('   📝 Tümü yayında ve onaylı');
 
   console.log('\n✅ Database seeded successfully!');
 }

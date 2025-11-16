@@ -40,8 +40,8 @@ export default function IntegrationsHealthPage() {
   useEffect(() => {
     fetchHealth();
 
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchHealth, 30000);
+    // Auto-refresh every hour
+    const interval = setInterval(fetchHealth, 3600000);
     return () => clearInterval(interval);
   }, []);
 
@@ -140,7 +140,7 @@ export default function IntegrationsHealthPage() {
         </div>
         <button
           onClick={fetchHealth}
-          className="px-4 py-2 bg-[#E7E393] text-white rounded-lg hover:bg-[#E7E393]/90 transition-colors"
+          className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors"
         >
           🔄 Yenile
         </button>

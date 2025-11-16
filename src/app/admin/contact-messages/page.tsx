@@ -225,7 +225,7 @@ export default function ContactMessagesAdminPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                     <button
                       onClick={() => setSelectedMessage(message)}
-                      className="text-[#E7E393] hover:text-[#E7E393]/80"
+                      className="text-secondary hover:text-secondary/80"
                     >
                       👁️ Görüntüle
                     </button>
@@ -312,14 +312,14 @@ export default function ContactMessagesAdminPage() {
                       value={replyText}
                       onChange={(e) => setReplyText(e.target.value)}
                       rows={4}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E7E393] focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
                       placeholder="Müşteriye yanıtınızı yazın..."
                     />
                     <div className="mt-3 flex gap-2">
                       <button
                         onClick={() => handleReply(selectedMessage.id)}
                         disabled={isReplying || !replyText.trim()}
-                        className="px-4 py-2 bg-[#E7E393] text-white rounded-md hover:bg-[#E7E393]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-4 py-2 bg-secondary text-white rounded-md hover:bg-secondary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         {isReplying ? 'Gönderiliyor...' : 'Yanıt Gönder'}
                       </button>

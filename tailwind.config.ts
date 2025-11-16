@@ -17,7 +17,10 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        'english-violet': '#E7E393',
+        primary: 'var(--primary)',
+        secondary: 'var(--secondary)',
+        tertiary: 'var(--tertiary)',
+        'bg-white': 'var(--background)',
       },
       animation: {
         'pulse-slow': 'pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',

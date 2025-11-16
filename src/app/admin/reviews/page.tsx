@@ -153,7 +153,7 @@ export default function ReviewsAdminPage() {
               <div className="flex gap-3">
                 <button
                   onClick={() => handleApprove(review.id, true)}
-                  className="px-4 py-2 bg-[#E7E393] text-white rounded-lg hover:bg-[#E7E393]/90 transition-colors font-semibold"
+                  className="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors font-semibold"
                 >
                   ✓ Onayla ve Ana Sayfada Göster
                 </button>

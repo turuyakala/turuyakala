@@ -59,19 +59,19 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-      <h2 className="text-xl font-semibold mb-4 text-gray-900">🔍 Filtrele</h2>
+      <h2 className="text-xl font-semibold mb-4 text-primary">🔍 Filtrele</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {/* Category */}
         <div>
-          <label htmlFor="filter-category" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="filter-category" className="block text-sm font-medium text-primary mb-2">
             Kategori
           </label>
           <select
             id="filter-category"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#91A8D0] text-gray-900 bg-white"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-primary bg-white"
             aria-label="Kategori seçin"
           >
             {categories.map((cat) => (
@@ -84,7 +84,7 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
 
         {/* From */}
         <div>
-          <label htmlFor="filter-from" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="filter-from" className="block text-sm font-medium text-primary mb-2">
             Nereden
           </label>
           <input
@@ -94,7 +94,7 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
             value={from}
             onChange={(e) => setFrom(e.target.value)}
             placeholder="Şehir seçin veya yazın"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#91A8D0] text-gray-900 bg-white placeholder-gray-400"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-primary bg-white placeholder-gray-400"
             aria-label="Nereden"
           />
           <datalist id="from-options">
@@ -106,7 +106,7 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
 
         {/* To */}
         <div>
-          <label htmlFor="filter-to" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="filter-to" className="block text-sm font-medium text-primary mb-2">
             Nereye
           </label>
           <input
@@ -116,7 +116,7 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
             value={to}
             onChange={(e) => setTo(e.target.value)}
             placeholder="Şehir seçin veya yazın"
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#91A8D0] text-gray-900 bg-white placeholder-gray-400"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-primary bg-white placeholder-gray-400"
             aria-label="Nereye"
           />
           <datalist id="to-options">
@@ -128,14 +128,14 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
 
         {/* Time Window */}
         <div>
-          <label htmlFor="filter-window" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="filter-window" className="block text-sm font-medium text-primary mb-2">
             Zaman Penceresi
           </label>
           <select
             id="filter-window"
             value={window}
             onChange={(e) => setWindow(parseInt(e.target.value, 10))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#91A8D0] text-gray-900 bg-white"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-primary bg-white"
             aria-label="Zaman penceresi seçin"
           >
             {windowOptions.map((opt) => (
@@ -148,7 +148,7 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
 
         {/* Min Price */}
         <div>
-          <label htmlFor="filter-min-price" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="filter-min-price" className="block text-sm font-medium text-primary mb-2">
             Min Fiyat (₺)
           </label>
           <input
@@ -157,14 +157,14 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
             value={minPrice}
             onChange={(e) => setMinPrice(e.target.value)}
             placeholder={priceRange.min.toString()}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#91A8D0] text-gray-900 bg-white placeholder-gray-400"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-primary bg-white placeholder-gray-400"
             aria-label="Minimum fiyat"
           />
         </div>
 
         {/* Max Price */}
         <div>
-          <label htmlFor="filter-max-price" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="filter-max-price" className="block text-sm font-medium text-primary mb-2">
             Max Fiyat (₺)
           </label>
           <input
@@ -173,7 +173,7 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
             value={maxPrice}
             onChange={(e) => setMaxPrice(e.target.value)}
             placeholder={priceRange.max.toString()}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#91A8D0] text-gray-900 bg-white placeholder-gray-400"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary text-primary bg-white placeholder-gray-400"
             aria-label="Maksimum fiyat"
           />
         </div>
@@ -182,14 +182,14 @@ export default function FilterBar({ fromOptions, toOptions, priceRange }: Filter
       <div className="flex gap-3 mt-6">
         <button
           onClick={handleApply}
-          className="flex-1 px-6 py-2.5 bg-[#E7E393] text-white font-medium rounded-lg hover:bg-[#E7E393]/90 transition-colors focus:outline-none focus:ring-4 focus:ring-[#E7E393]/50"
+          className="flex-1 px-6 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors focus:outline-none focus:ring-4 focus:ring-primary/50"
           aria-label="Filtreleri uygula"
         >
           🔍 Uygula
         </button>
         <button
           onClick={handleReset}
-          className="px-6 py-2.5 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors focus:outline-none focus:ring-4 focus:ring-gray-300/50"
+          className="px-6 py-2.5 bg-tertiary text-primary font-medium rounded-lg hover:bg-tertiary/80 transition-colors focus:outline-none focus:ring-4 focus:ring-tertiary/50"
           aria-label="Tüm filtreleri sıfırla"
         >
           🔄 Sıfırla

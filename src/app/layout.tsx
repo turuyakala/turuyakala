@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
@@ -14,17 +14,13 @@ export const metadata: Metadata = {
   title: "TuruYakala - Son Dakika Fırsatları",
   description: "Son dakikada, en doğru fırsatla! Tur, otobüs, uçak ve gemi biletlerinde en iyi son dakika fırsatları.",
   icons: {
-    icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/favicon.svg', type: 'image/svg+xml' },
-      { url: '/favicon-16x16.png', sizes: '16x16', type: 'image/png' },
-    ],
-    apple: [
-      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
-    ],
+    icon: '/favicon.ico',
   },
   manifest: '/site.webmanifest',
-  themeColor: '#E7E393',
+};
+
+export const viewport: Viewport = {
+  themeColor: '#1A2A5A',
 };
 
 export default function RootLayout({

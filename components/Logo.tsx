@@ -8,21 +8,21 @@ export default function Logo() {
   const [logoError, setLogoError] = useState(false);
 
   return (
-    <Link href="/" className="flex items-center">
+    <Link href="/" className="flex items-center h-full">
       {!logoError ? (
-        <div className="relative h-40 md:h-52 w-auto">
+        <div className="relative h-[150%] md:h-[140%] w-auto overflow-hidden flex items-center">
           <Image 
             src="/logo.png" 
             alt="TuruYakala Logo" 
             width={500}
             height={170}
-            className="h-40 md:h-52 w-auto object-contain"
+            className="h-full w-auto object-cover object-center"
             priority
             onError={() => setLogoError(true)}
           />
         </div>
       ) : (
-        <h1 className="text-4xl md:text-5xl font-bold">TuruYakala</h1>
+        <h1 className="text-2xl md:text-3xl font-bold">TuruYakala</h1>
       )}
     </Link>
   );

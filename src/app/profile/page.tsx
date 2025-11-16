@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import ReviewModal from '@/components/ReviewModal';
+import Navigation from '@/components/Navigation';
 import { formatDate } from '@/lib/time';
 import { formatPrice } from '@/lib/price';
 
@@ -50,6 +51,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -73,8 +75,21 @@ export default function ProfilePage() {
 
     if (status === 'authenticated') {
       fetchOrders();
+      fetchUserProfile();
     }
   }, [status, router, fetchOrders]);
+
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch('/api/profile');
+      if (response.ok) {
+        const data = await response.json();
+        setUserProfile(data.user);
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
 
   const handleReviewClick = (order: Order) => {
     // Check if already reviewed
@@ -107,23 +122,8 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-[#DD7230] text-white py-6 shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold font-montserrat">Profilim</h1>
-              <p className="text-white/80 mt-1">Hesap bilgileriniz ve ayarlarınız</p>
-            </div>
-            <Link
-              href="/"
-              className="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
-            >
-              ← Ana Sayfa
-            </Link>
-          </div>
-        </div>
-      </header>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 max-w-4xl">
@@ -171,6 +171,49 @@ export default function ProfilePage() {
                       </span>
                     )}
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Telefon Numarası
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.phone || '-'}
+                  </div>
+                  {!userProfile?.phone && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Rezervasyon yaparken otomatik doldurulması için{' '}
+                      <Link href="/profile/update" className="text-[#DD7230] hover:underline">
+                        bilgilerinizi güncelleyin
+                      </Link>
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Pasaport Numarası
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.passportNumber ? (
+                      <span className="font-mono">{userProfile.passportNumber}</span>
+                    ) : (
+                      '-'
+                    )}
+                  </div>
+                  {userProfile?.passportExpiry && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Geçerlilik: {new Date(userProfile.passportExpiry).toLocaleDateString('tr-TR')}
+                    </p>
+                  )}
+                  {!userProfile?.passportNumber && (
+                    <p className="text-xs text-gray-500 mt-1">
+                      Yurtdışı turları için{' '}
+                      <Link href="/profile/update" className="text-[#DD7230] hover:underline">
+                        pasaport bilgilerinizi ekleyin
+                      </Link>
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
@@ -283,13 +326,13 @@ export default function ProfilePage() {
               <div className="flex gap-3">
                 <Link
                   href="/profile/change-password"
-                  className="px-6 py-2.5 bg-[#DD7230] text-white font-medium rounded-lg hover:bg-[#DD7230]/90 transition-colors shadow-md inline-block text-center"
+                  className="px-6 py-2.5 bg-[#E63946] text-white font-medium rounded-lg hover:bg-[#E63946]/90 transition-colors shadow-md inline-block text-center"
                 >
                   Şifre Değiştir
                 </Link>
                 <Link
                   href="/profile/update"
-                  className="px-6 py-2.5 bg-[#DD7230]/10 text-[#DD7230] font-medium rounded-lg hover:bg-[#DD7230]/20 transition-colors border border-[#DD7230]/30 inline-block text-center"
+                  className="px-6 py-2.5 bg-[#1A2A5A] text-white font-medium rounded-lg hover:bg-[#1A2A5A]/90 transition-colors shadow-md inline-block text-center"
                 >
                   Bilgilerimi Güncelle
                 </Link>

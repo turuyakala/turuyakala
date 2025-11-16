@@ -3,10 +3,9 @@ import Link from 'next/link';
 import OfferCard from '@/components/OfferCard';
 import SortSelect from '@/components/SortSelect';
 import SimplePriceFilter from '@/components/SimplePriceFilter';
-import AuthButtons from '@/components/AuthButtons';
+import Navigation from '@/components/Navigation';
 import HeroSlider from '@/components/HeroSlider';
 import ReviewsSection from '@/components/ReviewsSection';
-import Logo from '@/components/Logo';
 import { Item, Category } from '@/lib/types';
 import { prisma } from '@/lib/prisma';
 import { toNum } from '@/lib/utils';
@@ -25,7 +24,14 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
   const params = await searchParams;
   
   // Get current date/time for filtering tours within 72 hours
+  // Server time in GMT+3 (Turkey timezone - Europe/Istanbul)
   const now = new Date();
+  // Get server time in GMT+3 timezone (Europe/Istanbul)
+  // Calculate Istanbul time: UTC + 3 hours (GMT+3)
+  // Note: This uses fixed GMT+3 offset (doesn't account for DST, but Turkey doesn't use DST)
+  const utcTime = now.getTime();
+  const gmt3Offset = 3 * 60 * 60 * 1000; // GMT+3 offset in milliseconds
+  const serverTimeGMT3 = new Date(utcTime + gmt3Offset);
   const windowEnd = new Date(now.getTime() + 72 * 60 * 60 * 1000);
 
   // Build where clause for Offer table
@@ -289,18 +295,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation */}
-      <nav className="bg-[#E7E393] text-gray-900 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20 md:h-24 py-2">
-            <div className="flex items-center">
-              <Logo />
-            </div>
-            <div className="flex items-center space-x-4">
-              <AuthButtons />
-            </div>
-          </div>
-        </div>
-      </nav>
+      <Navigation />
 
       {/* Hero Section */}
       <HeroSlider />
@@ -311,13 +306,13 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-primary mb-2">
                 Fiyat Aralığı
               </label>
               <SimplePriceFilter priceRange={priceRange} />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-primary mb-2">
                 Sıralama
               </label>
               <SortSelect />
@@ -327,19 +322,19 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
 
         {/* Results */}
         <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+          <h2 className="text-2xl font-bold text-primary mb-4">
             {allItems.length} Tur Fırsatı Bulundu
           </h2>
           
           {/* Surprise Tours */}
           {surpriseTours.length > 0 && (
             <div className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-primary mb-4">
                 Sürpriz Turlar
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {surpriseItems.map((offer) => (
-                  <OfferCard key={offer.id} item={offer} />
+                  <OfferCard key={offer.id} item={offer} serverTime={serverTimeGMT3.toISOString()} />
                 ))}
               </div>
             </div>
@@ -348,7 +343,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
           {/* Main Offers */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {mainItems.map((offer) => (
-              <OfferCard key={offer.id} item={offer} />
+              <OfferCard key={offer.id} item={offer} serverTime={serverTimeGMT3.toISOString()} />
             ))}
           </div>
         </div>

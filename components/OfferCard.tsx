@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Item } from '@/lib/types';
@@ -10,96 +10,162 @@ import { toNum, toString } from '@/lib/utils';
 
 type OfferCardProps = {
   item: Item;
+  serverTime: string; // ISO string formatında server saati (GMT+3)
 };
 
 const categoryColors: Record<Item['category'], { bg: string; border: string }> = {
-  tour: { bg: 'from-[#a4dded]/10 to-[#8cc5d8]/10', border: 'border-l-[#a4dded]' },
-  bus: { bg: 'from-[#a4dded]/10 to-[#8cc5d8]/10', border: 'border-l-[#a4dded]' },
-  flight: { bg: 'from-[#a4dded]/10 to-[#8cc5d8]/10', border: 'border-l-[#a4dded]' },
-  cruise: { bg: 'from-[#a4dded]/10 to-[#8cc5d8]/10', border: 'border-l-[#a4dded]' },
+  tour: { bg: 'from-[#DAE4F2]/20 to-[#DAE4F2]/10', border: 'border-l-[#1A2A5A]' },
+  bus: { bg: 'from-[#DAE4F2]/20 to-[#DAE4F2]/10', border: 'border-l-[#1A2A5A]' },
+  flight: { bg: 'from-[#DAE4F2]/20 to-[#DAE4F2]/10', border: 'border-l-[#1A2A5A]' },
+  cruise: { bg: 'from-[#DAE4F2]/20 to-[#DAE4F2]/10', border: 'border-l-[#1A2A5A]' },
 };
 
-export default function OfferCard({ item }: OfferCardProps) {
+export default function OfferCard({ item, serverTime }: OfferCardProps) {
   const [isSoldOut, setIsSoldOut] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [currentSeatsLeft, setCurrentSeatsLeft] = useState(toNum(item?.seatsLeft, 0));
   const [previousSeatsLeft, setPreviousSeatsLeft] = useState(toNum(item?.seatsLeft, 0));
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [mounted, setMounted] = useState(false);
+  
+  // Ref'ler ile state'i takip et (closure problemi önlemek için)
+  const isAnimatingRef = useRef(isAnimating);
+  const isSoldOutRef = useRef(isSoldOut);
+  
+  useEffect(() => {
+    isAnimatingRef.current = isAnimating;
+    isSoldOutRef.current = isSoldOut;
+  }, [isAnimating, isSoldOut]);
 
-  // Güvenli değer okuma
-  const departureDate = new Date(item?.startAt || Date.now());
+  // Güvenli değer okuma - default değerleri kaldırıldı
+  if (!item?.startAt) {
+    return null; // Eğer startAt yoksa kartı gösterme
+  }
+
+  // departureDate'i memoize et (her render'da yeni obje oluşturulmasını önle)
+  const departureDate = useMemo(() => new Date(item.startAt), [item.startAt]);
+  const departureTimeMs = useMemo(() => departureDate.getTime(), [departureDate]);
+  
   const timeInfo = getTimeUntilDeparture(departureDate);
   const isSurprise = item?.isSurprise === true;
   const isCritical = toNum(timeInfo?.totalHours, 0) <= 3;
   const categoryColor = categoryColors[item?.category] || categoryColors.tour;
 
-  // Gerçek zamanlı sayaç için her saniye güncelle
+  // Client-side mount kontrolü
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date());
-    }, 1000);
-
-    return () => clearInterval(timer);
+    setMounted(true);
   }, []);
 
-  // Kalan süreyi hesapla (saat:dakika:saniye)
-  const getTimeRemaining = () => {
-    const now = currentTime.getTime();
-    const departure = departureDate.getTime();
-    const diff = Math.max(0, departure - now);
-
+  // Gerçek zamanlı sayaç için state kullan
+  const [timeRemaining, setTimeRemaining] = useState(() => {
+    // İlk render'da server saatini kullan
+    const now = new Date(serverTime).getTime();
+    const diff = Math.max(0, departureTimeMs - now);
     const totalSeconds = Math.floor(diff / 1000);
     const hours = Math.floor(totalSeconds / 3600);
     const minutes = Math.floor((totalSeconds % 3600) / 60);
     const seconds = totalSeconds % 60;
-
     return { hours, minutes, seconds, totalSeconds };
-  };
+  });
 
-  const timeRemaining = getTimeRemaining();
-
-  // Koltuk sayısını düzenli olarak kontrol et (her 5 saniyede bir)
+  // Gerçek zamanlı sayaç güncellemesi - her saniye çalışır
   useEffect(() => {
-    const checkSeats = async () => {
-      try {
-        const response = await fetch(`/api/tours/${item.id}`);
-        if (response.ok) {
-          const data = await response.json();
-          const newSeatsLeft = toNum(data.seatsLeft, 0);
-          
+    if (!mounted) return;
+
+    // İlk hesaplama
+    const calculateTimeRemaining = () => {
+      const serverTimeMs = new Date(serverTime).getTime();
+      const clientTimeMs = Date.now();
+      const currentOffset = clientTimeMs - serverTimeMs;
+      const now = serverTimeMs + currentOffset;
+      const diff = Math.max(0, departureTimeMs - now);
+
+      const totalSeconds = Math.floor(diff / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      setTimeRemaining({ hours, minutes, seconds, totalSeconds });
+    };
+
+    // İlk hesaplama
+    calculateTimeRemaining();
+
+    // Her saniye güncelle
+    const timer = setInterval(calculateTimeRemaining, 1000);
+
+    return () => clearInterval(timer);
+  }, [mounted, serverTime, departureTimeMs]);
+
+  // Koltuk sayısını düzenli olarak kontrol et ve rezervasyon event'lerini dinle
+  // Optimize: useCallback ile fonksiyonu memoize et
+  const checkSeats = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/tours/${item.id}`);
+      if (response.ok) {
+        const data = await response.json();
+        const newSeatsLeft = toNum(data.seatsLeft, 0);
+        
+        // Batch state updates - React 18 otomatik batch'ler ama yine de dikkatli olalım
+        setCurrentSeatsLeft((prevSeats) => {
           // Koltuk sayısı azaldıysa animasyonu tetikle
-          if (previousSeatsLeft > 0 && newSeatsLeft < previousSeatsLeft && !isAnimating) {
-            setIsAnimating(true);
-            setTimeout(() => {
-              setIsSoldOut(true);
-            }, 2500); // Animasyon süresi (2.5 saniye)
+          if (prevSeats > 0 && newSeatsLeft < prevSeats && !isAnimatingRef.current) {
+            // Race condition önleme: flag'i hemen set et, sonra state'i güncelle
+            isAnimatingRef.current = true;
+            requestAnimationFrame(() => {
+              setIsAnimating(true);
+              setTimeout(() => {
+                setIsSoldOut(true);
+              }, 2500);
+            });
           }
           
-          setCurrentSeatsLeft(newSeatsLeft);
-          
-          // Eğer koltuk kalmadıysa animasyonu tetikle
-          if (newSeatsLeft === 0 && !isSoldOut && !isAnimating) {
+          return newSeatsLeft;
+        });
+        
+        // Eğer koltuk kalmadıysa animasyonu tetikle
+        if (newSeatsLeft === 0 && !isSoldOutRef.current && !isAnimatingRef.current) {
+          // Race condition önleme: flag'i hemen set et, sonra state'i güncelle
+          isAnimatingRef.current = true;
+          requestAnimationFrame(() => {
             setIsAnimating(true);
             setTimeout(() => {
               setIsSoldOut(true);
             }, 2500);
-          }
-          
-          setPreviousSeatsLeft(newSeatsLeft);
+          });
         }
-      } catch (error) {
-        console.error('Error checking seats:', error);
+        
+        setPreviousSeatsLeft(newSeatsLeft);
       }
-    };
+    } catch (error) {
+      console.error('Error checking seats:', error);
+    }
+  }, [item.id]);
 
+  useEffect(() => {
     // İlk kontrol
     checkSeats();
 
-    // Her 5 saniyede bir kontrol et
-    const interval = setInterval(checkSeats, 5000);
+    // Her 1 dakikada bir kontrol et (optimize edilmiş)
+    const interval = setInterval(checkSeats, 60000);
 
-    return () => clearInterval(interval);
-  }, [item.id, previousSeatsLeft, isSoldOut, isAnimating]);
+    // Rezervasyon başarılı olduğunda hemen güncelle
+    const handleReservationSuccess = (event: CustomEvent) => {
+      const { tourId } = event.detail || {};
+      // Eğer bu tur için rezervasyon yapıldıysa veya tüm turlar güncelleniyorsa
+      if (!tourId || tourId === item.id) {
+        checkSeats();
+      }
+    };
+
+    window.addEventListener('reservation-success' as any, handleReservationSuccess as EventListener);
+    window.addEventListener('seats-updated' as any, handleReservationSuccess as EventListener);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('reservation-success' as any, handleReservationSuccess as EventListener);
+      window.removeEventListener('seats-updated' as any, handleReservationSuccess as EventListener);
+    };
+  }, [item.id, checkSeats]);
 
   if (isSoldOut) {
     return null; // Kartı tamamen kaldır
@@ -107,8 +173,8 @@ export default function OfferCard({ item }: OfferCardProps) {
 
   return (
     <div className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 ${
-      isSurprise ? 'border-4 border-[#DD7230] ring-4 ring-[#DD7230]/30' : `border-l-4 ${categoryColor.border}`
-    } ${isCritical ? 'animate-pulse-slow ring-2 ring-red-400' : ''} ${
+      isSurprise ? 'border-4 border-[#E63946] ring-4 ring-[#E63946]/30' : `border-l-4 ${categoryColor.border}`
+    } ${isCritical ? 'animate-pulse-slow ring-2 ring-[#E63946]' : ''} ${
       isAnimating ? 'paper-plane-animation' : ''
     }`}>
       <div className={`relative h-56 flex items-center justify-center overflow-hidden ${
@@ -117,16 +183,16 @@ export default function OfferCard({ item }: OfferCardProps) {
         {isSurprise ? (
           <>
             {/* Animated background layers */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#DD7230] via-[#F4C95D] to-[#DD7230] opacity-75 animate-gradient-shift"></div>
-            <div className="absolute inset-0 bg-gradient-to-tl from-[#F4C95D] via-[#DD7230] to-[#F4C95D] opacity-50 animate-gradient-shift-reverse"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-[#E63946] via-[#DAE4F2] to-[#E63946] opacity-75 animate-gradient-shift"></div>
+            <div className="absolute inset-0 bg-gradient-to-tl from-[#DAE4F2] via-[#E63946] to-[#DAE4F2] opacity-50 animate-gradient-shift-reverse"></div>
             {/* Glowing particles effect */}
             <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-[#F4C95D] rounded-full opacity-30 blur-2xl animate-float"></div>
-              <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-[#DD7230] rounded-full opacity-20 blur-3xl animate-float-delayed"></div>
-              <div className="absolute top-1/2 right-1/3 w-24 h-24 bg-[#F4C95D] rounded-full opacity-25 blur-xl animate-float-slow"></div>
+              <div className="absolute top-1/4 left-1/4 w-32 h-32 bg-[#DAE4F2] rounded-full opacity-30 blur-2xl animate-float"></div>
+              <div className="absolute bottom-1/4 right-1/4 w-40 h-40 bg-[#E63946] rounded-full opacity-20 blur-3xl animate-float-delayed"></div>
+              <div className="absolute top-1/2 right-1/3 w-24 h-24 bg-[#DAE4F2] rounded-full opacity-25 blur-xl animate-float-slow"></div>
             </div>
             {/* Question mark */}
-            <div className="relative z-10 text-9xl animate-bounce-slow text-white drop-shadow-2xl filter drop-shadow-[0_0_20px_rgba(244,201,93,0.8)]">❓</div>
+            <div className="relative z-10 text-9xl animate-bounce-slow text-white drop-shadow-2xl filter drop-shadow-[0_0_20px_rgba(230,57,70,0.8)]">❓</div>
           </>
         ) : item.image ? (
           <Image
@@ -144,26 +210,14 @@ export default function OfferCard({ item }: OfferCardProps) {
             {item.category === 'cruise' && '🚢'}
           </div>
         )}
-        {/* Sol üst: Ulaşım şekli (hem normal hem sürpriz turlar için) */}
-        {item.transport && (
-          <div className="absolute top-3 left-3 z-10">
-            <div className={`px-3 py-1 backdrop-blur-sm text-xs font-medium rounded-md shadow-sm ${
-              isSurprise 
-                ? 'bg-[#DD7230] text-white font-bold' 
-                : 'bg-white/90 text-gray-700'
-            }`}>
-              {toString(item?.transport, 'Uçak')}
-            </div>
-          </div>
-        )}
 
         {/* Sağ üst: Geri sayım ibaresi */}
         {timeRemaining.totalSeconds > 0 && (
           <div className="absolute top-3 right-3 z-10">
             <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md shadow-lg ${
               isSurprise 
-                ? 'bg-[#F4C95D] text-white' 
-                : 'bg-[#DD7230] text-white'
+                ? 'bg-[#DAE4F2] text-[#1A2A5A]' 
+                : 'bg-[#E63946] text-white'
             } ${isCritical ? 'animate-pulse' : ''}`}>
               {/* Kum Saati İkonu */}
               <div className="hourglass-icon text-sm">
@@ -182,7 +236,7 @@ export default function OfferCard({ item }: OfferCardProps) {
         {/* Sağ alt (kartın içinde): Kalan koltuk - Kırmızı yuvarlak */}
         {currentSeatsLeft <= 2 && !isSurprise && (
           <div className="absolute bottom-3 right-3 z-10">
-            <div className="w-20 h-20 bg-red-600 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+            <div className="w-20 h-20 bg-[#E63946] rounded-full flex items-center justify-center shadow-lg animate-pulse">
               <div className="text-center">
                 <div className="text-white font-bold text-lg leading-tight">SON</div>
                 <div className="text-white font-bold text-2xl leading-tight">{currentSeatsLeft}</div>
@@ -192,19 +246,19 @@ export default function OfferCard({ item }: OfferCardProps) {
           </div>
         )}
         {isCritical && (
-          <div className={`absolute inset-0 ${isSurprise ? 'bg-[#DD7230]/10' : 'bg-red-500/10'} animate-pulse`} />
+          <div className={`absolute inset-0 ${isSurprise ? 'bg-[#E63946]/10' : 'bg-[#E63946]/10'} animate-pulse`} />
         )}
       </div>
 
       <div className="p-5">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+        <h3 className="text-lg font-semibold text-primary mb-2 line-clamp-2">
           {isSurprise ? '🎁 Sürpriz Destinasyon' : item.title}
         </h3>
 
         <div className="space-y-2 mb-4">
           {/* Nereden-Nereye: Sürpriz turlarda gizli */}
           {!isSurprise && (
-            <div className="flex items-center text-sm text-gray-600">
+            <div className="flex items-center text-sm text-primary">
               <span className="font-medium">{item.from}</span>
               <span className="mx-2">→</span>
               <span className="font-medium">{item.to}</span>
@@ -215,34 +269,34 @@ export default function OfferCard({ item }: OfferCardProps) {
           {isSurprise && (
             <div className="flex items-center gap-2 flex-wrap mb-2">
               {item.requiresPassport && (
-                <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-md font-medium text-xs">
+                <span className="bg-tertiary text-primary px-2 py-1 rounded-md font-medium text-xs">
                   📘 Pasaport Gerekli
                 </span>
               )}
               {item.requiresVisa && (
-                <span className="bg-orange-100 text-orange-700 px-2 py-1 rounded-md font-medium text-xs">
+                <span className="bg-tertiary text-primary px-2 py-1 rounded-md font-medium text-xs">
                   📝 Vize Gerekli
                 </span>
               )}
             </div>
           )}
 
-          <div className="flex items-center text-sm text-gray-500">
+          <div className="flex items-center text-sm text-primary">
             <span>📅 {formatDateShort(departureDate)}</span>
           </div>
         </div>
 
         <div className="flex items-center justify-between pt-4 border-t border-gray-200">
           <div>
-            <div className="text-3xl font-bold text-gray-900 font-montserrat">
+            <div className="text-3xl font-bold text-primary font-montserrat">
               {formatPrice(item.price * 100, item.currency)}
             </div>
-            <div className="text-xs text-gray-500">Kişi başı</div>
+            <div className="text-xs text-primary">Kişi başı</div>
           </div>
 
           <Link
             href={`/item/${item.id}`}
-            className="px-5 py-2.5 bg-[#E7E393] text-white text-sm font-semibold rounded-lg hover:bg-[#E7E393]/90 hover:scale-105 transition-all shadow-md"
+            className="px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary/90 hover:scale-105 transition-all shadow-md"
           >
             Detay →
           </Link>

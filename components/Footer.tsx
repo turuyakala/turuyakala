@@ -2,13 +2,13 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#E7E393] py-12 mt-16">
+    <footer className="bg-white py-6">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo ve Slogan */}
           <div className="md:col-span-2">
-            <h3 className="text-3xl font-bold font-montserrat mb-2 text-[#854D27]">TuruYakala</h3>
-            <p className="text-[#854D27] text-lg mb-6">
+            <h3 className="text-3xl font-bold font-montserrat mb-2 text-[#1A2A5A]">TuruYakala</h3>
+            <p className="text-[#1A2A5A] text-lg mb-6">
               Son dakikada, en doğru fırsatla!
             </p>
             
@@ -18,7 +18,7 @@ export default function Footer() {
                 href="https://instagram.com/turuyakala" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-12 h-12 bg-[#DD7230] rounded-full flex items-center justify-center hover:bg-[#DD7230]/90 transition-colors shadow-md"
+                className="w-12 h-12 bg-[#E63946] rounded-full flex items-center justify-center hover:bg-[#E63946]/90 transition-colors shadow-md"
                 aria-label="Instagram"
               >
                 <img 
@@ -31,7 +31,7 @@ export default function Footer() {
                 href="https://x.com/turuyakala" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-12 h-12 bg-[#DD7230] rounded-full flex items-center justify-center hover:bg-[#DD7230]/90 transition-colors shadow-md"
+                className="w-12 h-12 bg-[#E63946] rounded-full flex items-center justify-center hover:bg-[#E63946]/90 transition-colors shadow-md"
                 aria-label="X (Twitter)"
               >
                 <img 
@@ -44,7 +44,7 @@ export default function Footer() {
                 href="https://tiktok.com/@turuyakala" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-12 h-12 bg-[#DD7230] rounded-full flex items-center justify-center hover:bg-[#DD7230]/90 transition-colors shadow-md"
+                className="w-12 h-12 bg-[#E63946] rounded-full flex items-center justify-center hover:bg-[#E63946]/90 transition-colors shadow-md"
                 aria-label="TikTok"
               >
                 <img 
@@ -58,20 +58,20 @@ export default function Footer() {
 
           {/* Bilgi Sayfaları */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-[#854D27]">Bilgi</h3>
-            <ul className="text-[#854D27] text-sm space-y-2">
+            <h3 className="text-lg font-semibold mb-4 text-[#1A2A5A]">Bilgi</h3>
+            <ul className="text-[#1A2A5A] text-sm space-y-2">
               <li>
-                <Link href="/hakkimizda" className="hover:text-[#854D27]/80 transition-colors">
+                <Link href="/hakkimizda" className="hover:text-[#1A2A5A]/70 transition-colors">
                   Hakkımızda
                 </Link>
               </li>
               <li>
-                <Link href="/sss" className="hover:text-[#854D27]/80 transition-colors">
+                <Link href="/sss" className="hover:text-[#1A2A5A]/70 transition-colors">
                   Sıkça Sorulan Sorular
                 </Link>
               </li>
               <li>
-                <Link href="/iletisim" className="hover:text-[#854D27]/80 transition-colors">
+                <Link href="/iletisim" className="hover:text-[#1A2A5A]/70 transition-colors">
                   İletişim
                 </Link>
               </li>
@@ -80,20 +80,20 @@ export default function Footer() {
 
           {/* Yasal Bilgiler */}
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-[#854D27]">Yasal Bilgiler</h3>
-            <ul className="text-[#854D27] text-sm space-y-2">
+            <h3 className="text-lg font-semibold mb-4 text-[#1A2A5A]">Yasal Bilgiler</h3>
+            <ul className="text-[#1A2A5A] text-sm space-y-2">
               <li>
-                <Link href="/kvkk" className="hover:text-[#854D27]/80 transition-colors">
+                <Link href="/kvkk" className="hover:text-[#1A2A5A]/70 transition-colors">
                   KVKK Aydınlatma Metni
                 </Link>
               </li>
               <li>
-                <Link href="/gizlilik-politikasi" className="hover:text-[#854D27]/80 transition-colors">
+                <Link href="/gizlilik-politikasi" className="hover:text-[#1A2A5A]/70 transition-colors">
                   Gizlilik Politikası
                 </Link>
               </li>
               <li>
-                <Link href="/legal/mesafeli" className="hover:text-[#854D27]/80 transition-colors">
+                <Link href="/legal/mesafeli" className="hover:text-[#1A2A5A]/70 transition-colors">
                   Mesafeli Satış Sözleşmesi
                 </Link>
               </li>
@@ -101,7 +101,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t border-[#854D27]/30 mt-10 pt-8 text-center text-[#854D27] text-sm">
+        <div className="border-t border-gray-300 pt-6 text-center text-[#1A2A5A] text-sm">
           <p>&copy; {new Date().getFullYear()} TuruYakala. Tüm hakları saklıdır.</p>
         </div>
       </div>

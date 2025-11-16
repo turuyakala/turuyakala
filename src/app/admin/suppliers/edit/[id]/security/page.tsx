@@ -233,7 +233,7 @@ export default function SupplierSecurityPage() {
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="flex-1 px-6 py-3 bg-[#E7E393] text-white rounded-lg hover:bg-[#E7E393]/90 transition-colors font-semibold disabled:opacity-50"
+          className="flex-1 px-6 py-3 bg-secondary text-white rounded-lg hover:bg-secondary/90 transition-colors font-semibold disabled:opacity-50"
         >
           {isSaving ? '⏳ Kaydediliyor...' : '💾 Kaydet'}
         </button>

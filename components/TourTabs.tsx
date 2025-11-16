@@ -40,8 +40,8 @@ export default function TourTabs({
             }}
             className={`flex-1 px-6 py-4 font-semibold text-sm md:text-base transition-all whitespace-nowrap ${
               activeTab === tab.id
-                ? 'bg-[#91A8D0] text-white border-b-2 border-[#91A8D0]'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-primary text-white border-b-2 border-primary'
+                : 'text-primary hover:bg-gray-50'
             }`}
           >
             {tab.label}
@@ -54,25 +54,25 @@ export default function TourTabs({
         {/* Program */}
         {activeTab === 'program' && (
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Tur Programı</h3>
+            <h3 className="text-2xl font-bold text-primary mb-4">Tur Programı</h3>
             {description && (
-              <p className="text-gray-700 leading-relaxed mb-6">{description}</p>
+              <p className="text-primary leading-relaxed mb-6">{description}</p>
             )}
             {program && program.length > 0 ? (
               <div className="space-y-4">
                 {program.map((item, index) => (
                   <div key={index} className="flex gap-4 items-start">
-                    <div className="flex-shrink-0 w-10 h-10 bg-[#91A8D0] text-white rounded-full flex items-center justify-center font-bold">
+                    <div className="flex-shrink-0 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center font-bold">
                       {index + 1}
                     </div>
                     <div className="flex-1 bg-gray-50 p-4 rounded-lg">
-                      <p className="text-gray-800">{item}</p>
+                      <p className="text-primary">{item}</p>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600 bg-gray-50 p-6 rounded-lg text-center">
+              <p className="text-primary bg-gray-50 p-6 rounded-lg text-center">
                 Bu tur için detaylı program bilgisi henüz eklenmemiştir.
               </p>
             )}
@@ -93,12 +93,12 @@ export default function TourTabs({
                   {included.map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="text-green-500 text-xl flex-shrink-0">✓</span>
-                      <span className="text-gray-800">{item}</span>
+                      <span className="text-primary">{item}</span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-gray-600 bg-gray-50 p-4 rounded-lg">
+                <p className="text-primary bg-gray-50 p-4 rounded-lg">
                   Bilgi bulunmamaktadır.
                 </p>
               )}
@@ -115,12 +115,12 @@ export default function TourTabs({
                   {excluded.map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="text-red-500 text-xl flex-shrink-0">✗</span>
-                      <span className="text-gray-800">{item}</span>
+                      <span className="text-primary">{item}</span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <p className="text-gray-600 bg-gray-50 p-4 rounded-lg">
+                <p className="text-primary bg-gray-50 p-4 rounded-lg">
                   Bilgi bulunmamaktadır.
                 </p>
               )}
@@ -131,20 +131,20 @@ export default function TourTabs({
         {/* Önemli Bilgiler */}
         {activeTab === 'info' && (
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Önemli Bilgiler</h3>
+            <h3 className="text-2xl font-bold text-primary mb-4">Önemli Bilgiler</h3>
             {importantInfo && importantInfo.length > 0 ? (
               <div className="space-y-3">
                 {importantInfo.map((info, index) => (
-                  <div key={index} className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">
-                    <p className="text-gray-800 flex items-start gap-3">
-                      <span className="text-blue-500 text-xl flex-shrink-0">ℹ️</span>
+                  <div key={index} className="bg-tertiary border-l-4 border-primary p-4 rounded">
+                    <p className="text-primary flex items-start gap-3">
+                      <span className="text-primary text-xl flex-shrink-0">ℹ️</span>
                       {info}
                     </p>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-gray-600 bg-gray-50 p-6 rounded-lg text-center">
+              <p className="text-primary bg-gray-50 p-6 rounded-lg text-center">
                 Bu tur için önemli bilgi eklenmemiştir.
               </p>
             )}
@@ -154,34 +154,34 @@ export default function TourTabs({
         {/* İptal Koşulları */}
         {activeTab === 'cancel' && (
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">İptal ve İade Koşulları</h3>
-            <div className="bg-red-50 border-2 border-red-500 rounded-xl p-6">
+            <h3 className="text-2xl font-bold text-primary mb-4">İptal ve İade Koşulları</h3>
+            <div className="bg-tertiary border-2 border-secondary rounded-xl p-6">
               <div className="flex items-start gap-4">
                 <span className="text-5xl">⚠️</span>
                 <div>
-                  <h4 className="text-xl font-bold text-red-600 mb-3">
+                  <h4 className="text-xl font-bold text-secondary mb-3">
                     Bu Tur Kesinlikle İptal Edilemez!
                   </h4>
-                  <div className="space-y-2 text-gray-800">
+                  <div className="space-y-2 text-primary">
                     <p className="flex items-start gap-2">
-                      <span className="text-red-500 font-bold">•</span>
+                      <span className="text-secondary font-bold">•</span>
                       <span>Son dakika turu olduğu için rezervasyon sonrası iptal kabul edilmez.</span>
                     </p>
                     <p className="flex items-start gap-2">
-                      <span className="text-red-500 font-bold">•</span>
+                      <span className="text-secondary font-bold">•</span>
                       <span>Ödeme yapıldıktan sonra iade yapılmaz.</span>
                     </p>
                     <p className="flex items-start gap-2">
-                      <span className="text-red-500 font-bold">•</span>
+                      <span className="text-secondary font-bold">•</span>
                       <span>Tarih değişikliği yapılamaz.</span>
                     </p>
                     <p className="flex items-start gap-2">
-                      <span className="text-red-500 font-bold">•</span>
+                      <span className="text-secondary font-bold">•</span>
                       <span>İsim değişikliği yapılabilir (ek ücret karşılığında).</span>
                     </p>
                   </div>
                   <div className="mt-4 p-4 bg-yellow-100 rounded-lg">
-                    <p className="text-sm text-gray-800">
+                    <p className="text-sm text-primary">
                       <strong>💡 Not:</strong> Rezervasyon yapmadan önce tarih ve detayları dikkatlice kontrol ediniz.
                     </p>
                   </div>

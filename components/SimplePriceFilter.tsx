@@ -49,7 +49,7 @@ export default function SimplePriceFilter({ priceRange }: SimplePriceFilterProps
           value={minPrice}
           onChange={(e) => setMinPrice(e.target.value)}
           placeholder={`Min ${priceRange.min}₺`}
-          className="w-28 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E7E393] text-gray-900 text-sm bg-white placeholder-gray-400"
+          className="w-28 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A2A5A] text-gray-900 text-sm bg-white placeholder-gray-400"
           aria-label="Minimum fiyat"
         />
         <span className="text-gray-500">-</span>
@@ -58,14 +58,14 @@ export default function SimplePriceFilter({ priceRange }: SimplePriceFilterProps
           value={maxPrice}
           onChange={(e) => setMaxPrice(e.target.value)}
           placeholder={`Max ${priceRange.max}₺`}
-          className="w-28 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#E7E393] text-gray-900 text-sm bg-white placeholder-gray-400"
+          className="w-28 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#1A2A5A] text-gray-900 text-sm bg-white placeholder-gray-400"
           aria-label="Maksimum fiyat"
         />
       </div>
       
       <button
         onClick={handleApply}
-        className="px-4 py-2 bg-[#E7E393] text-white text-sm font-medium rounded-md hover:bg-[#E7E393]/90 transition-colors focus:outline-none focus:ring-2 focus:ring-[#E7E393]/50"
+        className="px-4 py-2 bg-[#1A2A5A] text-white text-sm font-medium rounded-md hover:bg-[#1A2A5A]/90 transition-colors focus:outline-none focus:ring-2 focus:ring-[#1A2A5A]/50"
         aria-label="Fiyat filtresini uygula"
       >
         Uygula
@@ -74,7 +74,7 @@ export default function SimplePriceFilter({ priceRange }: SimplePriceFilterProps
       {(minPrice || maxPrice) && (
         <button
           onClick={handleReset}
-          className="px-4 py-2 bg-gray-200 text-gray-700 text-sm font-medium rounded-md hover:bg-gray-300 transition-colors"
+          className="px-4 py-2 bg-[#DAE4F2] text-[#1A2A5A] text-sm font-medium rounded-md hover:bg-[#DAE4F2]/80 transition-colors"
           aria-label="Fiyat filtresini temizle"
         >
           Temizle
