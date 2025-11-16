@@ -9,6 +9,7 @@ import ReservationBox from '@/components/ReservationBox';
 import SimilarTours from '@/components/SimilarTours';
 import ShareButtons from '@/components/ShareButtons';
 import MapSection from '@/components/MapSection';
+import Navigation from '@/components/Navigation';
 import { prisma } from '@/lib/prisma';
 
 // Force dynamic rendering - this page needs real-time data

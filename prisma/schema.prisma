@@ -177,6 +177,8 @@ model Order {
   paymentMethod   String?
   transactionId   String?
   pnrCode         String?
+  passportNumber  String?       // Pasaport numarası
+  passportExpiry  DateTime?     // Pasaport geçerlilik tarihi
   
   user            User?         @relation(fields: [userId], references: [id])
   inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])

@@ -84,12 +84,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if already reviewed
-    const existingReview = await prisma.review.findUnique({
+    const existingReview = await prisma.review.findFirst({
       where: {
-        userId_orderId: {
-          userId,
-          orderId,
-        },
+        userId,
+        orderId,
       },
     });
 

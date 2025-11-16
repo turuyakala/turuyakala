@@ -91,14 +91,15 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate total price
-    const priceMinor = tour.priceMinor || (tour.price ? tour.price * 100 : 0);
+    // tour can be InventoryItem (has priceMinor) or synthetic object from Offer (has both priceMinor and price)
+    const priceMinor = tour.priceMinor ?? ((tour as any).price ? (tour as any).price * 100 : 0);
     const totalPriceMinor = priceMinor * data.guests;
 
     // Generate PNR code
     const pnrCode = `PNR-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
     // If tour is from Offer and not imported, we need to create InventoryItem first
-    if (isFromOffer && !tour.inventoryItemId) {
+    if (isFromOffer && !(tour as any).inventoryItemId) {
       // Get admin seller profile
       const adminUser = await prisma.user.findFirst({
         where: { role: 'admin' },

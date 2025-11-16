@@ -303,13 +303,13 @@ export default function ProfilePage() {
                               >
                                 ⭐ Puan Ver ve Yorum Yap
                               </button>
-                            ) : (
+                            ) : review ? (
                               <div className="text-center">
                                 <div className="px-6 py-2.5 bg-gray-100 text-gray-600 font-medium rounded-lg whitespace-nowrap">
                                   {review.isPublished ? '✅ Yorumunuz Yayında' : '⏳ Onay Bekliyor'}
                                 </div>
                               </div>
-                            )}
+                            ) : null}
                           </div>
                         </div>
                       </div>

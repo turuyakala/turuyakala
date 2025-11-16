@@ -1,11 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 
-export default function PaymentCallbackPage() {
+function PaymentCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const orderId = searchParams.get('orderId');
@@ -49,66 +49,81 @@ export default function PaymentCallbackPage() {
   };
 
   return (
+    <main className="container mx-auto px-4 py-12 max-w-2xl">
+      {paymentStatus === 'loading' && (
+        <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <div className="text-6xl mb-4 animate-spin">⏳</div>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Ödeme İşleniyor</h2>
+          <p className="text-gray-600">Lütfen bekleyin...</p>
+        </div>
+      )}
+
+      {paymentStatus === 'success' && (
+        <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <div className="text-6xl mb-4">✅</div>
+          <h2 className="text-2xl font-bold text-green-900 mb-2">Ödeme Başarılı!</h2>
+          <p className="text-gray-600 mb-6">Rezervasyonunuz onaylandı. Yönlendiriliyorsunuz...</p>
+          {order && (
+            <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+              <p className="text-sm text-gray-600">
+                <strong>PNR Kodu:</strong> {order.pnrCode || 'Oluşturuluyor...'}
+              </p>
+              <p className="text-sm text-gray-600">
+                <strong>Toplam Tutar:</strong> {order.amount.toLocaleString('tr-TR')} {order.currency === 'TRY' ? '₺' : order.currency}
+              </p>
+            </div>
+          )}
+          <Link
+            href={`/reservation/${orderId}/success?orderId=${orderId}`}
+            className="inline-block px-6 py-3 bg-[#1A2A5A] text-white font-medium rounded-lg hover:bg-[#1A2A5A]/90 transition-colors"
+          >
+            Rezervasyon Detaylarına Git →
+          </Link>
+        </div>
+      )}
+
+      {paymentStatus === 'failed' && (
+        <div className="bg-white rounded-lg shadow-md p-8 text-center">
+          <div className="text-6xl mb-4">❌</div>
+          <h2 className="text-2xl font-bold text-red-900 mb-2">Ödeme Başarısız</h2>
+          <p className="text-gray-600 mb-6">
+            Ödeme işlemi tamamlanamadı. Lütfen tekrar deneyin.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Link
+              href={`/reservation/${orderId}`}
+              className="px-6 py-3 bg-[#E63946] text-white font-medium rounded-lg hover:bg-[#E63946]/90 transition-colors"
+            >
+              Tekrar Dene
+            </Link>
+            <Link
+              href="/"
+              className="px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Ana Sayfaya Dön
+            </Link>
+          </div>
+        </div>
+      )}
+    </main>
+  );
+}
+
+export default function PaymentCallbackPage() {
+  return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
-      
-      <main className="container mx-auto px-4 py-12 max-w-2xl">
-        {paymentStatus === 'loading' && (
+      <Suspense fallback={
+        <main className="container mx-auto px-4 py-12 max-w-2xl">
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
             <div className="text-6xl mb-4 animate-spin">⏳</div>
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Ödeme İşleniyor</h2>
-            <p className="text-gray-600">Lütfen bekleyin...</p>
+            <p className="text-gray-600">Yükleniyor...</p>
           </div>
-        )}
-
-        {paymentStatus === 'success' && (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <div className="text-6xl mb-4">✅</div>
-            <h2 className="text-2xl font-bold text-green-900 mb-2">Ödeme Başarılı!</h2>
-            <p className="text-gray-600 mb-6">Rezervasyonunuz onaylandı. Yönlendiriliyorsunuz...</p>
-            {order && (
-              <div className="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-                <p className="text-sm text-gray-600">
-                  <strong>PNR Kodu:</strong> {order.pnrCode || 'Oluşturuluyor...'}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <strong>Toplam Tutar:</strong> {order.amount.toLocaleString('tr-TR')} {order.currency === 'TRY' ? '₺' : order.currency}
-                </p>
-              </div>
-            )}
-            <Link
-              href={`/reservation/${orderId}/success?orderId=${orderId}`}
-              className="inline-block px-6 py-3 bg-[#1A2A5A] text-white font-medium rounded-lg hover:bg-[#1A2A5A]/90 transition-colors"
-            >
-              Rezervasyon Detaylarına Git →
-            </Link>
-          </div>
-        )}
-
-        {paymentStatus === 'failed' && (
-          <div className="bg-white rounded-lg shadow-md p-8 text-center">
-            <div className="text-6xl mb-4">❌</div>
-            <h2 className="text-2xl font-bold text-red-900 mb-2">Ödeme Başarısız</h2>
-            <p className="text-gray-600 mb-6">
-              Ödeme işlemi tamamlanamadı. Lütfen tekrar deneyin.
-            </p>
-            <div className="flex gap-3 justify-center">
-              <Link
-                href={`/reservation/${orderId}`}
-                className="px-6 py-3 bg-[#E63946] text-white font-medium rounded-lg hover:bg-[#E63946]/90 transition-colors"
-              >
-                Tekrar Dene
-              </Link>
-              <Link
-                href="/"
-                className="px-6 py-3 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors"
-              >
-                Ana Sayfaya Dön
-              </Link>
-            </div>
-          </div>
-        )}
-      </main>
+        </main>
+      }>
+        <PaymentCallbackContent />
+      </Suspense>
     </div>
   );
 }
