@@ -51,27 +51,25 @@ export default function OfferCard({ item, serverTime }: OfferCardProps) {
   const categoryColor = categoryColors[item?.category] || categoryColors.tour;
 
   // Client-side mount kontrolü
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);
 
   // Gerçek zamanlı sayaç için state kullan
-  const [timeRemaining, setTimeRemaining] = useState(() => {
-    // İlk render'da server saatini kullan
-    const now = new Date(serverTime).getTime();
-    const diff = Math.max(0, departureTimeMs - now);
-    const totalSeconds = Math.floor(diff / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return { hours, minutes, seconds, totalSeconds };
-  });
+  // Hydration mismatch'i önlemek için başlangıç değeri null, mount'tan sonra hesaplanacak
+  const [timeRemaining, setTimeRemaining] = useState<{
+    hours: number;
+    minutes: number;
+    seconds: number;
+    totalSeconds: number;
+  } | null>(null);
 
   // Gerçek zamanlı sayaç güncellemesi - her saniye çalışır
   useEffect(() => {
     if (!mounted) return;
 
-    // İlk hesaplama
+    // İlk hesaplama - mount'tan sonra hemen çalışır
     const calculateTimeRemaining = () => {
       const serverTimeMs = new Date(serverTime).getTime();
       const clientTimeMs = Date.now();
@@ -107,8 +105,8 @@ export default function OfferCard({ item, serverTime }: OfferCardProps) {
         
         // Batch state updates - React 18 otomatik batch'ler ama yine de dikkatli olalım
         setCurrentSeatsLeft((prevSeats) => {
-          // Koltuk sayısı azaldıysa animasyonu tetikle
-          if (prevSeats > 0 && newSeatsLeft < prevSeats && !isAnimatingRef.current) {
+          // Koltuk sayısı azaldıysa animasyonu tetikle (ama 0'a düşmediyse)
+          if (prevSeats > 0 && newSeatsLeft < prevSeats && newSeatsLeft > 0 && !isAnimatingRef.current) {
             // Race condition önleme: flag'i hemen set et, sonra state'i güncelle
             isAnimatingRef.current = true;
             requestAnimationFrame(() => {
@@ -122,7 +120,7 @@ export default function OfferCard({ item, serverTime }: OfferCardProps) {
           return newSeatsLeft;
         });
         
-        // Eğer koltuk kalmadıysa animasyonu tetikle
+        // Eğer koltuk kalmadıysa animasyonu tetikle (sadece 0'a düştüyse ve önceki koşul çalışmadıysa)
         if (newSeatsLeft === 0 && !isSoldOutRef.current && !isAnimatingRef.current) {
           // Race condition önleme: flag'i hemen set et, sonra state'i güncelle
           isAnimatingRef.current = true;
@@ -212,7 +210,7 @@ export default function OfferCard({ item, serverTime }: OfferCardProps) {
         )}
 
         {/* Sol üst: Geri sayım ibaresi */}
-        {timeRemaining.totalSeconds > 0 && (
+        {timeRemaining && timeRemaining.totalSeconds > 0 && (
           <div className="absolute top-3 left-3 z-10">
             <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md shadow-lg ${
               isSurprise 
