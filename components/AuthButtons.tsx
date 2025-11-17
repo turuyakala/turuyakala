@@ -41,7 +41,7 @@ export default function AuthButtons() {
       <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-3 py-2 bg-[#1A2A5A]/70 hover:bg-[#1A2A5A]/90 text-white rounded-lg transition-colors shadow-sm"
+          className="flex items-center gap-2 px-3 py-2 bg-[#1A2A5A]/70 hover:bg-[#1A2A5A]/90 text-white rounded-full transition-colors shadow-sm"
           aria-label="Profil menüsü"
           aria-expanded={isOpen}
         >
@@ -125,7 +125,7 @@ export default function AuthButtons() {
     <div className="relative" ref={dropdownRef}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="flex items-center gap-2 px-3 py-2 bg-[#1A2A5A]/70 hover:bg-[#1A2A5A]/90 text-white rounded-lg transition-colors shadow-sm"
+          className="flex items-center gap-2 px-3 py-2 bg-[#1A2A5A]/70 hover:bg-[#1A2A5A]/90 text-white rounded-full transition-colors shadow-sm"
           aria-label="Giriş menüsü"
           aria-expanded={isOpen}
         >

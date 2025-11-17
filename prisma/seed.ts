@@ -602,157 +602,145 @@ async function main() {
   }
 
   // Create inventory items for tours (needed for orders)
-  const inventoryItem1 = await prisma.inventoryItem.upsert({
-    where: { id: offer1.id },
-    update: {},
-    create: {
-      sellerId: sellerProfile.id,
-      supplierId: supplier1.id,
+  // Check if inventory item already exists
+  let inventoryItem1 = await prisma.inventoryItem.findFirst({
+    where: {
       vendorOfferId: offer1.vendorOfferId,
-      category: 'tour',
-      title: offer1.title,
-      from: offer1.from,
-      to: offer1.to,
-      startAt: offer1.startAt,
-      seatsTotal: offer1.seatsTotal,
-      seatsLeft: offer1.seatsLeft,
-      priceMinor: offer1.priceMinor,
-      currency: offer1.currency,
-      image: offer1.image,
-      terms: offer1.terms,
-      transport: offer1.transport,
-      isSurprise: offer1.isSurprise,
-      requiresPassport: offer1.requiresPassport,
-      status: 'active',
+      supplierId: supplier1.id,
     },
   });
 
-  const inventoryItem2 = await prisma.inventoryItem.upsert({
-    where: { id: offer7.id },
-    update: {},
-    create: {
-      sellerId: sellerProfile.id,
-      supplierId: supplier1.id,
+  if (!inventoryItem1) {
+    inventoryItem1 = await prisma.inventoryItem.create({
+      data: {
+        sellerId: sellerProfile.id,
+        supplierId: supplier1.id,
+        vendorOfferId: offer1.vendorOfferId,
+        category: 'tour',
+        title: offer1.title,
+        from: offer1.from,
+        to: offer1.to,
+        startAt: offer1.startAt,
+        seatsTotal: offer1.seatsTotal,
+        seatsLeft: offer1.seatsLeft,
+        priceMinor: offer1.priceMinor,
+        currency: offer1.currency,
+        image: offer1.image,
+        terms: offer1.terms,
+        transport: offer1.transport,
+        isSurprise: offer1.isSurprise,
+        requiresPassport: offer1.requiresPassport,
+        status: 'active',
+      },
+    });
+  }
+
+  let inventoryItem2 = await prisma.inventoryItem.findFirst({
+    where: {
       vendorOfferId: offer7.vendorOfferId,
-      category: 'tour',
-      title: offer7.title,
-      from: offer7.from,
-      to: offer7.to,
-      startAt: offer7.startAt,
-      seatsTotal: offer7.seatsTotal,
-      seatsLeft: offer7.seatsLeft,
-      priceMinor: offer7.priceMinor,
-      currency: offer7.currency,
-      image: offer7.image,
-      terms: offer7.terms,
-      transport: offer7.transport,
-      isSurprise: offer7.isSurprise,
-      requiresPassport: offer7.requiresPassport,
-      status: 'active',
-    },
-  });
-
-  const inventoryItem3 = await prisma.inventoryItem.upsert({
-    where: { id: offer8.id },
-    update: {},
-    create: {
-      sellerId: sellerProfile.id,
-      supplierId: supplier2.id,
-      vendorOfferId: offer8.vendorOfferId,
-      category: 'tour',
-      title: offer8.title,
-      from: offer8.from,
-      to: offer8.to,
-      startAt: offer8.startAt,
-      seatsTotal: offer8.seatsTotal,
-      seatsLeft: offer8.seatsLeft,
-      priceMinor: offer8.priceMinor,
-      currency: offer8.currency,
-      image: offer8.image,
-      terms: offer8.terms,
-      transport: offer8.transport,
-      isSurprise: offer8.isSurprise,
-      requiresPassport: offer8.requiresPassport,
-      status: 'active',
-    },
-  });
-
-  const inventoryItem4 = await prisma.inventoryItem.upsert({
-    where: { id: offer10.id },
-    update: {},
-    create: {
-      sellerId: sellerProfile.id,
       supplierId: supplier1.id,
-      vendorOfferId: offer10.vendorOfferId,
-      category: 'tour',
-      title: offer10.title,
-      from: offer10.from,
-      to: offer10.to,
-      startAt: offer10.startAt,
-      seatsTotal: offer10.seatsTotal,
-      seatsLeft: offer10.seatsLeft,
-      priceMinor: offer10.priceMinor,
-      currency: offer10.currency,
-      image: offer10.image,
-      terms: offer10.terms,
-      transport: offer10.transport,
-      isSurprise: offer10.isSurprise,
-      requiresPassport: offer10.requiresPassport,
-      status: 'active',
     },
   });
 
-  const inventoryItem5 = await prisma.inventoryItem.upsert({
-    where: { id: offer3.id },
-    update: {},
-    create: {
-      sellerId: sellerProfile.id,
-      supplierId: supplier3.id,
-      vendorOfferId: offer3.vendorOfferId,
-      category: 'tour',
-      title: offer3.title,
-      from: offer3.from,
-      to: offer3.to,
-      startAt: offer3.startAt,
-      seatsTotal: offer3.seatsTotal,
-      seatsLeft: offer3.seatsLeft,
-      priceMinor: offer3.priceMinor,
-      currency: offer3.currency,
-      image: offer3.image,
-      terms: offer3.terms,
-      transport: offer3.transport,
-      isSurprise: offer3.isSurprise,
-      requiresPassport: offer3.requiresPassport,
-      status: 'active',
-    },
-  });
+  if (!inventoryItem2) {
+    inventoryItem2 = await prisma.inventoryItem.create({
+      data: {
+        sellerId: sellerProfile.id,
+        supplierId: supplier1.id,
+        vendorOfferId: offer7.vendorOfferId,
+        category: 'tour',
+        title: offer7.title,
+        from: offer7.from,
+        to: offer7.to,
+        startAt: offer7.startAt,
+        seatsTotal: offer7.seatsTotal,
+        seatsLeft: offer7.seatsLeft,
+        priceMinor: offer7.priceMinor,
+        currency: offer7.currency,
+        image: offer7.image,
+        terms: offer7.terms,
+        transport: offer7.transport,
+        isSurprise: offer7.isSurprise,
+        requiresPassport: offer7.requiresPassport,
+        status: 'active',
+      },
+    });
+  }
 
-  const inventoryItem6 = await prisma.inventoryItem.upsert({
-    where: { id: offer5.id },
-    update: {},
-    create: {
-      sellerId: sellerProfile.id,
-      supplierId: supplier1.id,
-      vendorOfferId: offer5.vendorOfferId,
-      category: 'tour',
-      title: offer5.title,
-      from: offer5.from,
-      to: offer5.to,
-      startAt: offer5.startAt,
-      seatsTotal: offer5.seatsTotal,
-      seatsLeft: offer5.seatsLeft,
-      priceMinor: offer5.priceMinor,
-      currency: offer5.currency,
-      image: offer5.image,
-      terms: offer5.terms,
-      transport: offer5.transport,
-      isSurprise: offer5.isSurprise,
-      requiresPassport: offer5.requiresPassport,
-      status: 'active',
-    },
-  });
+  // Helper function to create or find inventory item
+  const createOrFindInventoryItem = async (offer: any, supplierId: string) => {
+    let item = await prisma.inventoryItem.findFirst({
+      where: {
+        vendorOfferId: offer.vendorOfferId,
+        supplierId: supplierId,
+      },
+    });
+
+    if (!item) {
+      item = await prisma.inventoryItem.create({
+        data: {
+          sellerId: sellerProfile.id,
+          supplierId: supplierId,
+          vendorOfferId: offer.vendorOfferId,
+          category: offer.category,
+          title: offer.title,
+          from: offer.from,
+          to: offer.to,
+          startAt: offer.startAt,
+          seatsTotal: offer.seatsTotal,
+          seatsLeft: offer.seatsLeft,
+          priceMinor: offer.priceMinor,
+          currency: offer.currency,
+          image: offer.image,
+          terms: offer.terms,
+          transport: offer.transport,
+          isSurprise: offer.isSurprise,
+          requiresPassport: offer.requiresPassport,
+          status: 'active',
+        },
+      });
+    }
+
+    return item;
+  };
+
+  const inventoryItem3 = await createOrFindInventoryItem(offer8, supplier2.id);
+  const inventoryItem4 = await createOrFindInventoryItem(offer10, supplier1.id);
+  const inventoryItem5 = await createOrFindInventoryItem(offer3, supplier3.id);
+  const inventoryItem6 = await createOrFindInventoryItem(offer5, supplier1.id);
 
   // Create sample orders
+  // Test kullanıcısı için örnek orderlar - "Önceden Yakaladıklarım" bölümü için
+  // 1. Yorumlu order (Paris Turu)
+  const testUserOrder1 = await prisma.order.create({
+    data: {
+      userId: user.id,
+      inventoryItemId: inventoryItem2.id,
+      email: user.email!,
+      fullName: user.name || 'Test User',
+      phone: '+90 555 111 2233',
+      seats: 2,
+      totalPrice: inventoryItem2.priceMinor * 2,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-TEST-001',
+    },
+  });
+
+  // 2. Yorumsuz order (Roma Turu) - "Değerlendir ve Yorum Yap" butonu görünsün
+  const testUserOrder2 = await prisma.order.create({
+    data: {
+      userId: user.id,
+      inventoryItemId: inventoryItem3.id,
+      email: user.email!,
+      fullName: user.name || 'Test User',
+      phone: '+90 555 111 2233',
+      seats: 1,
+      totalPrice: inventoryItem3.priceMinor,
+      paymentStatus: 'paid',
+      pnrCode: 'PNR-TEST-002',
+    },
+  });
+
   const order1 = await prisma.order.create({
     data: {
       userId: user.id,
@@ -894,6 +882,16 @@ async function main() {
   });
 
   const reviews = [
+    // Test kullanıcısı için yorum (Paris Turu)
+    {
+      userId: user.id,
+      orderId: testUserOrder1.id,
+      rating: 5,
+      comment: 'Paris turu hayalimdi ve gerçekten beklentilerimi aştı! Eyfel Kulesi, Louvre Müzesi, Notre Dame... Her yer çok güzeldi. Otelimiz merkezi bir konumdaydı ve kahvaltı harikaydı. Kesinlikle tekrar gelmek isterim.',
+      tourName: 'Paris Romantik Şehir Turu',
+      isApproved: true,
+      isPublished: true,
+    },
     {
       userId: user.id,
       orderId: order1.id,
@@ -1022,6 +1020,207 @@ async function main() {
   console.log('   ⭐ Marmaris Cruise: 4/5 yıldız (Yayında)');
   console.log('   ⭐ Sürpriz Termal Tur: 5/5 yıldız (Yayında)');
   console.log('   📝 Tümü yayında ve onaylı');
+
+  // Create detailed example tour (InventoryItem with all details)
+  console.log('\n📋 Creating detailed example tour...');
+  
+  const adminSellerProfile = await prisma.sellerProfile.findFirst({
+    where: { userId: admin.id },
+  });
+
+  if (!adminSellerProfile) {
+    // Create admin seller profile if it doesn't exist
+    const newAdminSellerProfile = await prisma.sellerProfile.create({
+      data: {
+        userId: admin.id,
+        companyName: 'TuruYakala Admin',
+        verified: true,
+      },
+    });
+    
+    const exampleTour = await prisma.inventoryItem.create({
+      data: {
+        sellerId: newAdminSellerProfile.id,
+        category: 'tour',
+        title: 'Kapadokya Balon Turu - Unutulmaz Deneyim',
+        from: 'İstanbul',
+        to: 'Kapadokya',
+        startAt: hoursFromNow(48),
+        seatsTotal: 20,
+        seatsLeft: 5,
+        priceMinor: 850000, // 8500 TRY
+        currency: 'TRY',
+        image: '/images/hero-1.jpg',
+        images: JSON.stringify([
+          '/images/hero-1.jpg',
+          '/images/hero-2.jpg',
+          '/images/hero-3.jpg',
+          '/images/hero-4.jpg'
+        ]),
+        transport: 'Uçak ile',
+        contact: JSON.stringify({
+          phone: '+90 555 123 4567',
+          whatsapp: '905551234567'
+        }),
+        terms: 'Kalkıştan 24 saat önce iptal edilirse %80 iade. Sonrasında iade yok.',
+        description: 'Kapadokya\'nın eşsiz peri bacalarını havadan keşfetmek için muhteşem bir fırsat! Gün doğumu ile birlikte gökyüzüne yükselin ve bu büyülü deneyimi yaşayın. Profesyonel pilotlar eşliğinde güvenli bir şekilde uçun ve Kapadokya\'nın muhteşem manzarasını kuşbakışı izleyin.',
+        program: JSON.stringify([
+          'Sabah 05:30 - Otel transferi',
+          'Sabah 06:00 - Balon kalkış alanına varış, kahvaltı ikramı',
+          'Sabah 06:30 - Balon şişirme gösterisi ve güvenlik briefingi',
+          'Sabah 07:00 - Balon kalkışı (yaklaşık 1 saat sürecek)',
+          'Sabah 08:00 - Balon inişi ve şampanya töreni',
+          'Sabah 08:30 - Uçuş sertifikası dağıtımı',
+          'Sabah 09:00 - Otele dönüş'
+        ]),
+        included: JSON.stringify([
+          'Otel karşılama ve transfer hizmeti',
+          'Profesyonel pilot eşliğinde balon turu',
+          'Uçuş öncesi kahvaltı ikramı',
+          'Uçuş sonrası şampanya töreni',
+          'Uçuş sertifikası',
+          'Uçuş sigortası',
+          'Tüm güvenlik ekipmanları'
+        ]),
+        excluded: JSON.stringify([
+          'Kişisel harcamalar',
+          'Uçak bileti (İstanbul-Kayseri)',
+          'Ekstra içecekler',
+          'Fotoğraf ve video çekimi (opsiyonel)',
+          'Bahşişler'
+        ]),
+        importantInfo: JSON.stringify([
+          'Hava koşulları uygun değilse tur iptal edilebilir',
+          'Hamile kadınlar ve 6 yaşından küçük çocuklar katılamaz',
+          'Balon kapasitesi maksimum 20 kişidir',
+          'Rahat kıyafet ve spor ayakkabı önerilir',
+          'Uçuş süresi hava koşullarına göre değişebilir',
+          'Pasaport gerekli değildir (iç hat uçuşu)'
+        ]),
+        departureLocation: JSON.stringify({
+          address: 'Kapadokya Balon Kalkış Alanı, Göreme, Nevşehir',
+          lat: 38.6431,
+          lng: 34.8286
+        }),
+        checkInTime: '05:30',
+        checkOutTime: '09:00',
+        roomRules: JSON.stringify([
+          'Sigara içilmez',
+          'Ses yapılmaz',
+          'Gece 22:00\'den sonra sessizlik',
+          'Çocuklar için uygun'
+        ]),
+        petFriendly: false,
+        languages: JSON.stringify(['Türkçe', 'İngilizce']),
+        paymentMethods: JSON.stringify(['Nakit', 'Kredi Kartı', 'Banka Transferi']),
+        isSurprise: false,
+        requiresVisa: false,
+        requiresPassport: false,
+        status: 'active',
+      },
+    });
+    
+    console.log('✅ Created detailed example tour:', exampleTour.title);
+    console.log('   📍 Detay sayfası: /item/' + exampleTour.id);
+  } else {
+    // Check if example tour already exists
+    const existingTour = await prisma.inventoryItem.findFirst({
+      where: {
+        sellerId: adminSellerProfile.id,
+        title: 'Kapadokya Balon Turu - Unutulmaz Deneyim',
+      },
+    });
+
+    if (!existingTour) {
+      const exampleTour = await prisma.inventoryItem.create({
+        data: {
+          sellerId: adminSellerProfile.id,
+          category: 'tour',
+          title: 'Kapadokya Balon Turu - Unutulmaz Deneyim',
+          from: 'İstanbul',
+          to: 'Kapadokya',
+          startAt: hoursFromNow(48),
+          seatsTotal: 20,
+          seatsLeft: 5,
+          priceMinor: 850000, // 8500 TRY
+          currency: 'TRY',
+          image: '/images/hero-1.jpg',
+          images: JSON.stringify([
+            '/images/hero-1.jpg',
+            '/images/hero-2.jpg',
+            '/images/hero-3.jpg',
+            '/images/hero-4.jpg'
+          ]),
+          transport: 'Uçak ile',
+          contact: JSON.stringify({
+            phone: '+90 555 123 4567',
+            whatsapp: '905551234567'
+          }),
+          terms: 'Kalkıştan 24 saat önce iptal edilirse %80 iade. Sonrasında iade yok.',
+          description: 'Kapadokya\'nın eşsiz peri bacalarını havadan keşfetmek için muhteşem bir fırsat! Gün doğumu ile birlikte gökyüzüne yükselin ve bu büyülü deneyimi yaşayın. Profesyonel pilotlar eşliğinde güvenli bir şekilde uçun ve Kapadokya\'nın muhteşem manzarasını kuşbakışı izleyin.',
+          program: JSON.stringify([
+            'Sabah 05:30 - Otel transferi',
+            'Sabah 06:00 - Balon kalkış alanına varış, kahvaltı ikramı',
+            'Sabah 06:30 - Balon şişirme gösterisi ve güvenlik briefingi',
+            'Sabah 07:00 - Balon kalkışı (yaklaşık 1 saat sürecek)',
+            'Sabah 08:00 - Balon inişi ve şampanya töreni',
+            'Sabah 08:30 - Uçuş sertifikası dağıtımı',
+            'Sabah 09:00 - Otele dönüş'
+          ]),
+          included: JSON.stringify([
+            'Otel karşılama ve transfer hizmeti',
+            'Profesyonel pilot eşliğinde balon turu',
+            'Uçuş öncesi kahvaltı ikramı',
+            'Uçuş sonrası şampanya töreni',
+            'Uçuş sertifikası',
+            'Uçuş sigortası',
+            'Tüm güvenlik ekipmanları'
+          ]),
+          excluded: JSON.stringify([
+            'Kişisel harcamalar',
+            'Uçak bileti (İstanbul-Kayseri)',
+            'Ekstra içecekler',
+            'Fotoğraf ve video çekimi (opsiyonel)',
+            'Bahşişler'
+          ]),
+          importantInfo: JSON.stringify([
+            'Hava koşulları uygun değilse tur iptal edilebilir',
+            'Hamile kadınlar ve 6 yaşından küçük çocuklar katılamaz',
+            'Balon kapasitesi maksimum 20 kişidir',
+            'Rahat kıyafet ve spor ayakkabı önerilir',
+            'Uçuş süresi hava koşullarına göre değişebilir',
+            'Pasaport gerekli değildir (iç hat uçuşu)'
+          ]),
+          departureLocation: JSON.stringify({
+            address: 'Kapadokya Balon Kalkış Alanı, Göreme, Nevşehir',
+            lat: 38.6431,
+            lng: 34.8286
+          }),
+          checkInTime: '05:30',
+          checkOutTime: '09:00',
+          roomRules: JSON.stringify([
+            'Sigara içilmez',
+            'Ses yapılmaz',
+            'Gece 22:00\'den sonra sessizlik',
+            'Çocuklar için uygun'
+          ]),
+          petFriendly: false,
+          languages: JSON.stringify(['Türkçe', 'İngilizce']),
+          paymentMethods: JSON.stringify(['Nakit', 'Kredi Kartı', 'Banka Transferi']),
+          isSurprise: false,
+          requiresVisa: false,
+          requiresPassport: false,
+          status: 'active',
+        },
+      });
+      
+      console.log('✅ Created detailed example tour:', exampleTour.title);
+      console.log('   📍 Detay sayfası: /item/' + exampleTour.id);
+    } else {
+      console.log('✅ Example tour already exists:', existingTour.title);
+      console.log('   📍 Detay sayfası: /item/' + existingTour.id);
+    }
+  }
 
   console.log('\n✅ Database seeded successfully!');
 }

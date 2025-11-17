@@ -6,9 +6,10 @@ import Image from 'next/image';
 type ImageGalleryProps = {
   images: string[];
   title: string;
+  seatsLeft?: number;
 };
 
-export default function ImageGallery({ images, title }: ImageGalleryProps) {
+export default function ImageGallery({ images, title, seatsLeft }: ImageGalleryProps) {
   const [selectedImage, setSelectedImage] = useState(0);
 
   if (images.length === 0) {
@@ -30,6 +31,15 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
           className="object-cover"
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
+        
+        {/* Sağ Üst Köşe: Yanıp Sönen Koltuk Sayısı Badge */}
+        {seatsLeft !== undefined && seatsLeft > 0 && (
+          <div className="absolute top-4 right-4 z-20">
+            <div className="bg-[#E63946] text-white px-8 py-4 rounded-lg shadow-2xl font-bold text-lg animate-pulse ring-4 ring-[#E63946]/50">
+              Son {seatsLeft} Koltuk
+            </div>
+          </div>
+        )}
         
         {/* Fotoğraf Sayacı */}
         <div className="absolute bottom-4 right-4 bg-black/70 text-white px-4 py-2 rounded-full text-sm font-medium">

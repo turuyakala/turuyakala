@@ -2,7 +2,19 @@
 
 import { useState, useEffect } from 'react';
 
-const slides = [
+type Slide = {
+  id: number;
+  image: string;
+  title: string;
+  subtitle: string;
+  description?: string;
+};
+
+type HeroSliderProps = {
+  slides?: Slide[];
+};
+
+const defaultSlides: Slide[] = [
   {
     id: 1,
     image: '/images/hero-1.jpg',
@@ -32,8 +44,26 @@ const slides = [
   }
 ];
 
-export default function HeroSlider() {
+export default function HeroSlider({ slides: propSlides }: HeroSliderProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [slides, setSlides] = useState<Slide[]>(propSlides || defaultSlides);
+
+  useEffect(() => {
+    // Fetch slides from API if not provided
+    if (!propSlides) {
+      fetch('/api/site-settings/hero-slides')
+        .then(res => res.json())
+        .then(data => {
+          if (data.slides && data.slides.length > 0) {
+            setSlides(data.slides);
+          }
+        })
+        .catch(() => {
+          // Use default slides on error
+          setSlides(defaultSlides);
+        });
+    }
+  }, [propSlides]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -41,7 +71,11 @@ export default function HeroSlider() {
     }, 5000); // 5 saniyede bir değişir
 
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
+
+  if (slides.length === 0) {
+    return null;
+  }
 
   return (
     <div className="relative w-full h-[500px] overflow-hidden">
@@ -75,46 +109,53 @@ export default function HeroSlider() {
               <p className="text-2xl md:text-4xl text-white mb-4 drop-shadow-lg animate-fade-in-delay">
                 {slide.subtitle}
               </p>
-              <p className="text-lg md:text-xl text-white/90 drop-shadow-lg animate-fade-in-delay-2">
-                {slide.description}
-              </p>
+              {slide.description && (
+                <p className="text-lg md:text-xl text-white/90 drop-shadow-lg animate-fade-in-delay-2">
+                  {slide.description}
+                </p>
+              )}
             </div>
           </div>
         </div>
       ))}
 
       {/* Navigation Dots */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all duration-300 ${
-              index === currentSlide
-                ? 'bg-white w-8'
-                : 'bg-white/50 hover:bg-white/75'
-            }`}
-            aria-label={`Slayt ${index + 1}`}
-          />
-        ))}
-      </div>
+      {slides.length > 1 && (
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex gap-3 z-10">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentSlide
+                  ? 'bg-white w-8'
+                  : 'bg-white/50 hover:bg-white/75'
+              }`}
+              aria-label={`Slayt ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Arrow Navigation (optional) */}
-      <button
-        onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
-        className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-sm transition-all z-10"
-        aria-label="Önceki slayt"
-      >
-        ←
-      </button>
-      <button
-        onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
-        className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-sm transition-all z-10"
-        aria-label="Sonraki slayt"
-      >
-        →
-      </button>
+      {slides.length > 1 && (
+        <>
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-sm transition-all z-10"
+            aria-label="Önceki slayt"
+          >
+            ←
+          </button>
+          <button
+            onClick={() => setCurrentSlide((prev) => (prev + 1) % slides.length)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 text-white p-3 rounded-full backdrop-blur-sm transition-all z-10"
+            aria-label="Sonraki slayt"
+          >
+            →
+          </button>
+        </>
+      )}
     </div>
   );
 }
-

@@ -8,6 +8,8 @@ export default function NewTourPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingImages, setUploadingImages] = useState(false);
   const [formData, setFormData] = useState({
     category: 'tour',
     title: '',
@@ -68,18 +70,40 @@ export default function NewTourPage() {
       // Parse arrays from newline-separated strings
       const parseArray = (str: string) => str.split('\n').filter(line => line.trim()).map(line => line.trim());
       
+      // Convert datetime-local to GMT+3 (Turkey timezone)
+      // datetime-local input gives "YYYY-MM-DDTHH:mm" format
+      // We interpret the entered time as GMT+3 (Turkey timezone)
+      // Example: If user enters "2025-01-15T14:30", we treat it as 14:30 GMT+3
+      // To store it correctly in UTC: GMT+3 14:30 = UTC 11:30 (subtract 3 hours from UTC)
+      // But Date.UTC creates UTC time, so if user enters 14:30 GMT+3, we need UTC 11:30
+      // So we create UTC time with hours-3
+      let startAtGMT3: string;
+      if (formData.startAt) {
+        // Parse the datetime-local value: "2025-01-15T14:30"
+        const [datePart, timePart] = formData.startAt.split('T');
+        const [year, month, day] = datePart.split('-').map(Number);
+        const [hours, minutes] = timePart.split(':').map(Number);
+        
+        // Treat the entered time as GMT+3
+        // To convert GMT+3 to UTC: GMT+3 14:30 = UTC 11:30
+        // So we create UTC date with (hours - 3)
+        const utcHours = hours - 3;
+        const utcDate = new Date(Date.UTC(year, month - 1, day, utcHours, minutes, 0));
+        startAtGMT3 = utcDate.toISOString();
+      } else {
+        startAtGMT3 = formData.startAt;
+      }
+      
       const response = await fetch('/api/admin/tours', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...formData,
-          seatsTotal: parseInt(formData.seatsTotal),
+          startAt: startAtGMT3,
+          seatsTotal: parseInt(formData.seatsLeft), // Kalan koltuk sayısını toplam koltuk olarak kullan
           seatsLeft: parseInt(formData.seatsLeft),
           price: parseFloat(formData.price),
-          contact: formData.phone || formData.whatsapp ? {
-            phone: formData.phone,
-            whatsapp: formData.whatsapp,
-          } : undefined,
+          contact: undefined,
           description: formData.description || undefined,
           images: formData.images ? parseArray(formData.images) : undefined,
           program: formData.program ? parseArray(formData.program) : undefined,
@@ -90,6 +114,11 @@ export default function NewTourPage() {
             address: formData.departureAddress,
             lat: parseFloat(formData.departureLat),
             lng: parseFloat(formData.departureLng),
+          } : undefined,
+          destinationLocation: formData.destinationAddress && formData.destinationLat && formData.destinationLng ? {
+            address: formData.destinationAddress,
+            lat: parseFloat(formData.destinationLat),
+            lng: parseFloat(formData.destinationLng),
           } : undefined,
           checkInTime: formData.checkInTime || undefined,
           checkOutTime: formData.checkOutTime || undefined,
@@ -140,6 +169,78 @@ export default function NewTourPage() {
     }
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingImage(true);
+    setError('');
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Dosya yüklenemedi');
+      }
+
+      setFormData(prev => ({ ...prev, image: data.url }));
+    } catch (err: any) {
+      setError(err.message || 'Dosya yüklenirken bir hata oluştu');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleMultipleImagesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setUploadingImages(true);
+    setError('');
+
+    try {
+      const uploadedUrls: string[] = [];
+
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const response = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || `Dosya ${i + 1} yüklenemedi`);
+        }
+
+        uploadedUrls.push(data.url);
+      }
+
+      // Mevcut görsellerin sonuna ekle
+      setFormData(prev => {
+        const currentImages = prev.images.split('\n').filter(url => url.trim());
+        const allImages = [...currentImages, ...uploadedUrls].join('\n');
+        return { ...prev, images: allImages };
+      });
+    } catch (err: any) {
+      setError(err.message || 'Dosyalar yüklenirken bir hata oluştu');
+    } finally {
+      setUploadingImages(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
@@ -172,31 +273,16 @@ export default function NewTourPage() {
             onChange={handleChange}
             className="w-5 h-5"
           />
-          <label htmlFor="isSurprise" className="font-semibold text-gray-900 cursor-pointer">
-            🎁 Sürpriz Tur (Destinasyon gizli)
+          <label htmlFor="isSurprise" className="font-semibold text-gray-900 cursor-pointer flex items-center gap-2">
+            <svg className="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
+            </svg>
+            Sürpriz Tur (Destinasyon gizli)
           </label>
         </div>
 
         {/* Temel Bilgiler */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Kategori *
-            </label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
-            >
-              <option value="tour">🏞️ Tur</option>
-              <option value="bus">🚌 Otobüs</option>
-              <option value="flight">✈️ Uçuş</option>
-              <option value="cruise">🚢 Gemi</option>
-            </select>
-          </div>
-
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Tur Başlığı *
@@ -302,30 +388,18 @@ export default function NewTourPage() {
                 onChange={handleChange}
                 className="w-4 h-4"
               />
-              <label htmlFor="requiresVisa" className="text-sm font-medium text-gray-700 cursor-pointer">
-                📝 Vize Gerekli
+              <label htmlFor="requiresVisa" className="text-sm font-medium text-gray-700 cursor-pointer flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                Vize Gerekli
               </label>
             </div>
           </div>
         )}
 
         {/* Kapasite ve Fiyat */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Toplam Koltuk *
-            </label>
-            <input
-              type="number"
-              name="seatsTotal"
-              value={formData.seatsTotal}
-              onChange={handleChange}
-              required
-              min="1"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
-            />
-          </div>
-
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Kalan Koltuk *
@@ -375,53 +449,64 @@ export default function NewTourPage() {
           </div>
         </div>
 
-        {/* İletişim Bilgileri */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Telefon
-            </label>
-            <input
-              type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
-              placeholder="+90 555 123 4567"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              WhatsApp
-            </label>
-            <input
-              type="tel"
-              name="whatsapp"
-              value={formData.whatsapp}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
-              placeholder="905551234567"
-            />
-          </div>
-        </div>
-
         {/* Görsel ve Durum */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Ana Görsel URL *
+              Ana Görsel *
             </label>
-            <input
-              type="url"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
-              placeholder="/images/tour.jpg"
-            />
-            <p className="text-xs text-gray-500 mt-1">Tur kartında gösterilecek ana görsel</p>
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <label className="flex-1 cursor-pointer">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploadingImage}
+                    className="hidden"
+                  />
+                  <div className="px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#1A2A5A] transition-colors text-center flex items-center justify-center gap-2">
+                    {uploadingImage ? (
+                      <>
+                        <svg className="w-5 h-5 animate-spin text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        <span className="text-gray-600">Yükleniyor...</span>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span className="text-gray-700">Fotoğraf Yükle</span>
+                      </>
+                    )}
+                  </div>
+                </label>
+              </div>
+              <input
+                type="url"
+                name="image"
+                value={formData.image}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
+                placeholder="/images/tour.jpg veya URL girin"
+              />
+              {formData.image && (
+                <div className="mt-2">
+                  <img
+                    src={formData.image}
+                    alt="Preview"
+                    className="w-full h-32 object-cover rounded-lg border border-gray-300"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">Tur kartında gösterilecek ana görsel (fotoğraf yükleyin veya URL girin)</p>
           </div>
 
           <div>
@@ -435,10 +520,10 @@ export default function NewTourPage() {
               required
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
             >
-              <option value="active">✅ Aktif</option>
-              <option value="inactive">⏸️ Pasif</option>
-              <option value="expired">⏰ Süresi Dolmuş</option>
-              <option value="sold_out">🔴 Tükendi</option>
+              <option value="active">Aktif</option>
+              <option value="inactive">Pasif</option>
+              <option value="expired">Süresi Dolmuş</option>
+              <option value="sold_out">Tükendi</option>
             </select>
           </div>
         </div>
@@ -446,17 +531,64 @@ export default function NewTourPage() {
         {/* Çoklu Görseller */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Ek Görseller (Her satıra bir görsel URL)
+            Ek Görseller
           </label>
-          <textarea
-            name="images"
-            value={formData.images}
-            onChange={handleChange}
-            rows={4}
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900 font-mono text-sm"
-            placeholder="/images/tour-1.jpg&#10;/images/tour-2.jpg&#10;/images/tour-3.jpg"
-          />
-          <p className="text-xs text-gray-500 mt-1">Tur detay sayfasında gösterilecek ek görseller (her satıra bir URL)</p>
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <label className="flex-1 cursor-pointer">
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleMultipleImagesUpload}
+                  disabled={uploadingImages}
+                  className="hidden"
+                />
+                <div className="px-4 py-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-[#1A2A5A] transition-colors text-center">
+                  {uploadingImages ? (
+                    <>
+                      <svg className="w-5 h-5 animate-spin text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      <span className="text-gray-600">Yükleniyor...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span className="text-gray-700">Çoklu Fotoğraf Yükle</span>
+                    </>
+                  )}
+                </div>
+              </label>
+            </div>
+            <textarea
+              name="images"
+              value={formData.images}
+              onChange={handleChange}
+              rows={4}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900 font-mono text-sm"
+              placeholder="/images/tour-1.jpg&#10;/images/tour-2.jpg&#10;/images/tour-3.jpg"
+            />
+            {formData.images && (
+              <div className="grid grid-cols-3 gap-2 mt-2">
+                {formData.images.split('\n').filter(url => url.trim()).map((url, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={url.trim()}
+                      alt={`Preview ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-lg border border-gray-300"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = 'none';
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <p className="text-xs text-gray-500 mt-1">Tur detay sayfasında gösterilecek ek görseller (fotoğraf yükleyin veya her satıra bir URL yazın)</p>
         </div>
 
         {/* Detaylı Açıklama */}
@@ -583,6 +715,58 @@ export default function NewTourPage() {
           </div>
         </div>
 
+        {/* Gezilecek Yer Lokasyonu */}
+        <div className="bg-green-50 border border-green-300 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+            <span className="text-2xl">🗺️</span>
+            Gezilecek Yer Konumu (Google Map için)
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="md:col-span-3">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Gezilecek Yer Adresi
+              </label>
+              <input
+                type="text"
+                name="destinationAddress"
+                value={formData.destinationAddress}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
+                placeholder="Örn: Kapadokya, Göreme, Nevşehir"
+              />
+              <p className="text-xs text-gray-500 mt-1">Tur detay sayfasında Google Map'te gösterilecek konum</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Enlem (Latitude)
+              </label>
+              <input
+                type="number"
+                step="any"
+                name="destinationLat"
+                value={formData.destinationLat}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
+                placeholder="38.6431"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Boylam (Longitude)
+              </label>
+              <input
+                type="number"
+                step="any"
+                name="destinationLng"
+                value={formData.destinationLng}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
+                placeholder="34.8331"
+              />
+            </div>
+          </div>
+        </div>
+
         {/* Giriş/Çıkış Zamanları */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -682,7 +866,9 @@ export default function NewTourPage() {
         {/* Uçak Bilgileri */}
         <div className="bg-blue-50 border border-blue-300 rounded-lg p-6 space-y-4">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-2xl">✈️</span>
+            <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
             <h3 className="text-lg font-semibold text-gray-900">Uçak Bilgileri</h3>
           </div>
           
@@ -894,7 +1080,21 @@ export default function NewTourPage() {
             disabled={isLoading}
             className="flex-1 bg-[#1A2A5A] text-white font-semibold py-3 px-6 rounded-lg hover:bg-[#1A2A5A]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
           >
-            {isLoading ? 'Kaydediliyor...' : '✅ Turu Kaydet'}
+            {isLoading ? (
+              <>
+                <svg className="w-5 h-5 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span>Kaydediliyor...</span>
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Turu Kaydet</span>
+              </>
+            )}
           </button>
           <Link
             href="/admin/tours"

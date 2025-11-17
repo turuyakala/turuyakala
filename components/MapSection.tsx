@@ -6,9 +6,10 @@ type MapSectionProps = {
     lat: number;
     lng: number;
   };
+  title?: string;
 };
 
-export default function MapSection({ location }: MapSectionProps) {
+export default function MapSection({ location, title = 'Kalkış Noktası' }: MapSectionProps) {
   // API key olmadığında statik harita göster
   // const mapUrl = `https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${location.lat},${location.lng}&zoom=15`;
   // const staticMapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${location.lat},${location.lng}&zoom=15&size=600x400&markers=color:red%7C${location.lat},${location.lng}&key=YOUR_GOOGLE_MAPS_API_KEY`;
@@ -18,7 +19,7 @@ export default function MapSection({ location }: MapSectionProps) {
       <div className="p-6 bg-gray-50 border-b border-gray-200">
         <h3 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
           <span className="text-3xl">📍</span>
-          Kalkış Noktası
+          {title}
         </h3>
         <p className="text-gray-700 mt-2">{location.address}</p>
       </div>

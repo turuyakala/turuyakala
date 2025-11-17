@@ -29,8 +29,12 @@ export default async function ItemDetailPage({ params }: PageProps) {
       notFound();
     }
     
-    // Fetch the tour from database (using Offer table)
-    const tourData = await prisma.offer.findUnique({
+    // Fetch the tour from database (try InventoryItem first, then Offer)
+    let tourData: any = null;
+    let isInventoryItem = false;
+
+    // Try InventoryItem first (has more detailed info)
+    const inventoryItem = await prisma.inventoryItem.findUnique({
       where: { id },
       include: {
         supplier: {
@@ -40,6 +44,28 @@ export default async function ItemDetailPage({ params }: PageProps) {
         },
       },
     });
+
+    if (inventoryItem) {
+      tourData = inventoryItem;
+      isInventoryItem = true;
+    } else {
+      // Try Offer table
+      const offerData = await prisma.offer.findUnique({
+        where: { id },
+        include: {
+          supplier: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      });
+      
+      if (offerData) {
+        tourData = offerData;
+        isInventoryItem = false;
+      }
+    }
 
     if (!tourData) {
       notFound();
@@ -57,21 +83,23 @@ export default async function ItemDetailPage({ params }: PageProps) {
     price: tourData.priceMinor / 100, // Convert minor units to major
     currency: tourData.currency as any,
     supplier: tourData.supplier?.name || 'TuruYakala',
-    contact: undefined, // Offer doesn't have contact field
+    contact: isInventoryItem && tourData.contact ? JSON.parse(tourData.contact) : undefined,
     terms: tourData.terms || undefined,
     image: tourData.image || undefined,
+    images: isInventoryItem && tourData.images ? JSON.parse(tourData.images) : undefined,
     transport: tourData.transport || undefined,
     isSurprise: tourData.isSurprise,
     requiresVisa: tourData.requiresVisa,
     requiresPassport: tourData.requiresPassport,
     createdAt: tourData.createdAt.toISOString(),
-    // Optional fields for detail page
-    description: undefined,
-    program: undefined,
-    included: undefined,
-    excluded: undefined,
-    importantInfo: undefined,
-    departureLocation: undefined,
+    // Optional fields for detail page (only available in InventoryItem)
+    description: isInventoryItem ? tourData.description || undefined : undefined,
+    program: isInventoryItem && tourData.program ? JSON.parse(tourData.program) : undefined,
+    included: isInventoryItem && tourData.included ? JSON.parse(tourData.included) : undefined,
+    excluded: isInventoryItem && tourData.excluded ? JSON.parse(tourData.excluded) : undefined,
+    importantInfo: isInventoryItem && tourData.importantInfo ? JSON.parse(tourData.importantInfo) : undefined,
+    departureLocation: isInventoryItem && tourData.departureLocation ? JSON.parse(tourData.departureLocation) : undefined,
+    destinationLocation: isInventoryItem && tourData.destinationLocation ? JSON.parse(tourData.destinationLocation) : undefined,
   };
 
   const departureDate = new Date(item.startAt);
@@ -207,7 +235,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
                     </div>
 
                     {/* Fotoğraf Galerisi */}
-                    <ImageGallery images={gallery} title={item.title} />
+                    <ImageGallery images={gallery} title={item.title} seatsLeft={item.seatsLeft} />
 
                     {/* Sosyal Medya Paylaşım */}
                     <ShareButtons title={item.title} />
@@ -221,9 +249,14 @@ export default async function ItemDetailPage({ params }: PageProps) {
                       importantInfo={item.importantInfo}
                     />
 
-                    {/* Harita */}
+                    {/* Gezilecek Yer Haritası - Açıklama kısmının altında */}
+                    {item.destinationLocation && (
+                      <MapSection location={item.destinationLocation} title="Gezilecek Yer" />
+                    )}
+
+                    {/* Kalkış Noktası Haritası */}
                     {item.departureLocation && (
-                      <MapSection location={item.departureLocation} />
+                      <MapSection location={item.departureLocation} title="Kalkış Noktası" />
                     )}
 
                     {/* Benzer Turlar */}
@@ -240,19 +273,26 @@ export default async function ItemDetailPage({ params }: PageProps) {
                           {formatPrice(item.price * 100, item.currency)}
                         </div>
                         <div className="text-sm opacity-90 mt-2">
-                          ⏰ Kalkışa {Math.floor(timeInfo.totalHours)} saat kaldı
+                          <svg className="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Kalkışa {Math.floor(timeInfo.totalHours)} saat kaldı
                         </div>
                       </div>
 
                       {/* Koltuk Durumu - Fiyatın hemen altında */}
                       {item.seatsLeft <= 5 && (
                         <div className="bg-gradient-to-br from-[#E63946] to-[#E63946]/90 rounded-xl shadow-lg p-4 text-center text-white animate-pulse-slow">
-                          <div className="text-4xl mb-2">🔥</div>
+                          <div className="flex justify-center mb-2">
+                            <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                            </svg>
+                          </div>
                           <div className="font-bold text-2xl">
                             Son {item.seatsLeft} Koltuk!
                           </div>
                           <div className="text-sm mt-1 opacity-90">
-                            Hemen rezervasyon yapın
+                            Şimdi Turu Yakala!
                           </div>
                         </div>
                       )}
@@ -260,13 +300,18 @@ export default async function ItemDetailPage({ params }: PageProps) {
                       {/* İptal Politikası - Vanilla */}
                       <div className="bg-gradient-to-br from-[#F3E5AB] to-[#E8D596] rounded-xl shadow-lg p-6">
                         <div className="flex items-start gap-3">
-                          <span className="text-3xl">⚠️</span>
+                          <svg className="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                          </svg>
                           <div>
                             <h3 className="font-bold text-gray-900 text-lg mb-1">
                               İptal Politikası
                             </h3>
                             <p className="text-gray-900 font-semibold">
-                              ❌ Bu tur kesinlikle iptal edilemez!
+                              <svg className="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                              </svg>
+                              Bu tur kesinlikle iptal edilemez!
                             </p>
                             <p className="text-sm text-gray-800 mt-2">
                               Son dakika turu olduğu için iptal ve iade kabul edilmemektedir.
@@ -283,6 +328,10 @@ export default async function ItemDetailPage({ params }: PageProps) {
                         seatsLeft={item.seatsLeft}
                         requiresPassport={item.requiresPassport}
                         contact={item.contact}
+                        tourTitle={item.title}
+                        tourFrom={item.from}
+                        tourTo={item.to}
+                        tourStartAt={item.startAt}
                       />
                     </div>
                   </div>

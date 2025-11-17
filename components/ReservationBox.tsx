@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import ReservationModal from './ReservationModal';
 
 type ReservationBoxProps = {
   tourId: string;
@@ -13,18 +13,32 @@ type ReservationBoxProps = {
     phone?: string;
     whatsapp?: string;
   };
+  tourTitle?: string;
+  tourFrom?: string;
+  tourTo?: string;
+  tourStartAt?: string;
 };
 
-export default function ReservationBox({ tourId, price, currency, seatsLeft, requiresPassport, contact }: ReservationBoxProps) {
-  const router = useRouter();
+export default function ReservationBox({ 
+  tourId, 
+  price, 
+  currency, 
+  seatsLeft, 
+  requiresPassport, 
+  contact,
+  tourTitle = '',
+  tourFrom = '',
+  tourTo = '',
+  tourStartAt = '',
+}: ReservationBoxProps) {
   const [guests, setGuests] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const totalPrice = price * guests;
   const currencySymbol = currency === 'TRY' ? '₺' : currency === 'EUR' ? '€' : '$';
 
   const handleReservation = () => {
-    // Redirect to reservation page with tour ID and guest count
-    router.push(`/reservation/${tourId}?guests=${guests}`);
+    setIsModalOpen(true);
   };
 
   return (
@@ -78,14 +92,34 @@ export default function ReservationBox({ tourId, price, currency, seatsLeft, req
       {/* Rezervasyon Butonu */}
       <button
         onClick={handleReservation}
-        className="w-full bg-secondary hover:bg-secondary/90 text-white font-bold text-lg py-4 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg"
+        className="w-full bg-secondary hover:bg-secondary/90 text-white font-bold text-lg py-4 px-6 rounded-xl transition-all transform hover:scale-105 shadow-lg flex items-center justify-center gap-2"
       >
-        🎫 Hemen Rezervasyon Yap
+        <img src="/logo.png" alt="Turu Yakala" className="w-6 h-6 object-contain" />
+        Şimdi Turu Yakala!
       </button>
 
       <p className="text-xs text-primary text-center">
         Rezervasyon için WhatsApp üzerinden iletişime geçilecektir
       </p>
+
+      {/* Rezervasyon Modal */}
+      {isModalOpen && (
+        <ReservationModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          tourId={tourId}
+          tourTitle={tourTitle}
+          tourFrom={tourFrom}
+          tourTo={tourTo}
+          tourStartAt={tourStartAt}
+          price={price}
+          currency={currency}
+          guests={guests}
+          totalPrice={totalPrice}
+          requiresPassport={requiresPassport}
+          seatsLeft={seatsLeft}
+        />
+      )}
     </div>
   );
 }

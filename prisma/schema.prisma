@@ -21,6 +21,17 @@ model User {
   phone         String?   // Telefon numarası
   passportNumber String?  // Pasaport numarası
   passportExpiry DateTime? // Pasaport geçerlilik tarihi
+  tcKimlikNo    String?   // T.C. Kimlik Numarası
+  gender        String?   // Cinsiyet (male, female, other, prefer_not_to_say)
+  birthDate     DateTime? // Doğum tarihi
+  
+  // Address info (for billing/invoice)
+  addressCountry  String? // Ülke
+  addressProvince String? // İl
+  addressDistrict String? // İlçe
+  addressPostalCode String? // Posta kodu
+  addressLine1    String? // Adres satırı
+  addressLine2    String? // Adres satırı 2 (isteğe bağlı)
   
   accounts      Account[]
   sessions      Session[]
@@ -125,6 +136,7 @@ model InventoryItem {
   excluded          String?                        // JSON array: ["İçecekler", "Ekstra aktiviteler", ...]
   importantInfo     String?                        // JSON array: ["Pasaport gerekli", "Vize gerekli", ...]
   departureLocation String?                        // JSON: {address: string, lat: number, lng: number}
+  destinationLocation String?                      // JSON: {address: string, lat: number, lng: number} - Gezilecek yer konumu
   
   // Additional Tour Details
   checkInTime       String?                        // Giriş zamanı (örn: "14:00")
@@ -463,4 +475,15 @@ model ContactMessage {
   
   @@index([status])
   @@index([createdAt])
+}
+
+// Site Settings - Hero slider ve site ayarları
+model SiteSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique // "hero_slides", "homepage_settings", etc.
+  value     String   // JSON string
+  updatedAt DateTime @updatedAt
+  updatedBy String?  // Admin user ID
+  
+  @@index([key])
 }

@@ -211,9 +211,9 @@ export default function OfferCard({ item, serverTime }: OfferCardProps) {
           </div>
         )}
 
-        {/* Sağ üst: Geri sayım ibaresi */}
+        {/* Sol üst: Geri sayım ibaresi */}
         {timeRemaining.totalSeconds > 0 && (
-          <div className="absolute top-3 right-3 z-10">
+          <div className="absolute top-3 left-3 z-10">
             <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md shadow-lg ${
               isSurprise 
                 ? 'bg-[#DAE4F2] text-[#1A2A5A]' 
@@ -229,6 +229,15 @@ export default function OfferCard({ item, serverTime }: OfferCardProps) {
                 {String(timeRemaining.minutes).padStart(2, '0')}:
                 {String(timeRemaining.seconds).padStart(2, '0')}
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Sağ üst: Yanıp sönen koltuk sayısı badge */}
+        {currentSeatsLeft > 0 && (
+          <div className="absolute top-3 right-3 z-10">
+            <div className="bg-[#E63946] text-white px-6 py-3 rounded-lg shadow-2xl font-bold text-base animate-pulse ring-4 ring-[#E63946]/50">
+              Son {currentSeatsLeft} Koltuk
             </div>
           </div>
         )}

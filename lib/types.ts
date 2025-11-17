@@ -34,6 +34,11 @@ export type Item = {
     lat: number;
     lng: number;
   };
+  destinationLocation?: {
+    address: string;
+    lat: number;
+    lng: number;
+  };
 };
 
 export type FilterParams = {

@@ -39,6 +39,7 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
     category: string;
     status: string;
     startAt: { gte: Date; lte: Date };
+    seatsLeft?: { gt: number };
     from?: { contains: string; mode: 'insensitive' };
     to?: { contains: string; mode: 'insensitive' };
     priceMinor?: { gte?: number; lte?: number };
@@ -47,9 +48,10 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
     category: 'tour',
     status: 'active', // Only active offers
     startAt: {
-      gte: now,
+      gte: now, // Only future departures (süresi dolmamış)
       lte: windowEnd,
     },
+    seatsLeft: { gt: 0 }, // Only tours with available seats (satın alınmamış)
   };
 
   // Apply filters
@@ -100,6 +102,59 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
   let mainOffers: any[] = [];
 
   try {
+    // Otomatik olarak süresi dolmuş turları 'expired' olarak işaretle
+    // Bu işlem her sayfa yüklendiğinde çalışır, böylece süresi dolan turlar anında ana sayfadan kalkar
+    await prisma.offer.updateMany({
+      where: {
+        status: 'active',
+        startAt: {
+          lt: now, // Kalkış zamanı geçmiş olanlar
+        },
+      },
+      data: {
+        status: 'expired',
+      },
+    });
+
+    // Otomatik olarak koltuk kalmayan turları 'sold_out' olarak işaretle (Offer)
+    await prisma.offer.updateMany({
+      where: {
+        status: 'active',
+        seatsLeft: {
+          lte: 0, // Koltuk kalmayanlar
+        },
+      },
+      data: {
+        status: 'sold_out',
+      },
+    });
+
+    // Otomatik olarak süresi dolmuş InventoryItem'ları 'expired' olarak işaretle
+    await prisma.inventoryItem.updateMany({
+      where: {
+        status: 'active',
+        startAt: {
+          lt: now, // Kalkış zamanı geçmiş olanlar
+        },
+      },
+      data: {
+        status: 'expired',
+      },
+    });
+
+    // Otomatik olarak koltuk kalmayan InventoryItem'ları 'sold_out' olarak işaretle
+    await prisma.inventoryItem.updateMany({
+      where: {
+        status: 'active',
+        seatsLeft: {
+          lte: 0, // Koltuk kalmayanlar
+        },
+      },
+      data: {
+        status: 'sold_out',
+      },
+    });
+
     // Fetch surprise tours (always show at top, no filters, exclude from main query)
     surpriseTours = await prisma.offer.findMany({
       where: {
@@ -107,9 +162,10 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
         isSurprise: true,
         status: 'active',
         startAt: {
-          gte: now,
+          gte: now, // Only future departures (süresi dolmamış)
           lte: windowEnd,
         },
+        seatsLeft: { gt: 0 }, // Only tours with available seats (satın alınmamış)
       },
       include: {
         supplier: {
@@ -137,6 +193,77 @@ async function OffersContent({ searchParams }: { searchParams: SearchParams }) {
       orderBy,
       take: 21, // Show 21 offers + 3 surprise = 24 total
     });
+
+    // Also fetch InventoryItem tours (detailed tours)
+    const inventoryTours = await prisma.inventoryItem.findMany({
+      where: {
+        category: 'tour',
+        status: 'active',
+        startAt: {
+          gte: now,
+          lte: windowEnd,
+        },
+        seatsLeft: { gt: 0 },
+        ...(params.from ? { from: { contains: params.from, mode: 'insensitive' } } : {}),
+        ...(params.to ? { to: { contains: params.to, mode: 'insensitive' } } : {}),
+        ...(params.minPrice ? { priceMinor: { gte: toNum(params.minPrice, 0) * 100 } } : {}),
+        ...(params.maxPrice ? { priceMinor: { ...(params.minPrice ? { gte: toNum(params.minPrice, 0) * 100 } : {}), lte: toNum(params.maxPrice, Number.MAX_SAFE_INTEGER) * 100 } } : {}),
+      },
+      include: {
+        supplier: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      orderBy: orderBy as any,
+      take: 10, // Limit to 10 inventory items
+    });
+
+    // Merge inventory tours with offers (convert InventoryItem to Offer-like format)
+    const inventoryAsOffers = inventoryTours.map((item) => ({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      priceMinor: item.priceMinor,
+      currency: item.currency,
+      from: item.from,
+      to: item.to,
+      startAt: item.startAt,
+      seatsLeft: item.seatsLeft,
+      transport: item.transport,
+      image: item.image,
+      category: item.category,
+      supplier: item.supplier,
+      terms: item.terms,
+      isSurprise: item.isSurprise || false,
+      requiresVisa: item.requiresVisa || false,
+      requiresPassport: item.requiresPassport || false,
+    }));
+
+    // Combine and deduplicate (in case same tour exists in both tables)
+    const allTours = [...mainOffers, ...inventoryAsOffers];
+    const uniqueTours = allTours.filter((tour, index, self) => 
+      index === self.findIndex((t) => t.id === tour.id)
+    );
+    
+    // Sort combined tours
+    const sortedTours = uniqueTours.sort((a, b) => {
+      if (orderBy.startAt) {
+        const aTime = a.startAt.getTime();
+        const bTime = b.startAt.getTime();
+        return orderBy.startAt === 'asc' ? aTime - bTime : bTime - aTime;
+      }
+      if (orderBy.priceMinor) {
+        return orderBy.priceMinor === 'asc' ? a.priceMinor - b.priceMinor : b.priceMinor - a.priceMinor;
+      }
+      if (orderBy.seatsLeft) {
+        return orderBy.seatsLeft === 'asc' ? a.seatsLeft - b.seatsLeft : b.seatsLeft - a.seatsLeft;
+      }
+      return 0;
+    });
+
+    mainOffers = sortedTours.slice(0, 21); // Take first 21 after sorting
   } catch (error) {
     console.error('Database error, using sample data:', error);
     

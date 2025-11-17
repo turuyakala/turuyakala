@@ -8,6 +8,7 @@ import ReviewModal from '@/components/ReviewModal';
 import Navigation from '@/components/Navigation';
 import { formatDate } from '@/lib/time';
 import { formatPrice } from '@/lib/price';
+import Image from 'next/image';
 
 type UserRole = 'admin' | 'seller' | 'user';
 
@@ -126,7 +127,8 @@ export default function ProfilePage() {
       <Navigation />
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 max-w-4xl">
+      <main className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
+        {/* Hesap Bilgileri ve Adres Bilgileri Kutucuğu */}
         <div className="bg-white rounded-lg shadow-md p-8">
           <div className="space-y-6">
             <div>
@@ -152,29 +154,6 @@ export default function ProfilePage() {
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Hesap Türü
-                  </label>
-                  <div className="px-4 py-3 bg-gray-50 rounded-lg">
-                    {(session.user as ExtendedUser)?.role === 'admin' && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-yellow-100 text-yellow-800">
-                        👑 Admin
-                      </span>
-                    )}
-                    {(session.user as ExtendedUser)?.role === 'seller' && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                        🏢 Satıcı
-                      </span>
-                    )}
-                    {(session.user as ExtendedUser)?.role === 'user' && (
-                      <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                        👤 Kullanıcı
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Telefon Numarası
                   </label>
                   <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
@@ -188,6 +167,40 @@ export default function ProfilePage() {
                       </Link>
                     </p>
                   )}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    T.C. Kimlik Numarası
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.tcKimlikNo ? (
+                      <span className="font-mono">{userProfile.tcKimlikNo}</span>
+                    ) : (
+                      '-'
+                    )}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Cinsiyet
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.gender === 'male' ? 'Erkek' : 
+                     userProfile?.gender === 'female' ? 'Kadın' : 
+                     userProfile?.gender === 'other' ? 'Diğer' : 
+                     userProfile?.gender === 'prefer_not_to_say' ? 'Belirtmek istemiyorum' : '-'}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Doğum Tarihi
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.birthDate ? new Date(userProfile.birthDate).toLocaleDateString('tr-TR') : '-'}
+                  </div>
                 </div>
 
                 <div>
@@ -218,125 +231,193 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <hr className="border-gray-200" />
-
             <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Siparişlerim</h2>
-              {orders.length === 0 ? (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <p className="text-blue-800 text-sm">
-                    ℹ️ Henüz tur satın almadınız. Turlarımıza göz atmak için{' '}
-                    <Link href="/" className="underline font-semibold">
-                      ana sayfaya
-                    </Link>{' '}
-                    gidin.
-                  </p>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Adres Bilgileri</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ülke
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.addressCountry || '-'}
+                  </div>
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {orders.map((order) => {
-                    const hasReview = order.reviews.length > 0;
-                    const review = hasReview ? order.reviews[0] : null;
-                    const departureDate = new Date(order.inventoryItem.startAt);
 
-                    return (
-                      <div
-                        key={order.id}
-                        className="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow"
-                      >
-                        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                          {/* Left: Tour Info */}
-                          <div className="flex-1">
-                            <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                              {order.inventoryItem.title}
-                            </h3>
-                            <div className="space-y-1 text-sm text-gray-600">
-                              <div>
-                                <span className="font-medium">Rota:</span> {order.inventoryItem.from} → {order.inventoryItem.to}
-                              </div>
-                              <div>
-                                <span className="font-medium">Kalkış:</span> {formatDate(departureDate)}
-                              </div>
-                              <div>
-                                <span className="font-medium">Koltuk Sayısı:</span> {order.seats}
-                              </div>
-                              <div>
-                                <span className="font-medium">Toplam Tutar:</span>{' '}
-                                {formatPrice(order.totalPrice, 'TRY')}
-                              </div>
-                              {order.pnrCode && (
-                                <div>
-                                  <span className="font-medium">PNR:</span> {order.pnrCode}
-                                </div>
-                              )}
-                            </div>
-                            {review && (
-                              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                                <div className="flex items-center gap-2 mb-2">
-                                  <div className="flex">
-                                    {[1, 2, 3, 4, 5].map((star) => (
-                                      <span
-                                        key={star}
-                                        className={`text-lg ${
-                                          star <= review.rating ? 'text-yellow-400' : 'text-gray-300'
-                                        }`}
-                                      >
-                                        ★
-                                      </span>
-                                    ))}
-                                  </div>
-                                  <span className="text-xs text-gray-600">
-                                    {review.isPublished ? '✅ Yayında' : '⏳ Onay Bekliyor'}
-                                  </span>
-                                </div>
-                                <p className="text-sm text-gray-700 italic">&ldquo;{review.comment}&rdquo;</p>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Right: Action Button */}
-                          <div className="flex-shrink-0">
-                            {!hasReview ? (
-                              <button
-                                onClick={() => handleReviewClick(order)}
-                                className="px-6 py-2.5 bg-[#DD7230] text-white font-medium rounded-lg hover:bg-[#DD7230]/90 transition-colors shadow-md whitespace-nowrap"
-                              >
-                                ⭐ Puan Ver ve Yorum Yap
-                              </button>
-                            ) : review ? (
-                              <div className="text-center">
-                                <div className="px-6 py-2.5 bg-gray-100 text-gray-600 font-medium rounded-lg whitespace-nowrap">
-                                  {review.isPublished ? '✅ Yorumunuz Yayında' : '⏳ Onay Bekliyor'}
-                                </div>
-                              </div>
-                            ) : null}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    İl
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.addressProvince || '-'}
+                  </div>
                 </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    İlçe
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.addressDistrict || '-'}
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Posta Kodu
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.addressPostalCode || '-'}
+                  </div>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Adres Satırı
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.addressLine1 || '-'}
+                  </div>
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Adres Satırı 2 (İsteğe Bağlı)
+                  </label>
+                  <div className="px-4 py-3 bg-gray-50 rounded-lg text-gray-900">
+                    {userProfile?.addressLine2 || '-'}
+                  </div>
+                </div>
+              </div>
+              {(!userProfile?.addressCountry || !userProfile?.addressProvince || !userProfile?.addressLine1) && (
+                <p className="text-xs text-gray-500 mt-4">
+                  Fatura için{' '}
+                  <Link href="/profile/update" className="text-[#DD7230] hover:underline">
+                        adres bilgilerinizi ekleyin
+                      </Link>
+                </p>
               )}
             </div>
+          </div>
+        </div>
 
-            <hr className="border-gray-200" />
+        {/* Önceden Yakaladıklarım - Ayrı Kutucuk */}
+        <div className="bg-[#1A2A5A] rounded-xl shadow-lg p-6 md:p-8">
+          <h2 className="text-2xl font-bold text-white mb-6">Önceden Yakaladıklarım</h2>
+          
+          {orders.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-white text-lg mb-2">
+                Henüz bir tur yakalamamışsınız. Yakalamak için durmayın,{' '}
+                <Link href="/" className="underline font-bold hover:text-[#DAE4F2] transition-colors">
+                  tıklayın!
+                </Link>
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {orders.map((order) => {
+                const hasReview = order.reviews.length > 0;
+                const review = hasReview ? order.reviews[0] : null;
+                const departureDate = new Date(order.inventoryItem.startAt);
+                const tourImage = order.inventoryItem.image || '/images/default-tour.jpg';
 
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Hesap İşlemleri</h2>
-              <div className="flex gap-3">
-                <Link
-                  href="/profile/change-password"
-                  className="px-6 py-2.5 bg-[#E63946] text-white font-medium rounded-lg hover:bg-[#E63946]/90 transition-colors shadow-md inline-block text-center"
-                >
-                  Şifre Değiştir
-                </Link>
-                <Link
-                  href="/profile/update"
-                  className="px-6 py-2.5 bg-[#1A2A5A] text-white font-medium rounded-lg hover:bg-[#1A2A5A]/90 transition-colors shadow-md inline-block text-center"
-                >
-                  Bilgilerimi Güncelle
-                </Link>
-              </div>
+                return (
+                  <div
+                    key={order.id}
+                    className="bg-white rounded-lg p-5 md:p-6 flex flex-col md:flex-row gap-4 md:gap-6 items-start md:items-center hover:shadow-lg transition-shadow"
+                  >
+                    {/* Sol: Fotoğraf */}
+                    <div className="flex-shrink-0">
+                      <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden bg-gray-200">
+                        <Image
+                          src={tourImage}
+                          alt={order.inventoryItem.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 96px, 128px"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Orta: Tur Bilgileri */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                        {order.inventoryItem.title}
+                      </h3>
+                      <div className="text-sm text-gray-600 space-y-1">
+                        <div>
+                          <span className="font-medium">Tarih:</span> {formatDate(departureDate)}
+                        </div>
+                        <div>
+                          <span className="font-medium">Rota:</span> {order.inventoryItem.from} → {order.inventoryItem.to}
+                        </div>
+                        {review && (
+                          <div className="mt-3 pt-3 border-t border-gray-200">
+                            <div className="flex items-center gap-2 mb-1">
+                              <div className="flex">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <span
+                                    key={star}
+                                    className={`text-sm ${
+                                      star <= review.rating ? 'text-[#E63946]' : 'text-gray-300'
+                                    }`}
+                                  >
+                                    ★
+                                  </span>
+                                ))}
+                              </div>
+                              <span className="text-xs text-gray-500">
+                                {review.isPublished ? '✅ Yayında' : '⏳ Onay Bekliyor'}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-600 italic line-clamp-2">&ldquo;{review.comment}&rdquo;</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Sağ: Değerlendir Butonu */}
+                    <div className="flex-shrink-0 w-full md:w-auto">
+                      {!hasReview ? (
+                        <button
+                          onClick={() => handleReviewClick(order)}
+                          className="w-full md:w-auto px-6 py-3 bg-[#E63946] text-white font-semibold rounded-lg hover:bg-[#E63946]/90 transition-colors shadow-md whitespace-nowrap"
+                        >
+                          ⭐ Değerlendir ve Yorum Yap
+                        </button>
+                      ) : review ? (
+                        <div className="w-full md:w-auto px-6 py-3 bg-gray-100 text-gray-600 font-medium rounded-lg text-center whitespace-nowrap">
+                          {review.isPublished ? '✅ Yorumunuz Yayında' : '⏳ Onay Bekliyor'}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Hesap İşlemleri Kutucuğu */}
+        <div className="bg-white rounded-lg shadow-md p-8">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Hesap İşlemleri</h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Kişisel bilgilerinizi, adres bilgilerinizi ve diğer profil bilgilerinizi güncelleyebilirsiniz.
+            </p>
+            <div className="flex gap-3">
+              <Link
+                href="/profile/change-password"
+                className="px-6 py-2.5 bg-[#E63946] text-white font-medium rounded-lg hover:bg-[#E63946]/90 transition-colors shadow-md inline-block text-center"
+              >
+                Şifre Değiştir
+              </Link>
+              <Link
+                href="/profile/update"
+                className="px-6 py-2.5 bg-[#1A2A5A] text-white font-medium rounded-lg hover:bg-[#1A2A5A]/90 transition-colors shadow-md inline-block text-center"
+              >
+                Bilgilerimi Güncelle
+              </Link>
             </div>
           </div>
         </div>
