@@ -4,7 +4,7 @@
  * and locale-specific formatting with proper symbols
  */
 
-type Currency = 'TRY' | 'EUR' | 'USD';
+export type Currency = 'TRY' | 'EUR' | 'USD';
 
 /**
  * Currency symbols and formatting

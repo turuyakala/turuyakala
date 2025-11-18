@@ -50,12 +50,6 @@ export default function OfferCard({ item, serverTime }: OfferCardProps) {
   const isCritical = toNum(timeInfo?.totalHours, 0) <= 3;
   const categoryColor = categoryColors[item?.category] || categoryColors.tour;
 
-  // Client-side mount kontrolü
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   // Gerçek zamanlı sayaç için state kullan
   // Hydration mismatch'i önlemek için başlangıç değeri null, mount'tan sonra hesaplanacak
   const [timeRemaining, setTimeRemaining] = useState<{

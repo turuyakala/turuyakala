@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { z } from 'zod';
-import { formatPrice } from '@/lib/price';
+import { formatPrice, type Currency } from '@/lib/price';
 import Link from 'next/link';
 
 const reservationSchema = z.object({
@@ -214,7 +214,7 @@ export default function ReservationModal({
                 <p><span className="font-medium">Kişi Sayısı:</span> {guests}</p>
                 <p className="pt-2 border-t border-gray-300 mt-2">
                   <span className="font-medium">Toplam:</span> <span className="text-lg font-bold text-[#E63946]">
-                    {formatPrice(totalPrice * 100, currency)}
+                    {formatPrice(totalPrice * 100, currency as Currency)}
                   </span>
                 </p>
               </div>
