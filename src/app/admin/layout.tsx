@@ -2,6 +2,8 @@ import { requireAdmin } from '@/lib/middleware/admin';
 import Link from 'next/link';
 import { ToastProvider } from '@/lib/contexts/ToastContext';
 
+export const dynamic = 'force-dynamic';
+
 export default async function AdminLayout({
   children,
 }: {
