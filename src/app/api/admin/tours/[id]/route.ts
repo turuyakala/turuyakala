@@ -47,14 +47,6 @@ const tourSchema = z.object({
     departureTime: z.string().optional(),
     arrivalTime: z.string().optional(),
   }).optional(),
-  hotelInfo: z.object({
-    name: z.string().optional(),
-    stars: z.number().nullable().optional(),
-    location: z.string().optional(),
-    address: z.string().optional(),
-    amenities: z.array(z.string()).optional(),
-    extraInfoUrl: z.string().nullable().optional(),
-  }).optional(),
   isSurprise: z.boolean().default(false),
   requiresVisa: z.boolean().optional(),
   requiresPassport: z.boolean().optional(),
@@ -103,7 +95,6 @@ export async function GET(request: NextRequest, context: RouteContext) {
       languages: tour.languages || null,
       paymentMethods: tour.paymentMethods || null,
       flightInfo: tour.flightInfo || null,
-      hotelInfo: tour.hotelInfo || null,
     };
 
     return NextResponse.json(parsedTour, { status: 200 });
@@ -173,7 +164,6 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
         languages: data.languages ? JSON.stringify(data.languages) : null,
         paymentMethods: data.paymentMethods ? JSON.stringify(data.paymentMethods) : null,
         flightInfo: data.flightInfo ? JSON.stringify(data.flightInfo) : null,
-        hotelInfo: data.hotelInfo ? JSON.stringify(data.hotelInfo) : null,
         isSurprise: data.isSurprise || false,
         requiresVisa: data.requiresVisa || false,
         requiresPassport: data.requiresPassport || false,
