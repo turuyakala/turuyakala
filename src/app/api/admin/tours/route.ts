@@ -11,7 +11,9 @@ const tourSchema = z.object({
   startAt: z.string(),
   seatsTotal: z.number().min(1),
   seatsLeft: z.number().min(0),
-  price: z.number().min(0), // Will be converted to priceMinor (cents/kuruş)
+  price: z.number().min(0), // Will be converted to priceMinor (cents/kuruş) - İndirimli fiyat
+  originalPrice: z.number().min(0).optional(), // Will be converted to originalPriceMinor (cents/kuruş) - Asıl fiyat
+  discountPercentage: z.number().min(0).max(100).optional(), // İndirim oranı (yüzde olarak)
   currency: z.enum(['TRY', 'USD', 'EUR']).default('TRY'),
   supplierId: z.string().optional().or(z.literal('')), // Optional supplier integration
   vendorOfferId: z.string().optional().or(z.literal('')), // Vendor's unique offer ID
@@ -52,13 +54,13 @@ const tourSchema = z.object({
     departureTime: z.string().optional(),
     arrivalTime: z.string().optional(),
   }).optional(),
-  hotelInfo: z.object({
+  tourCompanyInfo: z.object({
     name: z.string().optional(),
-    stars: z.number().nullable().optional(),
-    location: z.string().optional(),
+    phone: z.string().optional(),
+    email: z.string().optional(),
     address: z.string().optional(),
-    amenities: z.array(z.string()).optional(),
-    extraInfoUrl: z.string().nullable().optional(),
+    website: z.string().optional(),
+    description: z.string().optional(),
   }).optional(),
   isSurprise: z.boolean().default(false),
   requiresVisa: z.boolean().optional(),
@@ -167,6 +169,8 @@ export async function POST(request: NextRequest) {
 
     // Convert price to priceMinor (cents/kuruş)
     const priceMinor = Math.round(data.price * 100);
+    const originalPriceMinor = data.originalPrice ? Math.round(data.originalPrice * 100) : null;
+    const discountPercentage = data.discountPercentage || null;
 
     // Create tour
     const tour = await prisma.inventoryItem.create({
@@ -182,6 +186,8 @@ export async function POST(request: NextRequest) {
         seatsTotal: data.seatsTotal,
         seatsLeft: data.seatsLeft,
         priceMinor: priceMinor,
+        originalPriceMinor: originalPriceMinor,
+        discountPercentage: discountPercentage,
         currency: data.currency,
         transport: data.transport || null,
         contact: data.contact ? JSON.stringify(data.contact) : null,
@@ -202,7 +208,7 @@ export async function POST(request: NextRequest) {
         languages: data.languages ? JSON.stringify(data.languages) : null,
         paymentMethods: data.paymentMethods ? JSON.stringify(data.paymentMethods) : null,
         flightInfo: data.flightInfo ? JSON.stringify(data.flightInfo) : null,
-        hotelInfo: data.hotelInfo ? JSON.stringify(data.hotelInfo) : null,
+        tourCompanyInfo: data.tourCompanyInfo ? JSON.stringify(data.tourCompanyInfo) : null,
         isSurprise: data.isSurprise || false,
         requiresVisa: data.requiresVisa || false,
         requiresPassport: data.requiresPassport || false,

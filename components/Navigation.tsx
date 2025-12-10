@@ -13,7 +13,7 @@ export default function Navigation() {
             {/* Telefon Numarası */}
             <div className="hidden md:flex items-center px-4 py-2 bg-[#1A2A5A]/70 rounded-full">
               <span className="text-sm font-medium text-white">
-                Bize ulaşın: +90 543 629 41 26
+                Bize ulaşın: +90 505 408 29 29
               </span>
             </div>
             <AuthButtons />

@@ -18,7 +18,9 @@ export default function NewTourPage() {
     startAt: '',
     seatsTotal: '',
     seatsLeft: '',
+    originalPrice: '',
     price: '',
+    discountPercentage: '',
     currency: 'TRY',
     supplierId: '',
     transport: '',
@@ -51,13 +53,13 @@ export default function NewTourPage() {
     arrivalAirport: '',
     flightDepartureTime: '',
     flightArrivalTime: '',
-    // Hotel Info
-    hotelName: '',
-    hotelStars: '',
-    hotelLocation: '',
-    hotelAddress: '',
-    hotelAmenities: '',
-    hotelExtraInfoUrl: '',
+    // Tour Company Info
+    tourCompanyName: '',
+    tourCompanyPhone: '',
+    tourCompanyEmail: '',
+    tourCompanyAddress: '',
+    tourCompanyWebsite: '',
+    tourCompanyDescription: '',
     isSurprise: false,
     requiresVisa: false,
     requiresPassport: false,
@@ -106,6 +108,8 @@ export default function NewTourPage() {
           seatsTotal: parseInt(formData.seatsLeft), // Kalan koltuk sayısını toplam koltuk olarak kullan
           seatsLeft: parseInt(formData.seatsLeft),
           price: parseFloat(formData.price),
+          originalPrice: formData.originalPrice ? parseFloat(formData.originalPrice) : undefined,
+          discountPercentage: formData.discountPercentage ? parseInt(formData.discountPercentage) : undefined,
           contact: undefined,
           description: formData.description || undefined,
           images: formData.images ? parseArray(formData.images) : undefined,
@@ -137,13 +141,13 @@ export default function NewTourPage() {
             departureTime: formData.flightDepartureTime,
             arrivalTime: formData.flightArrivalTime,
           } : undefined,
-          hotelInfo: (formData.hotelName || formData.hotelLocation) ? {
-            name: formData.hotelName,
-            stars: formData.hotelStars ? parseInt(formData.hotelStars) : null,
-            location: formData.hotelLocation,
-            address: formData.hotelAddress,
-            amenities: formData.hotelAmenities ? parseArray(formData.hotelAmenities) : [],
-            extraInfoUrl: formData.hotelExtraInfoUrl || null,
+          tourCompanyInfo: (formData.tourCompanyName || formData.tourCompanyPhone) ? {
+            name: formData.tourCompanyName,
+            phone: formData.tourCompanyPhone,
+            email: formData.tourCompanyEmail || null,
+            address: formData.tourCompanyAddress || null,
+            website: formData.tourCompanyWebsite || null,
+            description: formData.tourCompanyDescription || null,
           } : undefined,
         }),
       });
@@ -420,22 +424,6 @@ export default function NewTourPage() {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Fiyat *
-            </label>
-            <input
-              type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              required
-              min="0"
-              step="0.01"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
               Para Birimi *
             </label>
             <select
@@ -449,6 +437,65 @@ export default function NewTourPage() {
               <option value="USD">$ USD</option>
               <option value="EUR">€ EUR</option>
             </select>
+          </div>
+        </div>
+
+        {/* Fiyat Bilgileri */}
+        <div className="bg-blue-50 border border-blue-300 rounded-lg p-6 space-y-4">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Fiyat Bilgileri</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Asıl Fiyat
+              </label>
+              <input
+                type="number"
+                name="originalPrice"
+                value={formData.originalPrice}
+                onChange={handleChange}
+                min="0"
+                step="0.01"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
+                placeholder="Örn: 5000"
+              />
+              <p className="text-xs text-gray-500 mt-1">İndirim öncesi fiyat (opsiyonel)</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                İndirimli Fiyatımız *
+              </label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                required
+                min="0"
+                step="0.01"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
+                placeholder="Örn: 3500"
+              />
+              <p className="text-xs text-gray-500 mt-1">Satış fiyatı (zorunlu)</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                İndirim Oranı (%)
+              </label>
+              <input
+                type="number"
+                name="discountPercentage"
+                value={formData.discountPercentage}
+                onChange={handleChange}
+                min="0"
+                max="100"
+                step="1"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
+                placeholder="Örn: 25"
+              />
+              <p className="text-xs text-gray-500 mt-1">İndirim yüzdesi (opsiyonel, tur detay sayfasında gösterilir)</p>
+            </div>
           </div>
         </div>
 
@@ -960,69 +1007,78 @@ export default function NewTourPage() {
           </div>
         </div>
 
-        {/* Otel Bilgileri */}
+        {/* Tur Şirketi Bilgileri */}
         <div className="bg-purple-50 border border-purple-300 rounded-lg p-6 space-y-4">
           <div className="flex items-center gap-2 mb-4">
-            <span className="text-2xl">🏨</span>
-            <h3 className="text-lg font-semibold text-gray-900">Otel Bilgileri</h3>
+            <span className="text-2xl">🏢</span>
+            <h3 className="text-lg font-semibold text-gray-900">Tur Şirketi Bilgileri</h3>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Otel Adı *
+                Şirket Adı *
               </label>
               <input
                 type="text"
-                name="hotelName"
-                value={formData.hotelName}
+                name="tourCompanyName"
+                value={formData.tourCompanyName}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
-                placeholder="Örn: Grand Hotel Antalya"
+                placeholder="Örn: Kapadokya Premium Turizm"
               />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Yıldız Sayısı
+                Telefon *
               </label>
-              <select
-                name="hotelStars"
-                value={formData.hotelStars}
+              <input
+                type="tel"
+                name="tourCompanyPhone"
+                value={formData.tourCompanyPhone}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
-              >
-                <option value="">Seçiniz</option>
-                <option value="1">1 Yıldız</option>
-                <option value="2">2 Yıldız</option>
-                <option value="3">3 Yıldız</option>
-                <option value="4">4 Yıldız</option>
-                <option value="5">5 Yıldız</option>
-              </select>
+                placeholder="Örn: +90 555 123 4567"
+              />
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Konum
+                E-posta
               </label>
               <input
-                type="text"
-                name="hotelLocation"
-                value={formData.hotelLocation}
+                type="email"
+                name="tourCompanyEmail"
+                value={formData.tourCompanyEmail}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
-                placeholder="Örn: Lara, Antalya"
+                placeholder="Örn: info@kapadokyaturizm.com"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Website
+              </label>
+              <input
+                type="url"
+                name="tourCompanyWebsite"
+                value={formData.tourCompanyWebsite}
+                onChange={handleChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
+                placeholder="https://www.kapadokyaturizm.com"
               />
             </div>
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Otel Adresi
+                Adres
               </label>
               <input
                 type="text"
-                name="hotelAddress"
-                value={formData.hotelAddress}
+                name="tourCompanyAddress"
+                value={formData.tourCompanyAddress}
                 onChange={handleChange}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
                 placeholder="Tam adres bilgisi"
@@ -1031,32 +1087,17 @@ export default function NewTourPage() {
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Otel Özellikleri (Her satıra bir özellik)
+                Şirket Hakkında Açıklama
               </label>
               <textarea
-                name="hotelAmenities"
-                value={formData.hotelAmenities}
+                name="tourCompanyDescription"
+                value={formData.tourCompanyDescription}
                 onChange={handleChange}
                 rows={4}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#91A8D0] focus:border-transparent text-gray-900 font-mono text-sm"
-                placeholder="Wi-Fi&#10;Havuz&#10;Spa&#10;Fitness Center&#10;Oda Servisi&#10;Klima"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#91A8D0] focus:border-transparent text-gray-900"
+                placeholder="Tur şirketi hakkında kısa bilgi..."
               />
-              <p className="text-xs text-gray-500 mt-1">Her satıra bir özellik yazın</p>
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Otel Hakkında Ekstra Bilgi Linki
-              </label>
-              <input
-                type="url"
-                name="hotelExtraInfoUrl"
-                value={formData.hotelExtraInfoUrl}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A2A5A] focus:border-transparent text-gray-900"
-                placeholder="https://example.com/hotel-details"
-              />
-              <p className="text-xs text-gray-500 mt-1">Otel hakkında detaylı bilgi için link (opsiyonel)</p>
+              <p className="text-xs text-gray-500 mt-1">Tur şirketi hakkında kısa bir açıklama (opsiyonel)</p>
             </div>
           </div>
         </div>

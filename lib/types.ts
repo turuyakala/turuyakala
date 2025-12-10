@@ -9,6 +9,8 @@ export type Item = {
   startAt: string; // ISO string
   seatsLeft: number;
   price: number;
+  originalPrice?: number; // Asıl fiyat (indirim öncesi)
+  discountPercentage?: number; // İndirim oranı (yüzde olarak, örn: 25 = %25)
   currency: 'TRY' | 'EUR' | 'USD';
   supplier: string;
   contact?: {

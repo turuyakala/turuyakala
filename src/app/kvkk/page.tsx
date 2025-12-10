@@ -62,7 +62,7 @@ export default function KVKKPage() {
             <div className="bg-gray-50 p-4 rounded-lg">
               <p className="text-primary">
                 <strong>E-posta:</strong> info@turuyakala.com<br />
-                <strong>Telefon:</strong> +90 543 629 41 26
+                <strong>Telefon:</strong> +90 505 408 29 29
               </p>
             </div>
           </div>

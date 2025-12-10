@@ -119,7 +119,9 @@ model InventoryItem {
   seatsLeft         Int
   
   // Pricing (Normalized - in minor units: cents/kuruş)
-  priceMinor        Int                            // Price in minor currency units (cents/kuruş)
+  priceMinor        Int                            // Price in minor currency units (cents/kuruş) - İndirimli fiyat
+  originalPriceMinor Int?                          // Original price before discount (cents/kuruş) - Asıl fiyat
+  discountPercentage Int?                          // İndirim oranı (yüzde olarak, örn: 25 = %25)
   currency          String        @default("TRY")
   
   // Additional Info
@@ -146,9 +148,9 @@ model InventoryItem {
   languages         String?                        // JSON array: ["Türkçe", "İngilizce", ...]
   paymentMethods    String?                        // JSON array: ["Nakit", "Kredi Kartı", ...]
   
-  // Flight & Hotel Details
+  // Flight & Tour Company Details
   flightInfo        String?                        // JSON: {airline, flightNumber, departureAirport, arrivalAirport, departureTime, arrivalTime, ...}
-  hotelInfo         String?                        // JSON: {name, stars, location, address, amenities, extraInfoUrl, ...}
+  tourCompanyInfo   String?                        // JSON: {name, phone, email, address, website, description, ...}
   
   // Flags
   isSurprise        Boolean       @default(false)  // Sürpriz tur mu?

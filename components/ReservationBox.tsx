@@ -6,6 +6,7 @@ import ReservationModal from './ReservationModal';
 type ReservationBoxProps = {
   tourId: string;
   price: number;
+  originalPrice?: number;
   currency: string;
   seatsLeft: number;
   requiresPassport?: boolean;
@@ -22,6 +23,7 @@ type ReservationBoxProps = {
 export default function ReservationBox({ 
   tourId, 
   price, 
+  originalPrice,
   currency, 
   seatsLeft, 
   requiresPassport, 
@@ -77,10 +79,26 @@ export default function ReservationBox({
 
       {/* Fiyat Hesaplama */}
       <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-        <div className="flex justify-between text-sm text-primary">
-          <span>{price.toLocaleString('tr-TR')} {currencySymbol} × {guests} kişi</span>
-          <span className="font-medium">{totalPrice.toLocaleString('tr-TR')} {currencySymbol}</span>
-        </div>
+        {originalPrice && originalPrice > price ? (
+          <div className="space-y-1 mb-2">
+            <div className="flex justify-between text-sm text-gray-500">
+              <span>Asıl Fiyat:</span>
+              <span className="line-through">{originalPrice.toLocaleString('tr-TR')} {currencySymbol} × {guests} kişi</span>
+            </div>
+            <div className="flex justify-between text-sm text-primary">
+              <span>İndirimli Fiyatımız:</span>
+              <span className="font-medium">{price.toLocaleString('tr-TR')} {currencySymbol} × {guests} kişi</span>
+            </div>
+            <div className="text-xs text-green-600 font-medium text-right">
+              %{Math.round(((originalPrice - price) / originalPrice) * 100)} İndirim
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-between text-sm text-primary">
+            <span>{price.toLocaleString('tr-TR')} {currencySymbol} × {guests} kişi</span>
+            <span className="font-medium">{totalPrice.toLocaleString('tr-TR')} {currencySymbol}</span>
+          </div>
+        )}
         <div className="border-t border-gray-300 pt-2 flex justify-between items-center">
           <span className="font-bold text-primary">Toplam</span>
           <span className="text-2xl font-bold text-primary">

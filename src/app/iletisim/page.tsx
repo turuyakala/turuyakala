@@ -88,7 +88,7 @@ export default function IletisimPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary mb-1">Telefon</h3>
-                    <p className="text-primary">+90 543 629 41 26</p>
+                    <p className="text-primary">+90 505 408 29 29</p>
                     <p className="text-sm text-primary">Pazartesi - Cuma: 09:00 - 18:00</p>
                   </div>
                 </div>
@@ -99,7 +99,7 @@ export default function IletisimPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-primary mb-1">WhatsApp</h3>
-                    <p className="text-primary">+90 543 629 41 26</p>
+                    <p className="text-primary">+90 505 408 29 29</p>
                     <p className="text-sm text-primary">Acil durumlar için</p>
                   </div>
                 </div>
@@ -202,7 +202,7 @@ export default function IletisimPage() {
           {/* WhatsApp Channel Button */}
           <div className="mt-8 flex justify-center px-4">
             <a
-              href="https://wa.me/905551234567?text=Merhaba,%20WhatsApp%20duyuru%20kanalınıza%20katılmak%20istiyorum"
+              href="https://wa.me/905054082929?text=Merhaba,%20WhatsApp%20duyuru%20kanalınıza%20katılmak%20istiyorum"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 md:gap-3 bg-[#25D366] hover:bg-[#20BA5A] text-white font-semibold px-4 md:px-6 py-3 md:py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 max-w-4xl w-full justify-center text-center"

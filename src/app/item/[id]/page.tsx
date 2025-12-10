@@ -81,6 +81,8 @@ export default async function ItemDetailPage({ params }: PageProps) {
     startAt: tourData.startAt.toISOString(),
     seatsLeft: tourData.seatsLeft,
     price: tourData.priceMinor / 100, // Convert minor units to major
+    originalPrice: isInventoryItem && tourData.originalPriceMinor ? tourData.originalPriceMinor / 100 : undefined,
+    discountPercentage: isInventoryItem && tourData.discountPercentage ? tourData.discountPercentage : undefined,
     currency: tourData.currency as any,
     supplier: tourData.supplier?.name || 'TuruYakala',
     contact: isInventoryItem && tourData.contact ? JSON.parse(tourData.contact) : undefined,
@@ -266,12 +268,41 @@ export default async function ItemDetailPage({ params }: PageProps) {
                   {/* Sağ Kolon - Fiyat ve Rezervasyon */}
                   <div className="lg:col-span-1">
                     <div className="sticky top-24 space-y-4">
+                      {/* İndirim Oranı Yıldız Kutucuğu */}
+                      {item.discountPercentage && item.discountPercentage > 0 && (
+                        <div className="relative flex items-center justify-center">
+                          <svg className="w-32 h-32 text-[#E63946] drop-shadow-lg" viewBox="0 0 100 100" fill="currentColor">
+                            <path d="M50 5 L61 35 L95 35 L68 55 L79 85 L50 65 L21 85 L32 55 L5 35 L39 35 Z" />
+                          </svg>
+                          <div className="absolute inset-0 flex flex-col items-center justify-center text-white">
+                            <div className="text-3xl font-bold">%{item.discountPercentage}</div>
+                            <div className="text-xs font-medium">İndirim</div>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Fiyat Kutusu */}
                       <div className="bg-gradient-to-br from-[#1A2A5A] to-[#1A2A5A]/90 rounded-xl shadow-lg p-6 text-white">
                         <div className="text-sm opacity-90 mb-2">Kişi Başı Fiyat</div>
-                        <div className="text-5xl font-bold mb-1">
-                          {formatPrice(item.price * 100, item.currency)}
-                        </div>
+                        {item.originalPrice && item.originalPrice > item.price ? (
+                          <div className="mb-2">
+                            <div className="text-2xl font-medium line-through opacity-70 mb-1">
+                              {formatPrice(item.originalPrice * 100, item.currency)}
+                            </div>
+                            <div className="text-5xl font-bold text-[#E63946]">
+                              {formatPrice(item.price * 100, item.currency)}
+                            </div>
+                            {!item.discountPercentage && (
+                              <div className="text-sm font-medium text-green-300 mt-1">
+                                %{Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)} İndirim
+                              </div>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="text-5xl font-bold mb-1">
+                            {formatPrice(item.price * 100, item.currency)}
+                          </div>
+                        )}
                         <div className="text-sm opacity-90 mt-2">
                           <svg className="w-5 h-5 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -324,6 +355,7 @@ export default async function ItemDetailPage({ params }: PageProps) {
                       <ReservationBox
                         tourId={item.id}
                         price={item.price}
+                        originalPrice={item.originalPrice}
                         currency={item.currency}
                         seatsLeft={item.seatsLeft}
                         requiresPassport={item.requiresPassport}
